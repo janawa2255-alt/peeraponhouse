@@ -68,5 +68,5 @@ Route::get('/payments', [PaymentController::class, 'index'])->name('payments.ind
 Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 Route::post('/payments/{payment}/status', [PaymentController::class, 'updateStatus'])->name('payments.updateStatus');
 
-
+// Route::post('/payments/{payment}/status', [PaymentController::class, 'updateStatus'])->name('payments.updateStatus');
 });
