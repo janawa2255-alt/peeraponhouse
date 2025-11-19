@@ -16,7 +16,7 @@
     </div>
 
     {{-- ฟอร์มกรองสถานะ + ช่องค้นหาเลขห้อง --}}
-    <form id="paymentFilterForm" method="GET" action="{{ route('payments.index') }}"
+    <form id="paymentFilterForm" method="GET" action="{{ route('backend.payments.index') }}"
           class="flex flex-col md:flex-row md:items-end gap-3 rounded-xl p-4">
 
         {{-- เลือกสถานะ --}}
@@ -127,7 +127,7 @@
 
                     <td class="px-4 py-3">
                         @if ($payment->pic_slip)
-                            <a href="{{ route('payments.show', $payment) }}"
+                            <a href="{{ route('backend.payments.show', $payment) }}"
                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                       bg-gray-200 text-gray-800 border border-gray-300
                                       hover:bg-gray-300">
@@ -148,7 +148,7 @@
                         {{-- ปุ่มจัดการ แสดงเฉพาะตอนรอตรวจสอบ --}}
                         @if ($payment->status == 0)
                             {{-- อนุมัติ --}}
-                            <form action="{{ route('payments.updateStatus', $payment) }}" method="POST" class="inline-block">
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block">
                                 @csrf
                                 <input type="hidden" name="status" value="1">
                                 <button type="submit"
@@ -159,7 +159,7 @@
                             </form>
 
                             {{-- ปฏิเสธ / ยกเลิก --}}
-                            <form action="{{ route('payments.updateStatus', $payment) }}" method="POST" class="inline-block">
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block">
                                 @csrf
                                 <input type="hidden" name="status" value="2">
                                 <button type="submit"

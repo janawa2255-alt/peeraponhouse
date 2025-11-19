@@ -19,7 +19,7 @@
         </ul>
     </div>
 @endif
-        <form action="{{ route('tenants.store') }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('backend.tenants.store') }}" method="POST" enctype="multipart/form-data"
               class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 p-6 space-y-4">
             @csrf
             <div class="grid grid-cols-4 gap-4">
@@ -161,7 +161,7 @@
                                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-neutral-900">
                     บันทึกข้อมูล
                 </button>
-               <a href="{{ route('tenants.index') }}">
+               <a href="{{ route('backend.tenants.index') }}">
                     <button type="button"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                                    bg-neutral-900/60 border border-gray-600 text-gray-200

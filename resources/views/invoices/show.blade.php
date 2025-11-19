@@ -8,7 +8,7 @@
         <h1 class="text-2xl font-semibold text-white">
             รายละเอียดใบแจ้งหนี้
         </h1>
-        <a href="{{ route('invoices.index') }}"
+        <a href="{{ route('backend.invoices.index') }}"
            class="px-4 py-2 text-sm font-medium rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-800">
             ย้อนกลับ
         </a>

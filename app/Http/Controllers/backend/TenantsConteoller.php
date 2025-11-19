@@ -59,7 +59,7 @@ class TenantsConteoller extends Controller
             'status'        => $request->status ?? 0,
         ]);
 
-        return redirect()->route('tenants.index')->with('success', 'เพิ่มบัญชีสำเร็จ');
+        return redirect()->route('backend.tenants.index')->with('success', 'เพิ่มบัญชีสำเร็จ');
     }
 
     public function edit($id)
@@ -111,7 +111,7 @@ class TenantsConteoller extends Controller
         }
         $tenant->update($updateData);
 
-        return redirect()->route('tenants.index')->with('success', 'แก้ไขข้อมูลสำเร็จ');
+        return redirect()->route('backend.tenants.index')->with('success', 'แก้ไขข้อมูลสำเร็จ');
     }
 
     public function destroy($id)
@@ -121,7 +121,7 @@ class TenantsConteoller extends Controller
             unlink(public_path($tenant->avatar_path));
         }
         $tenant->delete();
-        return redirect()->route('tenants.index')->with('success', 'ลบรายการเรียบร้อยแล้ว');
+        return redirect()->route('backend.tenants.index')->with('success', 'ลบรายการเรียบร้อยแล้ว');
     }
    public function show($id)
         {

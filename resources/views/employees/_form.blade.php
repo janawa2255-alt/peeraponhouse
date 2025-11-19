@@ -95,7 +95,7 @@
 
 
     <div class="flex justify-end gap-3">
-        <a href="{{ route('employees.index') }}"
+        <a href="{{ route('backend.employees.index') }}"
            class="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition">
             ยกเลิก
         </a>

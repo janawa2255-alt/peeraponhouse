@@ -14,7 +14,7 @@
             </p>
         </div>
 
-        <a href="{{ route('banks.create') }}"
+        <a href="{{ route('backend.banks.create') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                   bg-gradient-to-r from-orange-500 to-orange-600 text-white
                   hover:from-orange-400 hover:to-orange-500 shadow-md shadow-orange-900/40
@@ -122,14 +122,14 @@
 
                     {{-- ปุ่มจัดการ --}}
                     <td class="px-4 py-3 text-right space-x-2">
-                        <a href="{{ route('banks.edit', $bank->bank_id) }}"
+                        <a href="{{ route('backend.banks.edit', $bank->bank_id) }}"
                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                   bg-amber-500/20 text-amber-200 border border-amber-500/40
                                   hover:bg-amber-500/30">
                             แก้ไข
                         </a>
 
-                        <form action="{{ route('banks.destroy', $bank->bank_id) }}"
+                        <form action="{{ route('backend.banks.destroy', $bank->bank_id) }}"
                               method="POST"
                               class="inline-block"
                               onsubmit="return confirm('ยืนยันการลบบัญชีธนาคารนี้หรือไม่?');">

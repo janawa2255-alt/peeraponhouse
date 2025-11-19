@@ -21,7 +21,8 @@
     }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
     @media (min-width:640px){
         body.sidebar-collapsed .sidebar-expanded-margin { margin-left:5rem; }
@@ -36,16 +37,31 @@
 
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-neutral-950 text-gray-200 selection:bg-orange-500 selection:text-white overflow-x-hidden">
 
+    {{-- Background Effects --}}
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(249,115,22,0.15),transparent_50%)]"></div>
+        <div class="absolute bottom-0 right-0 w-full h-1/2 bg-[radial-gradient(circle_at_100%_100%,rgba(249,115,22,0.1),transparent_50%)]"></div>
+    </div>
 
-    <div class="p-4 sidebar-expanded-margin">
+    <div class="flex sidebar-expanded-margin transition-all duration-300 ease-in-out relative z-0">
         @include('layouts.sidebar')
-        <main class="flex-1 flex flex-col p-6 background-blur-xl">
-            @yield('content')
+        
+        <main class="flex-1 min-h-screen w-full p-4 sm:p-6 lg:p-8">
+            <div class="mx-auto max-w-7xl animate-fade-in-up">
+                @yield('content')
+            </div>
         </main>
     </div>
-    @include('layouts.footer')
+    
+    <footer class="sidebar-expanded-margin transition-all duration-300 ease-in-out border-t border-neutral-800/50 bg-neutral-900/30 backdrop-blur-sm mt-auto">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+             <p class="text-center text-xs text-gray-500">
+                &copy; {{ date('Y') }} Peerapon House. All rights reserved.
+            </p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 

@@ -88,7 +88,7 @@
                     </td>
 
                     <td class="px-4 py-3 text-center">
-                        <a href="{{ route('cancel_lease.show', $item->cancel_id) }}"
+                        <a href="{{ route('backend.cancel_lease.show', $item->cancel_id) }}"
                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                   bg-blue-500/20 text-blue-200 border border-blue-500/40
                                   hover:bg-blue-500/30">

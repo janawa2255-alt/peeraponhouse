@@ -16,7 +16,8 @@ class Employee extends Model
         'email',
         'username',
         'password',
-        'status'
+        'status',
+        'avatar_path'
     ];
 
     protected $hidden = ['password'];

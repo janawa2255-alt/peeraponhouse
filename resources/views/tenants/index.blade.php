@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        <a href="{{ route('tenants.create') }}"
+        <a href="{{ route('backend.tenants.create') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                   bg-gradient-to-r from-orange-500 to-orange-600 text-white
                   hover:from-orange-400 hover:to-orange-500 shadow-md shadow-orange-900/40
@@ -86,7 +86,7 @@
 
                         {{-- ปุ่มดูรายละเอียด --}}
                         <td class="px-2 py-3 text-center">
-                            <a href="{{ route('tenants.show', $tenant->tenant_id) }}"
+                            <a href="{{ route('backend.tenants.show', $tenant->tenant_id) }}"
                                class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
                                       bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600">
                                 ดูรายละเอียด
@@ -95,14 +95,14 @@
 
                         {{-- ปุ่มแก้ไข / ลบ --}}
                    
-                            <a href="{{ route('tenants.edit', $tenant->tenant_id) }}"
+                            <a href="{{ route('backend.tenants.edit', $tenant->tenant_id) }}"
                                class="inline-flex  px-3 py-1.5 text-xs font-medium rounded-lg
                                       bg-amber-500/20 text-amber-200 border border-amber-500/40
                                       hover:bg-amber-500/30">
                                 แก้ไข
                             </a>
 
-                            <form action="{{ route('tenants.destroy', $tenant->tenant_id) }}" method="POST" class="inline-block">
+                            <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

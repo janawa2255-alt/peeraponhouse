@@ -14,7 +14,7 @@
             </p>
         </div>
 
-        <a href="{{ route('invoices.create') }}"
+        <a href="{{ route('backend.invoices.create') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                   bg-gradient-to-r from-orange-500 to-orange-600 text-white
                   hover:from-orange-400 hover:to-orange-500 shadow-md shadow-orange-900/40">
@@ -23,7 +23,7 @@
     </div>
 
     {{-- ฟอร์มกรองสถานะ + ค้นหาเลขห้อง --}}
-    <form id="invoiceFilterForm" method="GET" action="{{ route('invoices.index') }}"
+    <form id="invoiceFilterForm" method="GET" action="{{ route('backend.invoices.index') }}"
           class="flex flex-col md:flex-row md:items-end gap-3 rounded-xl p-4">
 
         {{-- เลือกสถานะ --}}
@@ -141,14 +141,14 @@
     <div class="flex items-center justify-center gap-2">
 
         {{-- ปุ่มดูรายละเอียด --}}
-        <a href="{{ route('invoices.show', $invoice->invoice_id) }}"
+        <a href="{{ route('backend.invoices.show', $invoice->invoice_id) }}"
             class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
             bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600">
             ดูรายละเอียด
         </a>
 
                             {{-- ปุ่มส่งแจ้งเตือน --}}
-                            <form action="{{ route('invoices.notify', $invoice->invoice_id) }}"
+                            <form action="{{ route('backend.invoices.notify', $invoice->invoice_id) }}"
                                 method="POST"
                                 onsubmit="return confirm('ส่งอีเมลแจ้งผู้เช่าอีกรอบ?')">
                                 @csrf
@@ -163,7 +163,7 @@
                             {{-- ปุ่มยกเลิก --}}
                             @if($invoice->status == 0)
                                 <form method="POST"
-                                    action="{{ route('invoices.cancel', $invoice->invoice_id) }}"
+                                    action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}"
                                     onsubmit="return confirm('ต้องการยกเลิกใบแจ้งหนี้นี้หรือไม่?');">
                                     @csrf
                                     @method('PATCH')

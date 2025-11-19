@@ -48,7 +48,7 @@
     </div>
 
     <div class="flex items-center justify-end gap-2 pt-2">
-        <a href="{{ route('rooms.index') }}"
+        <a href="{{ route('backend.rooms.index') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-500
                   text-gray-200 hover:bg-gray-800 transition">
             ยกเลิก

@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        <a href="{{ route('cancel-leases.index') }}"
+        <a href="{{ route('backend.cancel_lease.index') }}"
            class="px-4 py-2 text-sm rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800">
             ย้อนกลับ
         </a>
@@ -120,7 +120,7 @@
             <div class="border-t border-neutral-800 pt-4 space-y-3">
                 <h2 class="text-base font-semibold text-white mb-1">การดำเนินการของเจ้าของหอ</h2>
 
-                <form action="{{ route('cancel-leases.approve', $cancel->cancel_id) }}" method="POST" class="space-y-3">
+                <form action="{{ route('backend.cancel-leases.approve', $cancel->cancel_id) }}" method="POST" class="space-y-3">
                     @csrf
 
                     <label class="block text-sm text-gray-300 mb-1">
@@ -131,7 +131,7 @@
                                focus:outline-none focus:ring-2 focus:ring-emerald-500">{{ old('note_owner') }}</textarea>
 
                     <div class="flex justify-end gap-2">
-                        <a href="{{ route('cancel-leases.index') }}"
+                        <a href="{{ route('backend.cancel_lease.index') }}"
                            class="px-4 py-2 text-sm rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
                             ยกเลิก / กลับหน้ารายการ
                         </a>

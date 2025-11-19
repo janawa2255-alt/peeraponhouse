@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        <a href="{{ route('employees.create') }}"
+        <a href="{{ route('backend.employees.create') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                   bg-gradient-to-r from-orange-500 to-orange-600 text-white
                   hover:from-orange-400 hover:to-orange-500 shadow-md shadow-orange-900/40
@@ -82,14 +82,14 @@
             </td>
 
             <td class="px-4 py-3 text-right space-x-2">
-                <a href="{{ route('employees.edit', $employee->emp_id) }}"
+                <a href="{{ route('backend.employees.edit', $employee->emp_id) }}"
                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                           bg-amber-500/20 text-amber-200 border border-amber-500/40
                           hover:bg-amber-500/30">
                     แก้ไข
                 </a>
 
-                <form action="{{ route('employees.destroy', $employee->emp_id) }}"
+                <form action="{{ route('backend.employees.destroy', $employee->emp_id) }}"
                       method="POST"
                       class="inline-block"
                       onsubmit="return confirm('ยืนยันการลบพนักงาน {{ $employee->name }} ใช่หรือไม่?');">

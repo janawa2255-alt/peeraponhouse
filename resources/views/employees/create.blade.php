@@ -18,7 +18,7 @@
     @endif
 
     <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 p-5">
-        <form action="{{ route('employees.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('backend.employees.store') }}" method="POST" class="space-y-4">
             @include('employees._form')
         </form>
     </div>

@@ -10,9 +10,26 @@ use Illuminate\Support\Facades\Hash;
 
 class CustomLoginController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
-        return view('auth.login');
+        // เช็คว่ามาจาก backend route หรือไม่
+        $isBackend = $request->is('backend/*');
+        
+        // ถ้าเป็น backend และ admin login อยู่แล้ว ให้ redirect ไปหน้า dashboard
+        if ($isBackend) {
+            if (session()->has('auth_owner')) {
+                return redirect()->route('backend.dashboard');
+            }
+            return view('auth.admin-login');
+        }
+        
+        // ถ้าเป็น tenant และ tenant login อยู่แล้ว ให้ redirect ไปหน้าแรก
+        if (session()->has('auth_tenant')) {
+            return redirect()->route('home');
+        }
+        
+        // ถ้าไม่ใช่ ให้ไปหน้า tenant-login
+        return view('auth.tenant-login');
     }
 
     // ---------------- ผู้เช่า ----------------
@@ -35,15 +52,21 @@ class CustomLoginController extends Controller
 
         // เก็บข้อมูลผู้เช่าไว้ใน session
         $request->session()->put('auth_tenant', [
-            'id'   => $tenant->tenant_id,
-            'name' => $tenant->name,
+            'id'          => $tenant->tenant_id,
+            'name'        => $tenant->name,
+            'email'       => $tenant->email,
+            'username'    => $tenant->username,
+            'avatar_path' => $tenant->avatar_path,
         ]);
 
         // กันไม่ให้ชนกับ session ของเจ้าของ
         $request->session()->forget('auth_owner');
 
-        // ไปหน้ามุมมองผู้เช่า (เช่น หน้าสัญญาเช่า)
-        return redirect()->route('tenant.lease.show');
+        // บังคับให้ save session ก่อน redirect
+        $request->session()->save();
+
+        // ไปหน้ามุมมองผู้เช่า (หน้าแรก/Dashboard)
+        return redirect()->route('home');
     }
 
     // ---------------- เจ้าของ / แอดมิน ----------------
@@ -66,14 +89,20 @@ class CustomLoginController extends Controller
 
         // เก็บข้อมูลเจ้าของไว้ใน session
         $request->session()->put('auth_owner', [
-            'id'   => $employee->emp_id,
-            'name' => $employee->name,
+            'id'          => $employee->emp_id,
+            'name'        => $employee->name,
+            'email'       => $employee->email,
+            'username'    => $employee->username,
+            'avatar_path' => $employee->avatar_path,
         ]);
 
         // กันไม่ให้ชนกับ session ผู้เช่า
         $request->session()->forget('auth_tenant');
 
-        // ไปหน้า backend เจ้าของ (เปลี่ยน route ตามจริงของจ๋า)
+        // บังคับให้ save session ก่อน redirect
+        $request->session()->save();
+
+        // ไปหน้า backend เจ้าของ
         return redirect()->route('backend.dashboard');
     }
 

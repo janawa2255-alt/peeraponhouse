@@ -1,5 +1,5 @@
 {{-- resources/views/auth/login.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.guest')
 
 @section('content')
 <style>
@@ -63,13 +63,26 @@
                     <form method="POST" action="{{ route('login.tenant') }}" class="space-y-4">
                         @csrf
 
+                        {{-- แสดง error สำหรับ tenant login --}}
+                        @if ($errors->has('tenant_login'))
+                            <div class="rounded-lg bg-red-900/20 border border-red-500/50 px-4 py-3">
+                                <p class="text-sm text-red-400">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    {{ $errors->first('tenant_login') }}
+                                </p>
+                            </div>
+                        @endif
+
                         <div class="space-y-1">
                             <label class="block text-sm text-neutral-300">
                                 อีเมล / ชื่อผู้ใช้
                             </label>
-                            <input type="text" name="username"
-                                   class="w-full rounded-lg bg-neutral-900 border border-neutral-700 text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                   placeholder="กรอกอีเมลหรือชื่อผู้ใช้ของคุณ">
+                            <input type="text" name="username" value="{{ old('username') }}"
+                                   class="w-full rounded-lg bg-neutral-900 border @error('username') border-red-500 @else border-neutral-700 @enderror text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                   placeholder="กรอกอีเมลหรือชื่อผู้ใช้ของคุณ" required>
+                            @error('username')
+                                <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="space-y-1">
@@ -77,8 +90,11 @@
                                 รหัสผ่าน
                             </label>
                             <input type="password" name="password"
-                                   class="w-full rounded-lg bg-neutral-900 border border-neutral-700 text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                   placeholder="กรอกรหัสผ่าน">
+                                   class="w-full rounded-lg bg-neutral-900 border @error('password') border-red-500 @else border-neutral-700 @enderror text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                   placeholder="กรอกรหัสผ่าน" required>
+                            @error('password')
+                                <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <p class="text-xs text-neutral-400">
@@ -101,16 +117,29 @@
                         เข้าสู่ระบบสำหรับเจ้าของ / แอดมิน
                     </h2>
 
-                    <form method="POST" action="{{ route('login.owner') }}" class="space-y-4">
+                    <form method="POST" action="{{ route('backend.login.post') }}" class="space-y-4">
                         @csrf
+
+                        {{-- แสดง error สำหรับ owner login --}}
+                        @if ($errors->has('owner_login'))
+                            <div class="rounded-lg bg-red-900/20 border border-red-500/50 px-4 py-3">
+                                <p class="text-sm text-red-400">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    {{ $errors->first('owner_login') }}
+                                </p>
+                            </div>
+                        @endif
 
                         <div class="space-y-1">
                             <label class="block text-sm text-neutral-300">
                                 อีเมล / ชื่อผู้ใช้
                             </label>
-                            <input type="text" name="username"
-                                   class="w-full rounded-lg bg-neutral-900 border border-neutral-700 text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                   placeholder="กรอกอีเมลหรือชื่อผู้ใช้ของคุณ">
+                            <input type="text" name="username" value="{{ old('username') }}"
+                                   class="w-full rounded-lg bg-neutral-900 border @error('username') border-red-500 @else border-neutral-700 @enderror text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                   placeholder="กรอกอีเมลหรือชื่อผู้ใช้ของคุณ" required>
+                            @error('username')
+                                <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="space-y-1">
@@ -118,8 +147,11 @@
                                 รหัสผ่าน
                             </label>
                             <input type="password" name="password"
-                                   class="w-full rounded-lg bg-neutral-900 border border-neutral-700 text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                   placeholder="กรอกรหัสผ่าน">
+                                   class="w-full rounded-lg bg-neutral-900 border @error('password') border-red-500 @else border-neutral-700 @enderror text-sm text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                   placeholder="กรอกรหัสผ่าน" required>
+                            @error('password')
+                                <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <p class="text-xs text-neutral-400">
@@ -147,22 +179,32 @@
     const btnOwner  = document.getElementById('btn-owner');
     const indicator = document.getElementById('role-indicator');
 
-    btnTenant.addEventListener('click', () => {
+    // ฟังก์ชันสลับไปฟอร์มผู้เช่า
+    function showTenantForm() {
         slider.classList.remove('show-owner');
         btnTenant.classList.add('text-white');
         btnTenant.classList.remove('text-neutral-300');
         btnOwner.classList.add('text-neutral-300');
         btnOwner.classList.remove('text-white');
         indicator.style.transform = 'translateX(0)';
-    });
+    }
 
-    btnOwner.addEventListener('click', () => {
+    // ฟังก์ชันสลับไปฟอร์มเจ้าของ
+    function showOwnerForm() {
         slider.classList.add('show-owner');
         btnOwner.classList.add('text-white');
         btnOwner.classList.remove('text-neutral-300');
         btnTenant.classList.add('text-neutral-300');
         btnTenant.classList.remove('text-white');
         indicator.style.transform = 'translateX(100%)';
-    });
+    }
+
+    btnTenant.addEventListener('click', showTenantForm);
+    btnOwner.addEventListener('click', showOwnerForm);
+
+    // เช็คว่ามี error จากฟอร์มไหน แล้วสลับไปแสดงฟอร์มนั้นอัตโนมัติ
+    @if ($errors->has('owner_login') || (isset($isBackend) && $isBackend))
+        showOwnerForm();
+    @endif
 </script>
 @endsection

@@ -1,0 +1,130 @@
+@extends('layouts.tenant')
+
+@section('content')
+<div class="space-y-6">
+    {{-- Header --}}
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-white mb-1">
+                รายละเอียดการชำระเงิน
+            </h1>
+            <p class="text-sm text-gray-400">
+                ข้อมูลการชำระเงินของคุณ
+            </p>
+        </div>
+        <a href="{{ route('payments') }}" 
+           class="px-4 py-2 text-sm rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-700 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            ย้อนกลับ
+        </a>
+    </div>
+
+    {{-- Payment Info Card --}}
+    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl overflow-hidden shadow-lg">
+        <div class="bg-neutral-800/60 px-6 py-4 border-b border-neutral-700">
+            <h2 class="text-white font-semibold">ข้อมูลการชำระเงิน</h2>
+        </div>
+
+        <div class="p-6 space-y-6">
+            {{-- Status Badge --}}
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-400">สถานะ</span>
+                @php
+                    $statusClasses = [
+                        0 => 'bg-yellow-500/20 text-yellow-200 border-yellow-500/40',
+                        1 => 'bg-green-500/20 text-green-200 border-green-500/40',
+                        2 => 'bg-red-500/20 text-red-200 border-red-500/40',
+                    ];
+                    $statusLabels = [
+                        0 => 'รอตรวจสอบ',
+                        1 => 'อนุมัติแล้ว',
+                        2 => 'ปฏิเสธ',
+                    ];
+                @endphp
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border {{ $statusClasses[$payment->status] ?? '' }}">
+                    {{ $statusLabels[$payment->status] ?? 'ไม่ทราบ' }}
+                </span>
+            </div>
+
+            {{-- Amount --}}
+            <div class="bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-xl p-6 border border-orange-500/20 text-center">
+                <p class="text-gray-400 text-sm mb-2">ยอดที่ชำระ</p>
+                <p class="text-4xl font-bold text-orange-400">
+                    {{ number_format($payment->total_amount, 2) }} ฿
+                </p>
+            </div>
+
+            {{-- Payment Details --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <p class="text-gray-400 mb-1">วันที่ชำระ</p>
+                    <p class="text-white font-semibold">
+                        {{ \Carbon\Carbon::parse($payment->paid_date)->format('d/m/Y H:i') }}
+                    </p>
+                </div>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <p class="text-gray-400 mb-1">ใบแจ้งหนี้</p>
+                    <p class="text-white font-semibold">
+                        {{ $payment->invoice->invoice_code ?? '-' }}
+                    </p>
+                </div>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <p class="text-gray-400 mb-1">ห้อง</p>
+                    <p class="text-white font-semibold">
+                        {{ $payment->invoice->expense->lease->rooms->room_no ?? '-' }}
+                    </p>
+                </div>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <p class="text-gray-400 mb-1">ผู้เช่า</p>
+                    <p class="text-white font-semibold">
+                        {{ $payment->invoice->expense->lease->tenants->name ?? '-' }}
+                    </p>
+                </div>
+            </div>
+
+            {{-- Bank Info --}}
+            @if($payment->bank)
+            <div class="border-t border-neutral-700 pt-4">
+                <h3 class="text-white font-semibold mb-3">ข้อมูลการโอน</h3>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">ธนาคาร</span>
+                        <span class="text-white font-medium">{{ $payment->bank->bank_name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">เลขที่บัญชี</span>
+                        <span class="text-white font-medium">{{ $payment->bank->number }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">ชื่อบัญชี</span>
+                        <span class="text-white font-medium">{{ $payment->bank->account_name }}</span>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Slip Image --}}
+            @if($payment->pic_slip)
+            <div class="border-t border-neutral-700 pt-4">
+                <h3 class="text-white font-semibold mb-3">สลิปการชำระเงิน</h3>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <img src="{{ asset('storage/' . $payment->pic_slip) }}" 
+                         alt="สลิปการชำระเงิน"
+                         class="max-h-96 mx-auto rounded-lg shadow-lg">
+                </div>
+            </div>
+            @endif
+
+            {{-- Note --}}
+            @if($payment->note)
+            <div class="border-t border-neutral-700 pt-4">
+                <h3 class="text-white font-semibold mb-2">หมายเหตุ</h3>
+                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
+                    <p class="text-gray-300 text-sm">{{ $payment->note }}</p>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</div>
+@endsection

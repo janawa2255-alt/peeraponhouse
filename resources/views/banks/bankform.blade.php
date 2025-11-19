@@ -61,7 +61,7 @@
 
     {{-- ปุ่ม --}}
     <div class="flex justify-end gap-2 pt-4">
-        <a href="{{ route('banks.index') }}" class="px-4 py-2 rounded-lg border text-gray-200">ยกเลิก</a>
+        <a href="{{ route('backend.banks.index') }}" class="px-4 py-2 rounded-lg border text-gray-200">ยกเลิก</a>
         <button class="px-4 py-2 rounded-lg bg-orange-600 text-white shadow">บันทึกข้อมูล</button>
     </div>
 

@@ -9,7 +9,7 @@
             บันทึกค่าใช้จ่ายในใบแจ้งหนี้
         </h1>
 
-        <a href="{{ route('invoices.index') }}"
+        <a href="{{ route('backend.invoices.index') }}"
            class="px-4 py-2 text-sm font-medium rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-800">
             ย้อนกลับ
         </a>
@@ -22,7 +22,7 @@
             </h2>
         </div>
 
-        <form action="{{ route('invoices.store') }}" method="POST" enctype="multipart/form-data" class="px-8 py-6 space-y-6">
+        <form action="{{ route('backend.invoices.store') }}" method="POST" enctype="multipart/form-data" class="px-8 py-6 space-y-6">
             @csrf
 
             {{-- แถวบน: ห้อง / เดือน / ปี --}}
@@ -281,7 +281,7 @@
 
             {{-- ปุ่ม --}}
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-neutral-800">
-                <a href="{{ route('invoices.index') }}"
+                <a href="{{ route('backend.invoices.index') }}"
                    class="px-4 py-2 text-sm font-medium rounded-lg bg-red-600/90 text-white hover:bg-red-500">
                     ยกเลิก
                 </a>

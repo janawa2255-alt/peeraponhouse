@@ -10,7 +10,7 @@
 
 <div class="space-y-6">
 
-    <a href="{{ route('payments.index') }}"
+    <a href="{{ route('backend.payments.index') }}"
        class="inline-flex items-center text-sm text-gray-400 hover:text-gray-200">
         ← กลับไปหน้าการแจ้งชำระเงิน
     </a>
@@ -126,7 +126,7 @@
 
             {{-- ปุ่มอนุมัติ / ปฏิเสธ --}}
             <div class="mt-6 flex justify-center gap-4">
-                <form action="{{ route('payments.updateStatus', $payment) }}" method="POST">
+                <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST">
                     @csrf
                     <input type="hidden" name="status" value="1">
                     <button type="submit"
@@ -135,7 +135,7 @@
                     </button>
                 </form>
 
-                <form action="{{ route('payments.updateStatus', $payment) }}" method="POST">
+                <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST">
                     @csrf
                     <input type="hidden" name="status" value="2">
                     <button type="submit"

@@ -198,7 +198,7 @@
         </div>
         {{-- ปุ่ม --}}
         <div class="flex justify-end pt-4 border-t border-neutral-800">
-            <a href="{{ route('leases.index') }}"
+            <a href="{{ route('backend.leases.index') }}"
                class="px-4 py-2 text-sm rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800">
                 ย้อนกลับ
             </a>

@@ -14,7 +14,7 @@
             </p>
         </div>
 
-        <a href="{{ route('leases.create') }}"
+        <a href="{{ route('backend.leases.create') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
                   bg-gradient-to-r from-orange-500 to-orange-600 text-white
                   hover:from-orange-400 hover:to-orange-500 shadow-md shadow-orange-900/40
@@ -24,7 +24,7 @@
     </div>
 
     {{-- ฟอร์มกรองสถานะ + ช่องค้นหาชื่อ (รีเฟรชเฉพาะสถานะ / ค้นหาทันที) --}}
-    <form id="leaseFilterForm" method="GET" action="{{ route('leases.index') }}"
+    <form id="leaseFilterForm" method="GET" action="{{ route('backend.leases.index') }}"
           class="flex flex-col md:flex-row md:items-end gap-3 rounded-xl p-4">
 
         {{-- เลือกสถานะ --}}
@@ -126,7 +126,7 @@
 
                     <td class="px-4 text-center py-3 space-x-2">
                         {{-- ดูรายละเอียด --}}
-                        <a href="{{ route('leases.show', $lease->lease_id) }}"
+                        <a href="{{ route('backend.leases.show', $lease->lease_id) }}"
                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
                                       bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600">
                             ดูรายละเอียด
@@ -134,7 +134,7 @@
 
                         {{-- ยกเลิกสัญญาได้เฉพาะสัญญาที่กำลังเช่าอยู่ --}}
                         @if ($lease->status == 1)
-                            <a href="{{ route('leases.cancel.form', $lease->lease_id) }}"
+                            <a href="{{ route('backend.leases.cancel.form', $lease->lease_id) }}"
                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                                bg-red-500/20 text-red-200 border border-red-500/40
                                                hover:bg-red-500/30"  >    

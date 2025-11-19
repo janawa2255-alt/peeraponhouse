@@ -99,7 +99,7 @@
 
             {{-- ปุ่มย้อนกลับ --}}
             <div class="mt-10 flex justify-end">
-                <a href="{{ route('tenants.index') }}"
+                <a href="{{ route('backend.tenants.index') }}"
                    class="px-5 py-2 text-sm rounded-lg bg-neutral-700 hover:bg-neutral-600
                           border border-neutral-600 text-gray-100">
                     ย้อนกลับ

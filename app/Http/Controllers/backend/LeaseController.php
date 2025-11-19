@@ -144,7 +144,7 @@ class LeaseController extends Controller
 
         $this->syncTenantStatus($request->tenant_id);
 
-        return redirect()->route('leases.index')
+        return redirect()->route('backend.leases.index')
             ->with('success', 'เพิ่มสัญญาเช่าห้องเรียบร้อยแล้ว');
     }
 
@@ -162,7 +162,7 @@ class LeaseController extends Controller
         $lease = Lease::with(['tenants', 'rooms'])->findOrFail($id);
 
         if ($lease->status != 1) {
-            return redirect()->route('leases.index')
+            return redirect()->route('backend.leases.index')
                 ->with('success', 'สัญญานี้ถูกยกเลิกหรือสิ้นสุดไปแล้ว');
         }
 
@@ -175,7 +175,7 @@ class LeaseController extends Controller
 
 
         if ((int) $lease->status !== 1) {
-            return redirect()->route('leases.index')
+            return redirect()->route('backend.leases.index')
                 ->with('success', 'สัญญานี้ถูกยกเลิกหรือสิ้นสุดไปแล้ว');
         }
 
@@ -208,7 +208,7 @@ class LeaseController extends Controller
 
         $this->syncTenantStatus($lease->tenant_id);
 
-        return redirect()->route('leases.index')
+        return redirect()->route('backend.leases.index')
             ->with('success', 'ยกเลิกสัญญาเช่าเรียบร้อยแล้ว');
     }
     }

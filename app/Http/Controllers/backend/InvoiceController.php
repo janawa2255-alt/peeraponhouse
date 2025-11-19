@@ -193,7 +193,7 @@ class InvoiceController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('invoices.show', $invoice->invoice_id)
+                ->route('backend.invoices.show', $invoice->invoice_id)
                 ->with('success', 'บันทึกใบแจ้งหนี้เรียบร้อยแล้ว');
 
         } catch (\Throwable $e) {

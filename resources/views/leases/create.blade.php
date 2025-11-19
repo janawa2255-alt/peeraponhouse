@@ -21,7 +21,7 @@
     @endif
 
     <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 p-6">
-        <form action="{{ route('leases.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('backend.leases.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +173,7 @@
 
             {{-- ปุ่ม --}}
             <div class="flex items-center justify-end gap-2 pt-2">
-                <a href="{{ route('leases.index') }}"
+                <a href="{{ route('backend.leases.index') }}"
                    class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-500
                           text-gray-200 hover:bg-gray-800 transition">
                     ยกเลิก

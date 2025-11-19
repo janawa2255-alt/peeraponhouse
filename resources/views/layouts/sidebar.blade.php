@@ -4,8 +4,8 @@ $nav = [
 'ทั่วไป' => [
 [
 'label' => 'หน้าแรก',
-'href' => url('/'),
-'patterns' => ['/', 'dashboard'],
+'href' => route('backend.dashboard'),
+'patterns' => ['backend', 'dashboard'],
 'badge' => null,
 'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
     <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
@@ -15,7 +15,7 @@ $nav = [
 ],
  [
         'label' => 'ข้อมูลห้องเช่า',
-        'href' => route('rooms.index'),
+        'href' => route('backend.rooms.index'),
         'patterns' => ['rooms', 'rooms/*'],
         'badge' => null,
         'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
@@ -25,7 +25,7 @@ $nav = [
     ],
     [
         'label' => 'ข้อมูลพนักงาน',
-        'href' => route('employees.index'),
+        'href' => route('backend.employees.index'),
         'patterns' => ['employees', 'employees/*'],
         'badge' => null,
         'icon' => '
@@ -40,7 +40,7 @@ $nav = [
         ],
     [
         'label' => 'บัญชีธนาคาร',
-        'href' => route('banks.index'),
+        'href' => route('backend.banks.index'),
         'patterns' => ['banks', 'banks/*'],
         'badge' => null,
         'icon' => '
@@ -57,7 +57,7 @@ $nav = [
 
                 [
                 'label' => 'ข้อมูลผู้เช่า',
-                'href' => route('tenants.index'),
+                'href' => route('backend.tenants.index'),
                 'patterns' => ['products', 'products/*'],
                 'badge' => null,
                             'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -67,7 +67,7 @@ $nav = [
         ],
     [
             'label' => 'ข้อมูลสัญญาเช่า',
-            'href' => route('leases.index'),
+            'href' => route('backend.leases.index'),
             'patterns' => ['leases', 'leases/*'],
             'badge' => null,
                             'icon' => '
@@ -85,7 +85,7 @@ $nav = [
         ],
     [
             'label' => 'รายการยกเลิกสัญญาเช่า',
-            'href' =>  route('cancel_lease.index'),
+            'href' =>  route('backend.cancel_lease.index'),
             'patterns' => ['cancel_lease', 'cancel_lease/*'],
             'badge' => null,
             'icon' => '
@@ -103,7 +103,7 @@ $nav = [
 'การชำระเงิน' => [
     [
                  'label' => 'รายการใบแจ้งหนี้',
-            'href' => route('invoices.index'),
+            'href' => route('backend.invoices.index'),
             'patterns' => ['invoices', 'invoices/*'],
             'badge' => null,
             'icon' => '
@@ -120,7 +120,7 @@ $nav = [
         ],
     [
             'label' => 'ข้อมูลการแจ้งชำระเงิน',
-            'href' => 'payments',
+            'href' => route('backend.payments.index'),
             'patterns' => ['payments', 'payments/*'],
             'badge' => '',
             'icon' => '
@@ -137,32 +137,50 @@ $nav = [
                 ',
 
         ],
-  ],       
-'Account' => [
-[
-            'label' => 'Sign In',
-            'href' => '#',
-            'patterns' => ['login'],
-            'badge' => null,
-            'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
-            </svg>'
-        ],
     [
-            'label' => 'Sign Up',
-            'href' => '#',
-            'patterns' => ['register'],
-            'badge' => null,
-            'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z" />
-                <path
-                    d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z" />
-                <path
-                    d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z" />
-            </svg>'
+            'label' => 'จัดการประกาศ',
+            'href' => route('backend.announcements.index'),
+            'patterns' => ['announcements', 'announcements/*'],
+            'badge' => '',
+            'icon' => '
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22v-6"/>
+                    <path d="M12 16V6"/>
+                    <path d="M15.4 9.4a2 2 0 1 0 0-2.8 2 2 0 1 0 0 2.8Z"/>
+                    <path d="M6 10v1a4 4 0 0 0 4 4h1"/>
+                    <circle cx="10" cy="4" r="2"/>
+                    <path d="M21 10V8a4 4 0 0 0-8 0v2"/>
+                </svg>
+                ',
         ],
-    ],
+  ]    
+// 'Account' => [
+// [
+//             'label' => 'Sign In',
+//             'href' => '#',
+//             'patterns' => ['login'],
+//             'badge' => null,
+//             'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+//                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+//                     d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
+//             </svg>'
+//         ],
+//     [
+//             'label' => 'Sign Up',
+//             'href' => '#',
+//             'patterns' => ['register'],
+//             'badge' => null,
+//             'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+//                 <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z" />
+//                 <path
+//                     d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z" />
+//                 <path
+//                     d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z" />
+//             </svg>'
+//         ],
+//     ],
 ];
 @endphp
 
@@ -236,29 +254,67 @@ $nav = [
         </ul>
         @endforeach
 
-        <div class="mt-auto px-4 py-4 space-y-3">
+        <div class="mt-auto px-4 py-4 space-y-3 border-t border-orange-500/20">
+            @php
+                $owner = session('auth_owner');
+            @endphp
+            
+            @if($owner)
+            {{-- User Profile Card --}}
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-neutral-800/80 to-neutral-800/60 backdrop-blur ring-1 ring-orange-500/20 shadow-lg">
+                {{-- @if(!empty($owner['avatar_path']) && file_exists(public_path($owner['avatar_path'])))
+                    
+                    <img src="{{ asset($owner['avatar_path']) }}" 
+                         alt="{{ $owner['name'] }}"
+                         class="h-10 w-10 rounded-lg object-cover shadow-md ring-2 ring-orange-500/30">
+                @else
+                    
+                    <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white flex items-center justify-center text-sm font-bold shadow-md">
+                        {{ mb_strtoupper(mb_substr($owner['name'] ?? 'A', 0, 1, 'UTF-8'), 'UTF-8') }}
+                    </div>
+                @endif --}}
+                <div class="min-w-0 sidebar-text flex-1">
+                    <p class="text-xs font-semibold text-white truncate">
+                        {{ $owner['name'] ?? 'Admin' }}
+                    </p>
+                    <p class="text-[10px] text-gray-400 truncate">
+                        {{ $owner['email'] ?? $owner['username'] ?? 'admin' }}
+                    </p>
+                </div>
+            </div>
+
+            {{-- Logout Button --}}
+            <form action="{{ route('backend.logout') }}" method="POST" class="w-full">
+                @csrf
+                <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium 
+                           bg-red-600/20 text-red-200 border border-red-500/40 hover:bg-red-600/30 hover:border-red-500/60
+                           active:scale-[.98] focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span class="sidebar-text">ออกจากระบบ</span>
+                </button>
+            </form>
+            @else
+            {{-- Guest State --}}
             <div class="flex items-center gap-3 p-3 rounded-xl bg-neutral-800/60 backdrop-blur ring-1 ring-white/5">
-                <div
-                    class="h-9 w-9 rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white flex items-center justify-center text-xs font-bold">
-                    PH</div>
+                <div class="h-9 w-9 rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white flex items-center justify-center text-xs font-bold">
+                    ?
+                </div>
                 <div class="min-w-0 sidebar-text">
                     <p class="text-xs font-medium text-white truncate">
                         Welcome
                     </p>
                     <p class="text-[10px] text-gray-400 truncate">
-                        Sign in to your account
+                        Please sign in
                     </p>
                 </div>
             </div>
-            <!-- <button type="button"
-                class="w-full inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-orange-600/90 text-white hover:bg-orange-500/90 active:scale-[.98] focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M12 5v14" />
-                    <path d="M5 12h14" />
-                </svg>
-                <span class="sidebar-text">New Item</span>
-            </button> -->
+            @endif
         </div>
     </div>
 </aside>
