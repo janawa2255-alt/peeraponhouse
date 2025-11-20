@@ -25,14 +25,23 @@ class TenantsConteoller extends Controller
     {
         $request->validate([
             'name'          => 'required|string|max:255',
-            'phone'         => 'required|string|max:10',
-            'email'         => 'nullable|email|max:255|unique:tenants,email',
-            'id_card'       => 'required|max:13',
+            'phone'         => 'required|string|digits:10|regex:/^[0-9]{10}$/',
+            'email'         => 'required|email|max:255|unique:tenants,email',
+            'id_card'       => 'required|digits:13',
             'address'       => 'required|max:255',
             'username'      => 'required|max:255|unique:tenants,username',
             'password'      => 'required|min:6|max:255',
             'avatar_path'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',        
             'status'        => 'nullable|integer',
+        ], [
+            'phone.required' => 'กรุณากรอกเบอร์โทรศัพท์',
+            'phone.digits' => 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลักเท่านั้น',
+            'phone.regex' => 'เบอร์โทรศัพท์ไม่ถูกต้อง',
+            'email.required' => 'กรุณากรอกอีเมล',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'email.unique' => 'อีเมลนี้ถูกใช้งานแล้ว',
+            'id_card.digits' => 'เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก',
+            'username.unique' => 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว',
         ]);
 
         $profile = null;
@@ -74,14 +83,23 @@ class TenantsConteoller extends Controller
 
         $request->validate([
             'name'          => 'required|string|max:255',
-            'phone'         => 'required|string|max:10',
-            'email'         => 'nullable|email|max:255|unique:tenants,email,' . $tenant->tenant_id . ',tenant_id',
-            'id_card'       => 'required|max:13',
+            'phone'         => 'required|string|digits:10|regex:/^[0-9]{10}$/',
+            'email'         => 'required|email|max:255|unique:tenants,email,' . $tenant->tenant_id . ',tenant_id',
+            'id_card'       => 'required|digits:13',
             'address'       => 'required|max:255',
             'username'      => 'required|max:255|unique:tenants,username,' . $tenant->tenant_id . ',tenant_id',
             'password'      => 'nullable|min:6|max:255',
             'avatar_path'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',        
             'status'        => 'nullable|integer',
+        ], [
+            'phone.required' => 'กรุณากรอกเบอร์โทรศัพท์',
+            'phone.digits' => 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลักเท่านั้น',
+            'phone.regex' => 'เบอร์โทรศัพท์ไม่ถูกต้อง',
+            'email.required' => 'กรุณากรอกอีเมล',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'email.unique' => 'อีเมลนี้ถูกใช้งานแล้ว (ใช้โดยผู้เช่าคนอื่น)',
+            'id_card.digits' => 'เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก',
+            'username.unique' => 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว',
         ]);
 
         $profile = $tenant->avatar_path;

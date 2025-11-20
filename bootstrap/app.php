@@ -18,7 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'auth.owner' => \App\Http\Middleware\CheckOwnerAuth::class,
+            'auth.tenant' => \App\Http\Middleware\CheckTenantAuth::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
