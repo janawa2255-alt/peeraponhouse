@@ -199,7 +199,7 @@ $nav = [
     <div
         class="flex flex-col h-full overflow-y-auto bg-neutral-900/90 backdrop-blur-xl text-gray-200 border-r border-orange-500/20 shadow-2xl shadow-black/40">
         <div class="flex items-center gap-2 px-3 pt-4 pb-3">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 group/logo">
+            <a href="{{ url('/backend') }}" class="flex items-center gap-3 group/logo">
                 <span
                     class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white font-semibold shadow ring-1 ring-white/10">PH</span>
                 <span class="sidebar-text text-lg font-semibold tracking-tight text-white">Peerapon House</span>

@@ -73,7 +73,8 @@
                                 <option value="{{ $bank->bank_id }}" 
                                         data-bank-name="{{ $bank->bank_name }}"
                                         data-account-number="{{ $bank->number }}"
-                                        data-account-name="{{ $bank->account_name ?? '-' }}">
+                                        data-account-name="{{ $bank->account_name ?? '-' }}"
+                                        data-qrcode="{{ $bank->qrcode_pic ? asset('storage/' . $bank->qrcode_pic) : '' }}">
                                     {{ $bank->bank_name }}
                                 </option>
                             @endforeach
@@ -85,19 +86,32 @@
 
                     {{-- Bank Account Info --}}
                     <div id="bank-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
-                        <h4 class="text-white font-medium mb-3">ข้อมูลบัญชีรับเงิน</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">ธนาคาร:</span>
-                                <span class="text-white" id="info-bank-name">-</span>
+                        <div class="grid md:grid-cols-1 gap-4">
+                            {{-- Account Details --}}
+                            <div>
+                                <h4 class="text-white font-medium mb-3">ข้อมูลบัญชีรับเงิน</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">ธนาคาร:</span>
+                                        <span class="text-white" id="info-bank-name">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">เลขที่บัญชี:</span>
+                                        <span class="text-white" id="info-account-number">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">ชื่อบัญชี:</span>
+                                        <span class="text-white" id="info-account-name">-</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">เลขที่บัญชี:</span>
-                                <span class="text-white" id="info-account-number">-</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">ชื่อบัญชี:</span>
-                                <span class="text-white" id="info-account-name">-</span>
+                            
+                            {{-- QR Code --}}
+                            <div id="qrcode-container" class="hidden">
+                                <img id="qrcode-image" 
+                                     src="" 
+                                     alt="QR Code" 
+                                     class="w-52 h-52 object-contain bg-white rounded-lg border-2 border-neutral-600 cursor-pointer hover:scale-105 transition-transform mx-auto">
                             </div>
                         </div>
                     </div>
@@ -173,23 +187,35 @@
 document.getElementById('bank_select').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     const bankInfo = document.getElementById('bank-info');
+    const qrcodeContainer = document.getElementById('qrcode-container');
+    const qrcodeImage = document.getElementById('qrcode-image');
     
     if (this.value) {
         // Get data from selected option
         const bankName = selectedOption.getAttribute('data-bank-name');
         const accountNumber = selectedOption.getAttribute('data-account-number');
         const accountName = selectedOption.getAttribute('data-account-name');
+        const qrcode = selectedOption.getAttribute('data-qrcode');
         
         // Update info display
         document.getElementById('info-bank-name').textContent = bankName || '-';
         document.getElementById('info-account-number').textContent = accountNumber || '-';
         document.getElementById('info-account-name').textContent = accountName || '-';
         
+        // Show/Hide QR Code
+        if (qrcode) {
+            qrcodeImage.src = qrcode;
+            qrcodeContainer.classList.remove('hidden');
+        } else {
+            qrcodeContainer.classList.add('hidden');
+        }
+        
         // Show bank info
         bankInfo.classList.remove('hidden');
     } else {
         // Hide bank info
         bankInfo.classList.add('hidden');
+        qrcodeContainer.classList.add('hidden');
     }
 });
 

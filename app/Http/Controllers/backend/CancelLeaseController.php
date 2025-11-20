@@ -67,7 +67,28 @@ public function approve(Request $request, $cancelId)
         // (จะก็อปฟังก์ชัน syncTenantStatus มาไว้ใน Controller นี้ หรือเรียกจาก service ก็ได้)
     });
 
-    return redirect()->route('cancel-leases.index')
+    return redirect()->route('backend.cancel_lease.index')
         ->with('success', 'อนุมัติการยกเลิกสัญญาเรียบร้อยแล้ว');
+}
+
+public function reject(Request $request, $cancelId)
+{
+    $cancel = CancelLease::findOrFail($cancelId);
+
+    if ($cancel->status != 0) {
+        return back()->with('error', 'รายการนี้ถูกดำเนินการไปแล้ว');
+    }
+
+    $request->validate([
+        'note_owner' => 'nullable|string|max:255',
+    ]);
+
+    $cancel->update([
+        'status'     => 2,  // ปฏิเสธ
+        'note_owner' => $request->note_owner,
+    ]);
+
+    return redirect()->route('backend.cancel_lease.index')
+        ->with('success', 'ปฏิเสธการยกเลิกสัญญาเรียบร้อยแล้ว');
 }
 }

@@ -56,6 +56,8 @@ Route::post('leases/{id}/cancel', [LeaseController::class, 'cancel'])->name('lea
 // Cancel Lease Routes
 Route::get('/cancel_lease' , [CancelLeaseController::class, 'index'])->name('cancel_lease.index');
 Route::get('/cancel_lease/show/{id}', [CancelLeaseController::class, 'show'])->name('cancel_lease.show');
+Route::post('/cancel-leases/{id}/approve', [CancelLeaseController::class, 'approve'])->name('cancel-leases.approve');
+Route::post('/cancel-leases/{id}/reject', [CancelLeaseController::class, 'reject'])->name('cancel-leases.reject');
 
 // Invoice Routes
 Route::get('/invoices' , [InvoiceController::class, 'index'])->name('invoices.index');

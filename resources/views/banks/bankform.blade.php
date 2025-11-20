@@ -54,8 +54,8 @@
         @endphp
         <select name="status"
             class="w-full px-3 py-2 rounded-lg bg-neutral-900/60 border border-gray-600 text-gray-200">
-            <option value="0" {{ $status == 0 ? 'selected' : '' }}>เปิดใช้งานอยู่</option>
-            <option value="1" {{ $status == 1 ? 'selected' : '' }}>ปิดใช้งาน</option>
+            <option value="1" {{ $status == 1 ? 'selected' : '' }}>เปิดใช้งานอยู่</option>
+            <option value="0" {{ $status == 0 ? 'selected' : '' }}>ปิดใช้งาน</option>
         </select>
     </div>
 

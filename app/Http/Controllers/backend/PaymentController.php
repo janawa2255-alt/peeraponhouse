@@ -55,6 +55,13 @@ public function index(Request $request)
     }
     public function updateStatus(Request $request, Payment $payment)
     {
+        // ตรวจสอบว่าสถานะถูกอัปเดตไปแล้วหรือไม่ (ไม่ใช่ 0 = รอตรวจสอบ)
+        if ($payment->status != 0) {
+            return redirect()
+                ->route('backend.payments.show', $payment)
+                ->with('error', 'การชำระเงินนี้ได้รับการดำเนินการไปแล้ว');
+        }
+
         $data = $request->validate([
             'status' => 'required|in:1,2',  
             'note'   => 'nullable|string|max:255',

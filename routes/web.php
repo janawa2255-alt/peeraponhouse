@@ -34,6 +34,7 @@ Route::post('/logout', function (Request $request) {
 // User/Tenant Routes (ต้อง login เป็น tenant)
 // Lease (สัญญาเช่า)
 Route::get('/lease', [TenantLeaseController::class, 'showCurrent'])->name('lease.show');
+Route::post('/lease/cancel/{leaseId}', [TenantLeaseController::class, 'requestCancel'])->name('tenant.lease.cancel.request');
 
 // Invoices (ใบแจ้งหนี้)
 Route::get('/invoices', [TenantInvoiceController::class, 'index'])->name('invoices');

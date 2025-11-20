@@ -91,8 +91,8 @@
                     <p class="text-gray-300 mb-1">สถานะ</p>
                     <div class="border border-neutral-600 bg-neutral-800 rounded
                                 px-3 py-1.5 inline-block
-                                {{ $tenant->status == 1 ? 'text-green-300' : 'text-red-300' }}">
-                        {{ $tenant->status == 1 ? 'ใช้งานอยู่' : 'ยกเลิกใช้งาน' }}
+                                {{ $tenant->status == 0 ? 'text-green-300' : 'text-red-300' }}">
+                        {{ $tenant->status == 0 ? 'ใช้งานอยู่' : 'ยกเลิกใช้งาน' }}
                     </div>
                 </div>
             </div>

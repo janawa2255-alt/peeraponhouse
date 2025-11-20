@@ -23,9 +23,9 @@ class BankController extends Controller
     {
         $request->validate([
             'bank_code'     => 'required|integer',
-            'bank_name'     => 'nullable|max:255',
-            'account_name'  => 'nullable|max:255',
-            'number'        => 'nullable|max:20',
+            'bank_name'     => 'required|string|max:255',
+            'account_name'  => 'required|string|max:255',
+            'number'        => 'required|string|max:20',
             'status'        => 'required|integer|in:1,2',
             'qrcode_pic'    => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
@@ -44,7 +44,7 @@ class BankController extends Controller
             'status'       => $request->status,
         ]);
 
-        return redirect()->route('banks.index')->with('success', 'เพิ่มบัญชีสำเร็จ');
+        return redirect()->route('backend.banks.index')->with('success', 'เพิ่มบัญชีสำเร็จ');
     }
 
     public function edit($id)
@@ -59,9 +59,9 @@ class BankController extends Controller
 
         $request->validate([
             'bank_code'     => 'required|integer',
-            'bank_name'     => 'nullable|max:255',
-            'account_name'  => 'nullable|max:255',
-            'number'        => 'nullable|max:20',
+            'bank_name'     => 'required|string|max:255',
+            'account_name'  => 'required|string|max:255',
+            'number'        => 'required|string|max:20',
             'status'        => 'required|integer|in:1,2',
             'qrcode_pic'    => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
@@ -82,7 +82,7 @@ class BankController extends Controller
             'status'       => $request->status,
         ]);
 
-        return redirect()->route('banks.index')->with('success', 'แก้ไขข้อมูลสำเร็จ');
+        return redirect()->route('backend.banks.index')->with('success', 'แก้ไขข้อมูลสำเร็จ');
     } 
 
     public function destroy($id)
@@ -95,6 +95,6 @@ class BankController extends Controller
 
         $bank->delete();
 
-        return redirect()->route('banks.index')->with('success', 'ลบรายการเรียบร้อยแล้ว');
+        return redirect()->route('backend.banks.index')->with('success', 'ลบรายการเรียบร้อยแล้ว');
     }
 }

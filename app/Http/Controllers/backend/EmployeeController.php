@@ -41,7 +41,7 @@ class EmployeeController extends Controller
         ]);
         
 
-        return redirect()->route('employees.index')->with('success', 'เพิ่มพนักงานสำเร็จ');
+        return redirect()->route('backend.employees.index')->with('success', 'เพิ่มพนักงานสำเร็จ');
     }
 
         public function edit($id)
@@ -76,7 +76,7 @@ class EmployeeController extends Controller
 
         $emp->save();
 
-        return redirect()->route('employees.index')->with('success', 'แก้ไขข้อมูลพนักงานสำเร็จ');
+        return redirect()->route('backend.employees.index')->with('success', 'แก้ไขข้อมูลพนักงานสำเร็จ');
     }
 
     public function destroy($id)
@@ -84,6 +84,6 @@ class EmployeeController extends Controller
         $emp = Employee::findOrFail($id);
         $emp->delete();
 
-        return redirect()->route('employees.index')->with('success', 'ลบพนักงานเรียบร้อยแล้ว');
+        return redirect()->route('backend.employees.index')->with('success', 'ลบพนักงานเรียบร้อยแล้ว');
     }
 }
