@@ -74,10 +74,13 @@
                     <label class="block text-sm font-medium text-gray-200 mb-1">
                         วันที่เริ่มสัญญา <span class="text-red-400">*</span>
                     </label>
-                    <input type="date" name="start_date"
-                           value="{{ old('start_date') }}"
+                    <input type="text" id="start_date_display"
+                           value="{{ old('start_date') ? \Carbon\Carbon::parse(old('start_date'))->format('d/m/Y') : '' }}"
+                           placeholder="วว/ดด/ปปปป"
                            class="w-full px-3 py-2 rounded-lg bg-neutral-900/80 border border-gray-600 text-gray-100
-                                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                           readonly>
+                    <input type="hidden" name="start_date" id="start_date" value="{{ old('start_date') }}">
                     @error('start_date')
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                     @enderror
@@ -88,10 +91,13 @@
                     <label class="block text-sm font-medium text-gray-200 mb-1">
                         วันสิ้นสุดสัญญา <span class="text-400">(ถ้าไม่มีกำหนด ไม่ต้องกรอก)</span>
                     </label>
-                    <input type="date" name="end_date"
-                           value="{{ old('end_date') }}"
+                    <input type="text" id="end_date_display"
+                           value="{{ old('end_date') ? \Carbon\Carbon::parse(old('end_date'))->format('d/m/Y') : '' }}"
+                           placeholder="วว/ดด/ปปปป"
                            class="w-full px-3 py-2 rounded-lg bg-neutral-900/80 border border-gray-600 text-gray-100
-                                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                           readonly>
+                    <input type="hidden" name="end_date" id="end_date" value="{{ old('end_date') }}">
                     @error('end_date')
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                     @enderror
@@ -190,10 +196,18 @@
     </div>
 </div>
 
-{{-- JS เติมค่าเช่าอัตโนมัติตามห้อง --}}
+{{-- Flatpickr CSS --}}
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+@endpush
+
+{{-- JS เติมค่าเช่าอัตโนมัติตามห้อง และ Date Picker --}}
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Auto-fill rent amount
         const roomSelect = document.getElementById('roomSelect');
         const rentInput  = document.getElementById('rentAmount');
 
@@ -206,6 +220,40 @@
                 }
             });
         }
+
+        // Date Picker for start_date
+        flatpickr("#start_date_display", {
+            dateFormat: "d/m/Y",
+            altInput: false,
+            allowInput: false,
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Convert to Y-m-d format for backend
+                    const date = selectedDates[0];
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    document.getElementById('start_date').value = `${year}-${month}-${day}`;
+                }
+            }
+        });
+
+        // Date Picker for end_date
+        flatpickr("#end_date_display", {
+            dateFormat: "d/m/Y",
+            altInput: false,
+            allowInput: false,
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Convert to Y-m-d format for backend
+                    const date = selectedDates[0];
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    document.getElementById('end_date').value = `${year}-${month}-${day}`;
+                }
+            }
+        });
     });
 </script>
 @endpush

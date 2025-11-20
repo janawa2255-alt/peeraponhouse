@@ -35,6 +35,7 @@
     #logo-sidebar.collapsed .sidebar-badge { display:none; }
     </style>
 
+    @stack('styles')
 </head>
 
 <body class="min-h-screen flex flex-col bg-neutral-950 text-gray-200 selection:bg-orange-500 selection:text-white overflow-x-hidden">

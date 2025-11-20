@@ -45,11 +45,11 @@
                     <span class="text-white ml-2">{{ $invoice->expense->lease->rooms->room_no ?? '-' }}</span>
                 </div>
                 <div>
-                    <span class="text-gray-400">วันที่เริ่ม:</span>
+                    <span class="text-gray-400">วันที่ออกบิล:</span>
                     <span class="text-white ml-2">{{ \Carbon\Carbon::parse($invoice->invoice_data)->format('d/m/Y') }}</span>
                 </div>
                 <div>
-                    <span class="text-gray-400">วันที่เริ่ม:</span>
+                    <span class="text-gray-400">วันครบกำหนด:</span>
                     <span class="text-white ml-2">{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</span>
                 </div>
             </div>
@@ -59,52 +59,44 @@
 
             {{-- 2 Column Layout --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Left Column - ข้อมูลการค่าใช้จ่าย --}}
+                {{-- Left Column - ข้อมูลมิเตอร์น้ำ --}}
                 <div>
                     <div class="bg-neutral-800 px-3 py-2 mb-3">
-                        <h3 class="text-white font-medium text-sm">ข้อมูลการค่าใช้จ่าย</h3>
+                        <h3 class="text-white font-medium text-sm">ข้อมูลมิเตอร์น้ำ</h3>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-gray-400">ค่าเช่าเดือนนี้:</span>
-                            <span class="text-white">{{ number_format($invoice->expense->rent_amount ?? 0, 0) }} บาท</span>
+                            <span class="text-gray-400">เลขมิเตอร์เดือนที่แล้ว:</span>
+                            <span class="text-white">{{ number_format($invoice->expense->prev_water ?? 0, 0) }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-400">ค่าไฟเดือนนี้เนือนที่ผ่านมา</span>
-                            <span class="text-white">{{ $invoice->expense->curr_elec ?? 0 }}</span>
+                            <span class="text-gray-400">เลขมิเตอร์เดือนนี้:</span>
+                            <span class="text-white">{{ number_format($invoice->expense->curr_water ?? 0, 0) }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-400">เลขมิเตอร์เดือนนี้</span>
-                            <span class="text-white">{{ $invoice->expense->curr_water ?? 0 }}</span>
+                            <span class="text-gray-400">ใช้ไป (หน่วย):</span>
+                            <span class="text-white">{{ number_format($invoice->expense->water_units ?? 0, 0) }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-400">เลขมิเตอร์เดือนที่แล้ว</span>
-                            <span class="text-white">{{ $invoice->expense->prev_water ?? 0 }}</span>
+                            <span class="text-gray-400">อัตราค่าน้ำ (บาท/หน่วย):</span>
+                            <span class="text-white">{{ number_format($invoice->expense->water_rate ?? 0, 2) }}</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">ใช้ไป (หน่วย)</span>
-                            <span class="text-white">{{ ($invoice->expense->curr_water ?? 0) - ($invoice->expense->prev_water ?? 0) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">ออกเป็นเงิน (บาทต่อหน่วย)</span>
-                            <span class="text-white">{{ $invoice->expense->water_rate ?? 0 }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">ค่าห้อง</span>
-                            <span class="text-white">{{ number_format($invoice->expense->rent_amount ?? 0, 0) }} บาท</span>
+                        <div class="flex justify-between pt-2 border-t border-neutral-600">
+                            <span class="text-gray-400 font-medium">ค่าน้ำรวม:</span>
+                            <span class="text-white font-medium">{{ number_format($invoice->expense->water_total ?? 0, 0) }} บาท</span>
                         </div>
                     </div>
                 </div>
 
-                {{-- Right Column - ข้อมูลการค่าใช้จ่าย --}}
+                {{-- Right Column - ข้อมูลการชำระเงิน --}}
                 <div>
                     <div class="bg-neutral-800 px-3 py-2 mb-3">
-                        <h3 class="text-white font-medium text-sm">ข้อมูลการค่าใช้จ่าย</h3>
+                        <h3 class="text-white font-medium text-sm">ข้อมูลการชำระเงิน</h3>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-400">ค่าเช่า:</span>
-                            <span class="text-white">{{ number_format($invoice->expense->rent_amount ?? 0, 0) }} บาท</span>
+                            <span class="text-white">{{ number_format($invoice->expense->room_rent ?? 0, 0) }} บาท</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-400">ค่าไฟ:</span>
@@ -114,9 +106,15 @@
                             <span class="text-gray-400">ค่าน้ำ:</span>
                             <span class="text-white">{{ number_format($invoice->expense->water_total ?? 0, 0) }} บาท</span>
                         </div>
+                        @if($invoice->expense->discount > 0)
+                        <div class="flex justify-between text-green-400">
+                            <span>ส่วนลด:</span>
+                            <span>-{{ number_format($invoice->expense->discount ?? 0, 0) }} บาท</span>
+                        </div>
+                        @endif
                         <div class="flex justify-between pt-2 border-t border-neutral-600">
                             <span class="text-white font-medium">ยอดรวม:</span>
-                            <span class="text-white font-bold">{{ number_format($invoice->expense->total_amount ?? 0, 0) }} บาท</span>
+                            <span class="text-orange-400 font-bold text-lg">{{ number_format($invoice->expense->total_amount ?? 0, 0) }} บาท</span>
                         </div>
                     </div>
                 </div>
