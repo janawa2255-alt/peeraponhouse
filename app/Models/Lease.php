@@ -32,12 +32,17 @@ class Lease extends Model
         'status'      => 'integer',
     ];
 
-        public function tenants()
+    public function tenant()
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'tenant_id');
     }
 
-         public function rooms()
+    public function tenants()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'tenant_id');
+    }
+
+    public function rooms()
     {
         return $this->belongsTo(Room::class, 'room_id', 'room_id');
     }

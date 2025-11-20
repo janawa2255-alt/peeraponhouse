@@ -112,7 +112,7 @@
                         </td>
 
                         <td class="px-6 py-3">
-                            {{ $tenant->name ?? '-' }}
+                            {{ optional($lease)->tenant->name ?? optional($tenant)->name ?? '-' }}
                         </td>
 
                         <td class="px-6 py-3 room-no">
