@@ -23,8 +23,16 @@
     </div>
 
     @if (session('success'))
-        <div class="p-3 rounded-lg border border-green-500/40 bg-green-500/10 text-sm text-green-200">
+        <div class="p-3 rounded-lg border border-green-500/40 bg-green-500/10 text-sm text-green-200 flex items-center gap-2">
+            <i class="fas fa-check-circle"></i>
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-sm text-red-200 flex items-center gap-2">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ session('error') }}
         </div>
     @endif
 
@@ -108,8 +116,9 @@
                                 <button type="submit"
                                         class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                                bg-red-500/20 text-red-200 border border-red-500/40
-                                               hover:bg-red-500/30"
-                                        onclick="return confirm('คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?')">
+                                               hover:bg-red-500/30 transition-colors"
+                                        onclick="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?\n\nหมายเหตุ: หากผู้เช่ามีสัญญาเช่าที่ยังใช้งานอยู่ จะไม่สามารถลบได้')">
+                                    <i class="fas fa-trash-alt mr-1"></i>
                                     ลบ
                                 </button>
                             </form>

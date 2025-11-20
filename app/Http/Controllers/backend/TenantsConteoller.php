@@ -135,9 +135,21 @@ class TenantsConteoller extends Controller
     public function destroy($id)
     {
         $tenant = Tenant::findOrFail($id);
+        
+        // ตรวจสอบว่ามีสัญญาเช่าที่ยังใช้งานอยู่หรือไม่ (status = 1)
+        $activeLeases = $tenant->activeLeases()->count();
+        
+        if ($activeLeases > 0) {
+            return redirect()
+                ->route('backend.tenants.index')
+                ->with('error', 'ไม่สามารถลบผู้เช่าได้ เนื่องจากมีสัญญาเช่าที่ยังใช้งานอยู่ ' . $activeLeases . ' สัญญา กรุณายกเลิกสัญญาก่อน');
+        }
+        
+        // ลบรูปโปรไฟล์ถ้ามี
         if ($tenant->avatar_path && file_exists(public_path($tenant->avatar_path))) {
             unlink(public_path($tenant->avatar_path));
         }
+        
         $tenant->delete();
         return redirect()->route('backend.tenants.index')->with('success', 'ลบรายการเรียบร้อยแล้ว');
     }
