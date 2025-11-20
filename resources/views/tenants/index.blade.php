@@ -36,6 +36,41 @@
         </div>
     @endif
 
+    {{-- ฟอร์มค้นหาและกรอง --}}
+    <div class="bg-neutral-900/60 border border-neutral-700 rounded-xl p-4">
+        <form method="GET" action="{{ route('backend.tenants.index') }}" class="flex flex-col md:flex-row gap-3">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-300 mb-1">ค้นหาชื่อผู้เช่า</label>
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="พิมพ์ชื่อผู้เช่า..."
+                       class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
+                              focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+            <div class="w-full md:w-1/3">
+                <label class="block text-sm font-medium text-gray-300 mb-1">กรองสถานะ</label>
+                <select name="status"
+                        class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
+                               focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <option value="">ทั้งหมด</option>
+                    <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>เช่าอยู่</option>
+                    <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>ยกเลิก</option>
+                </select>
+            </div>
+            <div class="flex items-end gap-2">
+                <button type="submit"
+                        class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600
+                               focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <i class="fas fa-search mr-1"></i> ค้นหา
+                </button>
+                <a href="{{ route('backend.tenants.index') }}"
+                   class="px-4 py-2 rounded-lg bg-neutral-700 text-gray-200 hover:bg-neutral-600
+                          focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    <i class="fas fa-redo mr-1"></i> รีเซ็ต
+                </a>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
         <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
@@ -129,6 +164,11 @@
             </tbody>
 
         </table>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-4">
+        {{ $tenants->appends(request()->query())->links() }}
     </div>
 </div>
 @endsection

@@ -82,7 +82,7 @@
 
             {{-- Expense Info --}}
             <div>
-                <h3 class="text-white font-medium mb-3">รายการ</h3>
+                <h3 class="text-white font-medium mb-2">รายการ</h3>
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-400">ค่าเช่าห้องต่อเดือน:</span>

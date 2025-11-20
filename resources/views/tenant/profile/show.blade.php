@@ -40,11 +40,11 @@
                             </div>
                         @endif
                     </div>
-                    <label for="avatar" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded cursor-pointer transition-colors">
-                        อัพโหลดรูป
+                    <label for="avatar" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded cursor-pointer transition-colors">
+                        <i class="fas fa-upload mr-1"></i> เลือกรูปใหม่
                     </label>
                     <input type="file" id="avatar" name="avatar" accept="image/*" class="hidden">
-                    <p class="text-gray-400 text-xs mt-2">อัปโหลดรูปโปรไฟล์ของคุณ</p>
+                    <p class="text-gray-400 text-xs mt-2 text-center" id="file-name">อัปโหลดรูปโปรไฟล์ของคุณ</p>
                 </div>
 
                 {{-- Middle Column - Basic Info --}}
@@ -183,14 +183,22 @@
 // Preview avatar when file is selected
 document.getElementById('avatar').addEventListener('change', function(e) {
     const file = e.target.files[0];
+    const fileNameDisplay = document.getElementById('file-name');
+    
     if (file) {
+        // แสดงชื่อไฟล์
+        fileNameDisplay.textContent = '📎 ' + file.name;
+        fileNameDisplay.classList.remove('text-gray-400');
+        fileNameDisplay.classList.add('text-orange-400');
+        
+        // แสดง preview รูปภาพ
         const reader = new FileReader();
         reader.onload = function(e) {
             const preview = document.getElementById('avatar-preview');
             preview.innerHTML = '';
             const img = document.createElement('img');
             img.src = e.target.result;
-            img.className = 'w-32 h-32 rounded-full object-cover';
+            img.className = 'w-32 h-32 rounded-full object-cover border-4 border-orange-500';
             preview.appendChild(img);
         };
         reader.readAsDataURL(file);

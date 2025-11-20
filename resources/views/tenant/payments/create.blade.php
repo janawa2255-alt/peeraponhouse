@@ -1,5 +1,10 @@
 @extends('layouts.tenant')
 
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+@endpush
+
 @section('content')
 <div class="space-y-6">
     {{-- Header --}}
@@ -42,11 +47,13 @@
                 </div>
                 <div>
                     <span class="text-gray-400">วันที่ชำระเงิน:</span>
-                    <input type="date" 
-                           name="paid_date" 
-                           value="{{ date('Y-m-d') }}"
+                    <input type="text" 
+                           id="paid_date_display"
+                           placeholder="วว/ดด/ปปปป"
+                           readonly
                            required
                            class="w-full mt-1 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
+                    <input type="hidden" name="paid_date" id="paid_date" value="{{ date('Y-m-d') }}">
                     @error('paid_date')
                         <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -182,6 +189,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 // Show bank account info when bank is selected
 document.getElementById('bank_select').addEventListener('change', function() {
@@ -235,6 +243,23 @@ document.getElementById('slip_image').addEventListener('change', function(e) {
     } else {
         document.getElementById('image-preview').classList.add('hidden');
     }
+});
+
+// Flatpickr for date picker
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#paid_date_display", {
+        dateFormat: "d/m/Y",
+        defaultDate: new Date(),
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                const date = selectedDates[0];
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                document.getElementById('paid_date').value = `${year}-${month}-${day}`;
+            }
+        }
+    });
 });
 </script>
 @endsection

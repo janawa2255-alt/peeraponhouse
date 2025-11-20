@@ -40,6 +40,15 @@ class CustomLoginController extends Controller
             'password' => ['required','string'],
         ]);
 
+        // ตรวจสอบว่ามีผู้ใช้นี้หรือไม่
+        $tenantCheck = Tenant::where('username', $request->username)->first();
+        
+        if ($tenantCheck && $tenantCheck->status == 1) {
+            return back()
+                ->withErrors(['tenant_login' => 'บัญชีของคุณถูกปิดใช้งาน กรุณาติดต่อเจ้าของหอพัก'])
+                ->withInput();
+        }
+
         $tenant = Tenant::where('username', $request->username)
             ->where('status', 0)          // ใช้งานอยู่เท่านั้น
             ->first();

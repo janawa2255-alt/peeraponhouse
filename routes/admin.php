@@ -11,6 +11,7 @@ use App\Http\Controllers\backend\LeaseController;
 use App\Http\Controllers\backend\CancelLeaseController;
 use App\Http\Controllers\backend\InvoiceController;
 use App\Http\Controllers\backend\PaymentController;
+use App\Http\Controllers\backend\ReportController;
 
 // Admin Login & Logout Routes
 Route::get('/login', [App\Http\Controllers\Auth\CustomLoginController::class, 'showLoginForm'])->name('login');
@@ -78,5 +79,9 @@ Route::middleware(['auth.owner'])->group(function () {
     Route::get('/announcements/edit/{id}', [App\Http\Controllers\backend\AnnouncementController::class, 'edit'])->name('announcements.edit');
     Route::put('/announcements/update/{id}', [App\Http\Controllers\backend\AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('/announcements/destroy/{id}', [App\Http\Controllers\backend\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+    
+    // Report Routes
+    Route::get('/reports/income', [ReportController::class, 'income'])->name('reports.income');
+    Route::get('/reports/outstanding', [ReportController::class, 'outstanding'])->name('reports.outstanding');
     
 }); // ปิด middleware group

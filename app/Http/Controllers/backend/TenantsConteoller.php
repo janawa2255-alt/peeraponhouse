@@ -10,9 +10,21 @@ use Illuminate\Support\Facades\Hash;
 
 class TenantsConteoller extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tenants = Tenant::orderBy('tenant_id', 'desc')->get();
+        $query = Tenant::query();
+
+        // ค้นหาชื่อผู้เช่า
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // กรองสถานะ
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $tenants = $query->orderBy('tenant_id', 'desc')->paginate(10);
         return view('tenants.index', compact('tenants'));
     }
 
@@ -136,13 +148,13 @@ class TenantsConteoller extends Controller
     {
         $tenant = Tenant::findOrFail($id);
         
-        // ตรวจสอบว่ามีสัญญาเช่าที่ยังใช้งานอยู่หรือไม่ (status = 1)
-        $activeLeases = $tenant->activeLeases()->count();
+        // ตรวจสอบว่ามีสัญญาเช่าหรือไม่ (ห้ามลบถ้ามีสัญญา)
+        $totalLeases = $tenant->leases()->count();
         
-        if ($activeLeases > 0) {
+        if ($totalLeases > 0) {
             return redirect()
                 ->route('backend.tenants.index')
-                ->with('error', 'ไม่สามารถลบผู้เช่าได้ เนื่องจากมีสัญญาเช่าที่ยังใช้งานอยู่ ' . $activeLeases . ' สัญญา กรุณายกเลิกสัญญาก่อน');
+                ->with('error', 'ไม่สามารถลบผู้เช่าได้ เนื่องจากมีประวัติสัญญาเช่าในระบบ (' . $totalLeases . ' สัญญา)');
         }
         
         // ลบรูปโปรไฟล์ถ้ามี

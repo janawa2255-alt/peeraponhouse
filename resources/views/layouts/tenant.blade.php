@@ -18,13 +18,31 @@
         body {
             font-family: 'Prompt', 'Kanit', sans-serif;
         }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ea580c;
+        }
     </style>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    @stack('styles')
 </head>
 
-<body class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-neutral-200">
+<body class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-neutral-200 min-h-screen">
     
     @include('layouts.tenant_nav')
 

@@ -37,8 +37,9 @@
                         @foreach($leases as $lease)
                             <option value="{{ $lease->lease_id }}"
                                     data-rent="{{ $lease->rent_amount }}"
+                                    data-prev-water="{{ $lease->latestExpense->curr_water ?? 0 }}"
                                     @selected(old('lease_id') == $lease->lease_id)>
-                                {{ $lease->rooms->room_no }} - {{ $lease->tenants->full_name }}
+                                {{ $lease->rooms->room_no }} - {{ optional($lease)->tenant->name ?? $lease->tenants->name ?? '-' }}
                             </option>
                         @endforeach
                     </select>
@@ -334,17 +335,24 @@
         if (elGrand)  elGrand.textContent  = grand.toFixed(0);
     }
 
-    // ดึงค่าเช่าห้องจาก option ที่เลือก (data-rent)
+    // ดึงค่าเช่าห้องและเลขมิเตอร์เดือนก่อนจาก option ที่เลือก
     function updateRoomRentFromLease() {
         const select = document.getElementById('lease_id');
         const rentInput = document.getElementById('room_rent');
+        const prevWaterInput = document.getElementById('prev_water');
         if (!select || !rentInput) return;
 
         const option = select.options[select.selectedIndex];
         if (option && option.dataset.rent) {
             rentInput.value = option.dataset.rent;
+            
+            // Auto-fill เลขมิเตอร์เดือนก่อน (แก้ไขได้)
+            if (prevWaterInput && option.dataset.prevWater) {
+                prevWaterInput.value = option.dataset.prevWater;
+            }
         } else {
             rentInput.value = '';
+            if (prevWaterInput) prevWaterInput.value = '';
         }
 
         recalcTotal();

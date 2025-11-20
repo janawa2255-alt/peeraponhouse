@@ -57,7 +57,7 @@ class InvoiceController extends Controller
     public function create()
     {
         
-        $leases = Lease::with(['tenants', 'rooms'])
+        $leases = Lease::with(['tenants', 'rooms', 'latestExpense'])
             ->where('status', 1)
             ->get();
 

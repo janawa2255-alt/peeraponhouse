@@ -63,8 +63,10 @@ public function approve(Request $request, $cancelId)
             Room::where('room_id', $lease->room_id)->update(['status' => 0]);
         }
 
-        // sync สถานะผู้เช่า
-        // (จะก็อปฟังก์ชัน syncTenantStatus มาไว้ใน Controller นี้ หรือเรียกจาก service ก็ได้)
+        // ปิดบัญชีผู้เช่า (status = 1 = ยกเลิก/ปิดใช้งาน)
+        if ($lease->tenant_id) {
+            Tenant::where('tenant_id', $lease->tenant_id)->update(['status' => 1]);
+        }
     });
 
     return redirect()->route('backend.cancel_lease.index')
