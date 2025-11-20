@@ -27,10 +27,14 @@
 
                 {{-- เบอร์โทร --}}
                 <div>
-                    <label class="text-sm text-gray-200">เบอร์โทร *</label>
+                    <label class="text-sm text-gray-200">เบอร์โทร * (10 หลัก)</label>
                     <input type="text" name="phone"
                         value="{{ old('phone', $tenant->phone) }}"
                         class="w-full px-3 py-2 rounded-lg bg-neutral-900/60 border border-gray-600 text-gray-200"
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        placeholder="0812345678"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                         required>
                 </div>
 
@@ -45,10 +49,14 @@
 
                 {{-- บัตรประชาชน --}}
                 <div>
-                    <label class="text-sm text-gray-200">บัตรประชาชน *</label>
+                    <label class="text-sm text-gray-200">บัตรประชาชน * (13 หลัก)</label>
                     <input type="text" name="id_card"
                         value="{{ old('id_card' , $tenant->id_card ) }}"
                         class="w-full px-3 py-2 rounded-lg bg-neutral-900/60 border border-gray-600 text-gray-200"
+                        maxlength="13"
+                        pattern="[0-9]{13}"
+                        placeholder="1234567890123"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                         required>
                 </div>
             </div>

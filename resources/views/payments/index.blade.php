@@ -106,7 +106,7 @@
                     </td>
 
                     <td class="px-4 py-3 text-gray-200">
-                        {{ $tenant->full_name ?? '-' }}
+                        {{ optional($lease)->tenant->name ?? optional($tenant)->name ?? '-' }}
                     </td>
 
                     <td class="px-4 py-3 text-gray-200 room-no">
@@ -148,7 +148,8 @@
                         {{-- ปุ่มจัดการ แสดงเฉพาะตอนรอตรวจสอบ --}}
                         @if ($payment->status == 0)
                             {{-- อนุมัติ --}}
-                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block">
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block"
+                                  onsubmit="return confirm('ยืนยันการอนุมัติการชำระเงินนี้หรือไม่?')">
                                 @csrf
                                 <input type="hidden" name="status" value="1">
                                 <button type="submit"
@@ -159,7 +160,8 @@
                             </form>
 
                             {{-- ปฏิเสธ / ยกเลิก --}}
-                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block">
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="inline-block"
+                                  onsubmit="return confirm('ยืนยันการปฏิเสธการชำระเงินนี้หรือไม่?')">
                                 @csrf
                                 <input type="hidden" name="status" value="2">
                                 <button type="submit"

@@ -139,7 +139,7 @@
                         ค่าน้ำต่อหน่วย (บาท)
                     </label>
                     <input type="number" name="water_rate" id="water_rate" step="1" min="0"
-                        value="{{ old('water_rate', config('rent.water_rate', 20)) }}"
+                        value="{{ old('water_rate', config('rent.water_rate', 10)) }}"
                         class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
                 </div>
 
@@ -236,7 +236,7 @@
                                     <span id="summary-water-units">0</span> หน่วย
                                 </td>
                                 <td class="px-4 py-2 text-right">
-                                    <span id="summary-water-rate">{{ (int) config('rent.water_rate', 20) }}</span>
+                                    <span id="summary-water-rate">{{ (int) config('rent.water_rate', 10) }}</span>
                                 </td>
                                 <td class="px-4 py-2 text-right">
                                     <span id="summary-water-total">0</span>
@@ -305,7 +305,7 @@
         const discount = parseFloat(document.getElementById('discount').value) || 0;
 
         const waterRateInput = document.getElementById('water_rate');
-        const waterRate = parseFloat(waterRateInput.value) || {{ (int) (config('rent.water_rate', 20)) }};
+        const waterRate = parseFloat(waterRateInput.value) || {{ (int) (config('rent.water_rate', 10)) }};
 
         const units = Math.max(curr - prev, 0);
         const waterTotal = units * waterRate;
