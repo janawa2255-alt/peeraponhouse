@@ -144,6 +144,7 @@ class TenantPaymentController extends Controller
         $payment = Payment::create([
             'invoice_id' => $request->invoice_id,
             'bank_id' => $request->bank_id,
+            'method' => 1, // 1 = โอนผ่านธนาคาร
             'total_amount' => $request->amount,
             'paid_date' => $request->paid_date,
             'pic_slip' => $slipPath,

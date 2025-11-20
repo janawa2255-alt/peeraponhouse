@@ -46,7 +46,7 @@
                 </div>
                 <div>
                     <div class="text-gray-400 text-xs">ผู้เช่า</div>
-                    <div>{{ $tenant->full_name ?? '-' }}</div>
+                    <div>{{ $tenant->name ?? '-' }}</div>
                 </div>
                 <div>
                     <div class="text-gray-400 text-xs">วิธีชำระ</div>

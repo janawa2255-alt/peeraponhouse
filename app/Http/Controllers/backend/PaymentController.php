@@ -20,6 +20,7 @@ public function index(Request $request)
     $query = Payment::with([
         'invoice.expense.lease.tenants',
         'invoice.expense.lease.rooms',
+        'bank',
     ]);
 
     switch ($status) {
@@ -49,6 +50,7 @@ public function index(Request $request)
     {
         $payment->load([
             'invoice.expense.lease.tenants',
+            'bank',
         ]);
 
         return view('payments.show', compact('payment'));
