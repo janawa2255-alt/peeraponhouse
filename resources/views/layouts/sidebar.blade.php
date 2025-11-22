@@ -215,7 +215,7 @@ $nav = [
 ];
 @endphp
 
-<button type="button" aria-label="Open sidebar" aria-controls="logo-sidebar"
+<button type="button" data-drawer-toggle="logo-sidebar" aria-label="Open sidebar" aria-controls="logo-sidebar"
     class="inline-flex items-center p-2 mt-2 ms-3 text-sm rounded-md sm:hidden text-gray-300 hover:text-white hover:bg-orange-500/30 focus:outline-none focus:ring-2 focus:ring-orange-500/40">
     <span class="sr-only">Open sidebar</span>
     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -223,6 +223,9 @@ $nav = [
             d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" />
     </svg>
 </button>
+
+<!-- Mobile Backdrop Overlay -->
+<div id="sidebar-backdrop" class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm hidden sm:hidden" aria-hidden="true"></div>
 
 <aside id="logo-sidebar"
     class="fixed top-0 left-0 z-40 w-64 h-screen transition-all duration-300 -translate-x-full sm:translate-x-0 will-change-transform group/sidebar"
@@ -235,8 +238,20 @@ $nav = [
                     class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white font-semibold shadow ring-1 ring-white/10">PH</span>
                 <span class="sidebar-text text-lg font-semibold tracking-tight text-white">Peerapon House</span>
             </a>
+            
+            <!-- Mobile Close Button -->
+            <button id="mobileCloseBtn" type="button" aria-label="Close sidebar"
+                class="ml-auto inline-flex sm:hidden items-center justify-center h-10 w-10 rounded-lg text-gray-300 hover:text-white hover:bg-red-500/25 focus:outline-none focus:ring-2 focus:ring-red-500/40 transition-colors">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            
+            <!-- Desktop Collapse Button -->
             <button id="sidebarCollapseBtn" type="button" aria-label="Toggle sidebar" aria-expanded="true"
-                class="ml-auto inline-flex items-center justify-center h-10 w-10 rounded-lg text-gray-300 hover:text-white hover:bg-orange-500/25 focus:outline-none focus:ring-2 focus:ring-orange-500/40 transition-colors">
+                class="ml-auto hidden sm:inline-flex items-center justify-center h-10 w-10 rounded-lg text-gray-300 hover:text-white hover:bg-orange-500/25 focus:outline-none focus:ring-2 focus:ring-orange-500/40 transition-colors">
                 <svg data-icon-collapse class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 3H3" />
@@ -354,8 +369,12 @@ $nav = [
 (function() {
     const aside = document.getElementById('logo-sidebar');
     const collapseBtn = document.getElementById('sidebarCollapseBtn');
-    if (!aside || !collapseBtn) return;
+    const mobileToggleBtn = document.querySelector('[data-drawer-toggle="logo-sidebar"]');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    
+    if (!aside) return;
 
+    // Desktop collapse functionality
     const setCollapsed = (collapsed) => {
         collapseBtn.setAttribute('aria-expanded', (!collapsed).toString());
         aside.classList.toggle('collapsed', collapsed);
@@ -367,10 +386,77 @@ $nav = [
         aside.querySelectorAll('.sidebar-badge').forEach(el => el.classList.toggle('hidden', collapsed));
     };
 
-    collapseBtn.addEventListener('click', () => {
+    collapseBtn?.addEventListener('click', () => {
         const nowCollapsed = !aside.classList.contains('collapsed');
         setCollapsed(nowCollapsed);
     });
+
+    // Mobile menu toggle functionality
+    const toggleMobileMenu = (show) => {
+        if (show) {
+            aside.classList.remove('-translate-x-full');
+            backdrop?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent body scroll
+        } else {
+            aside.classList.add('-translate-x-full');
+            backdrop?.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore body scroll
+        }
+    };
+
+    // Mobile toggle button click
+    mobileToggleBtn?.addEventListener('click', () => {
+        const isHidden = aside.classList.contains('-translate-x-full');
+        toggleMobileMenu(isHidden);
+    });
+
+    // Mobile close button click
+    const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+    mobileCloseBtn?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+    });
+
+    // Backdrop click to close
+    backdrop?.addEventListener('click', () => {
+        toggleMobileMenu(false);
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !aside.classList.contains('-translate-x-full')) {
+            toggleMobileMenu(false);
+        }
+    });
+
+    // Close menu when clicking a link on mobile
+    if (window.innerWidth < 640) {
+        aside.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMobileMenu(false);
+            });
+        });
+    }
+
+    // Swipe to close gesture
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    aside.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    aside.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        // Swipe left to close (at least 50px)
+        if (swipeDistance < -50 && window.innerWidth < 640) {
+            toggleMobileMenu(false);
+        }
+    }
 })();
 </script>
 

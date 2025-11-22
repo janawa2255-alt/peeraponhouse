@@ -20,15 +20,15 @@
     @if($payments->count() > 0)
     <div class="bg-neutral-900/80 border border-neutral-700 rounded-xl overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="min-w-full w-full text-sm">
             <thead class="bg-neutral-800 border-b border-neutral-700">
                 <tr>
-                    <th class="px-4 py-3 text-left text-gray-300 font-medium">เลขที่ใบแจ้งหนี้</th>
-                    <th class="px-4 py-3 text-left text-gray-300 font-medium">ห้องเช่า</th>
-                    <th class="px-4 py-3 text-right text-gray-300 font-medium">ยอดที่ชำระ</th>
-                    <th class="px-4 py-3 text-center text-gray-300 font-medium">ยอดที่ต้องชำระ</th>
-                    <th class="px-4 py-3 text-center text-gray-300 font-medium">วันที่ชำระเงิน</th>
-                    <th class="px-4 py-3 text-center text-gray-300 font-medium">สถานะ</th>
+                    <th class="px-4 py-3 text-left text-gray-300 font-medium whitespace-nowrap">เลขที่ใบแจ้งหนี้</th>
+                    <th class="px-4 py-3 text-left text-gray-300 font-medium whitespace-nowrap">ห้องเช่า</th>
+                    <th class="px-4 py-3 text-right text-gray-300 font-medium whitespace-nowrap">ยอดที่ชำระ</th>
+                    <th class="px-4 py-3 text-center text-gray-300 font-medium whitespace-nowrap">ยอดที่ต้องชำระ</th>
+                    <th class="px-4 py-3 text-center text-gray-300 font-medium whitespace-nowrap">วันที่ชำระเงิน</th>
+                    <th class="px-4 py-3 text-center text-gray-300 font-medium whitespace-nowrap">สถานะ</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-neutral-700">

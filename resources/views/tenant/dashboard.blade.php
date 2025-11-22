@@ -105,14 +105,14 @@
                     </a>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                    <table class="min-w-full w-full text-sm">
                         <thead class="bg-neutral-800 border-b border-neutral-700">
                             <tr>
-                                <th class="px-4 py-3 text-left text-gray-300 font-medium">เลขที่</th>
-                                <th class="px-4 py-3 text-left text-gray-300 font-medium">เดือน</th>
-                                <th class="px-4 py-3 text-right text-gray-300 font-medium">ยอดเงิน</th>
-                                <th class="px-4 py-3 text-center text-gray-300 font-medium">สถานะ</th>
-                                <th class="px-4 py-3 text-center text-gray-300 font-medium">จัดการ</th>
+                                <th class="px-4 py-3 text-left text-gray-300 font-medium whitespace-nowrap">เลขที่</th>
+                                <th class="px-4 py-3 text-left text-gray-300 font-medium whitespace-nowrap">เดือน</th>
+                                <th class="px-4 py-3 text-right text-gray-300 font-medium whitespace-nowrap">ยอดเงิน</th>
+                                <th class="px-4 py-3 text-center text-gray-300 font-medium whitespace-nowrap">สถานะ</th>
+                                <th class="px-4 py-3 text-center text-gray-300 font-medium whitespace-nowrap">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-neutral-700">
