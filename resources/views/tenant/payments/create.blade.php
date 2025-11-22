@@ -65,24 +65,31 @@
 
             {{-- Bank Selection & Upload --}}
             <div>
-                <h3 class="text-white font-medium mb-3">วิธีการชำระเงิน/สลิปโอนเงิน</h3>
+                <h3 class="text-white font-medium mb-3">วิธีการชำระเงิน</h3>
                 
                 <div class="space-y-4">
-                    {{-- Bank Selection --}}
+                    {{-- Payment Method Selection --}}
                     <div>
-                        <label class="block text-gray-400 text-sm mb-2">วิธีการชำระ:</label>
+                        <label class="block text-gray-400 text-sm mb-2">เลือกวิธีการชำระ: <span class="text-red-400">*</span></label>
                         <select name="bank_id" 
                                 id="bank_select"
                                 required
-                                class="w-full md:w-1/3 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
-                            <option value="">เลือกธนาคาร</option>
+                                class="w-full md:w-1/2 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
+                            <option value="">-- เลือกวิธีการชำระ --</option>
                             @foreach($banks as $bank)
                                 <option value="{{ $bank->bank_id }}" 
+                                        data-bank-code="{{ $bank->bank_code }}"
                                         data-bank-name="{{ $bank->bank_name }}"
                                         data-account-number="{{ $bank->number }}"
                                         data-account-name="{{ $bank->account_name ?? '-' }}"
                                         data-qrcode="{{ $bank->qrcode_pic ? asset('storage/' . $bank->qrcode_pic) : '' }}">
-                                    {{ $bank->bank_name }}
+                                    @if($bank->bank_code == 0)
+                                        💳 สแกนจ่าย (พร้อมเพย์) - {{ $bank->bank_name }}
+                                    @elseif($bank->bank_code == 1)
+                                        🏦 โอนผ่านธนาคาร - {{ $bank->bank_name }}
+                                    @else
+                                        💵 เงินสด
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
@@ -91,50 +98,103 @@
                         @enderror
                     </div>
 
-                    {{-- Bank Account Info --}}
-                    <div id="bank-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
-                        <div class="grid md:grid-cols-1 gap-4">
-                            {{-- Account Details --}}
+                    {{-- Bank Transfer Info (bank_code = 1) --}}
+                    <div id="bank-transfer-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
+                        <h4 class="text-white font-medium mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                            ข้อมูลบัญชีรับเงิน
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">ธนาคาร:</span>
+                                <span class="text-white font-medium" id="info-bank-name">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">เลขที่บัญชี:</span>
+                                <span class="text-white font-medium" id="info-account-number">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">ชื่อบัญชี:</span>
+                                <span class="text-white font-medium" id="info-account-name">-</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-3 bg-orange-500/10 border border-orange-500/30 rounded text-orange-200 text-sm">
+                            <strong>⚠️ หมายเหตุ:</strong> กรุณาโอนเงินเข้าบัญชีด้านบนและแนบสลิปการโอนเงิน
+                        </div>
+                    </div>
+
+                    {{-- QR Code / PromptPay Info (bank_code = 0) --}}
+                    <div id="qr-payment-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
+                        <h4 class="text-white font-medium mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                            </svg>
+                            สแกน QR Code เพื่อชำระเงิน
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <h4 class="text-white font-medium mb-3">ข้อมูลบัญชีรับเงิน</h4>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">ธนาคาร:</span>
-                                        <span class="text-white" id="info-bank-name">-</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">เลขที่บัญชี:</span>
-                                        <span class="text-white" id="info-account-number">-</span>
-                                    </div>
+                                <div class="space-y-2 text-sm mb-3">
                                     <div class="flex justify-between">
                                         <span class="text-gray-400">ชื่อบัญชี:</span>
-                                        <span class="text-white" id="info-account-name">-</span>
+                                        <span class="text-white font-medium" id="qr-account-name">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">เลขพร้อมเพย์:</span>
+                                        <span class="text-white font-medium" id="qr-account-number">-</span>
                                     </div>
                                 </div>
+                                <div class="p-3 bg-orange-500/10 border border-orange-500/30 rounded text-orange-200 text-sm">
+                                    <strong>📱 วิธีชำระ:</strong> สแกน QR Code ด้านล่างด้วยแอพธนาคารของคุณและแนบสลิปการโอนเงิน
+                                </div>
                             </div>
-                            
-                            {{-- QR Code --}}
-                            <div id="qrcode-container" class="hidden">
+                            <div class="flex justify-center items-center">
                                 <img id="qrcode-image" 
                                      src="" 
                                      alt="QR Code" 
-                                     class="w-52 h-52 object-contain bg-white rounded-lg border-2 border-neutral-600 cursor-pointer hover:scale-105 transition-transform mx-auto">
+                                     class="w-48 h-48 object-contain bg-white rounded-lg border-2 border-orange-500/40 shadow-lg cursor-pointer hover:scale-105 transition-transform"
+                                     onclick="window.open(this.src, '_blank')">
                             </div>
                         </div>
                     </div>
 
+                    {{-- Cash Payment Info (bank_code = 2) --}}
+                    <div id="cash-payment-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
+                        <h4 class="text-white font-medium mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            ชำระเงินสด
+                        </h4>
+                        <div class="p-4 bg-green-500/10 border border-green-500/30 rounded text-green-200">
+                            <p class="text-sm mb-2">
+                                <strong>💵 วิธีชำระ:</strong> นำเงินสดมาชำระที่หอพักโดยตรง
+                            </p>
+                            <p class="text-sm">
+                                <strong>📝 หมายเหตุ:</strong> ไม่จำเป็นต้องแนบสลิป แต่หากต้องการแนบใบเสร็จหรือหลักฐานการชำระเงินก็สามารถทำได้
+                            </p>
+                        </div>
+                    </div>
+
                     {{-- File Upload --}}
-                    <div>
-                        <label class="block text-gray-400 text-sm mb-2">อัปโหลดสลิปหรือภาพถ่ายหน้าเล่ม:</label>
+                    <div id="slip-upload-section">
+                        <label class="block text-gray-400 text-sm mb-2">
+                            อัปโหลดสลิปการโอนเงิน: 
+                            <span id="slip-required-indicator" class="text-red-400">*</span>
+                            <span id="slip-optional-indicator" class="text-gray-500 hidden">(ไม่บังคับ)</span>
+                        </label>
                         <div class="flex items-start gap-4">
                             {{-- Upload Button --}}
                             <label class="inline-block px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded cursor-pointer transition-colors">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
                                 แนบไฟล์
                                 <input type="file" 
                                        name="slip_image" 
                                        id="slip_image"
                                        accept="image/*"
-                                       required
                                        class="hidden">
                             </label>
                             <span id="file-name" class="text-gray-400 text-sm py-2">ยังไม่ได้เลือกไฟล์</span>
@@ -145,7 +205,8 @@
                         
                         {{-- Image Preview --}}
                         <div id="image-preview" class="mt-4 hidden">
-                            <img id="preview-img" src="" alt="Preview" class="max-w-md max-h-64 rounded border border-neutral-600">
+                            <p class="text-gray-400 text-sm mb-2">ตัวอย่างภาพ:</p>
+                            <img id="preview-img" src="" alt="Preview" class="max-w-md max-h-64 rounded border border-neutral-600 shadow-lg">
                         </div>
                     </div>
 
@@ -191,39 +252,69 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-// Show bank account info when bank is selected
+// Handle payment method selection and display appropriate info
 document.getElementById('bank_select').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
-    const bankInfo = document.getElementById('bank-info');
-    const qrcodeContainer = document.getElementById('qrcode-container');
-    const qrcodeImage = document.getElementById('qrcode-image');
+    const bankCode = selectedOption.getAttribute('data-bank-code');
+    
+    // Get all info sections
+    const bankTransferInfo = document.getElementById('bank-transfer-info');
+    const qrPaymentInfo = document.getElementById('qr-payment-info');
+    const cashPaymentInfo = document.getElementById('cash-payment-info');
+    const slipInput = document.getElementById('slip_image');
+    const slipRequiredIndicator = document.getElementById('slip-required-indicator');
+    const slipOptionalIndicator = document.getElementById('slip-optional-indicator');
+    
+    // Hide all sections first
+    bankTransferInfo.classList.add('hidden');
+    qrPaymentInfo.classList.add('hidden');
+    cashPaymentInfo.classList.add('hidden');
     
     if (this.value) {
-        // Get data from selected option
         const bankName = selectedOption.getAttribute('data-bank-name');
         const accountNumber = selectedOption.getAttribute('data-account-number');
         const accountName = selectedOption.getAttribute('data-account-name');
         const qrcode = selectedOption.getAttribute('data-qrcode');
         
-        // Update info display
-        document.getElementById('info-bank-name').textContent = bankName || '-';
-        document.getElementById('info-account-number').textContent = accountNumber || '-';
-        document.getElementById('info-account-name').textContent = accountName || '-';
-        
-        // Show/Hide QR Code
-        if (qrcode) {
-            qrcodeImage.src = qrcode;
-            qrcodeContainer.classList.remove('hidden');
-        } else {
-            qrcodeContainer.classList.add('hidden');
+        // Bank Transfer (bank_code = 1)
+        if (bankCode == '1') {
+            // Show bank transfer info
+            document.getElementById('info-bank-name').textContent = bankName || '-';
+            document.getElementById('info-account-number').textContent = accountNumber || '-';
+            document.getElementById('info-account-name').textContent = accountName || '-';
+            bankTransferInfo.classList.remove('hidden');
+            
+            // Slip is required
+            slipInput.setAttribute('required', 'required');
+            slipRequiredIndicator.classList.remove('hidden');
+            slipOptionalIndicator.classList.add('hidden');
         }
-        
-        // Show bank info
-        bankInfo.classList.remove('hidden');
-    } else {
-        // Hide bank info
-        bankInfo.classList.add('hidden');
-        qrcodeContainer.classList.add('hidden');
+        // QR Code / PromptPay (bank_code = 0)
+        else if (bankCode == '0') {
+            // Show QR payment info
+            document.getElementById('qr-account-name').textContent = accountName || '-';
+            document.getElementById('qr-account-number').textContent = accountNumber || '-';
+            
+            if (qrcode) {
+                document.getElementById('qrcode-image').src = qrcode;
+            }
+            qrPaymentInfo.classList.remove('hidden');
+            
+            // Slip is required
+            slipInput.setAttribute('required', 'required');
+            slipRequiredIndicator.classList.remove('hidden');
+            slipOptionalIndicator.classList.add('hidden');
+        }
+        // Cash (bank_code = 2)
+        else if (bankCode == '2') {
+            // Show cash payment info
+            cashPaymentInfo.classList.remove('hidden');
+            
+            // Slip is optional
+            slipInput.removeAttribute('required');
+            slipRequiredIndicator.classList.add('hidden');
+            slipOptionalIndicator.classList.remove('hidden');
+        }
     }
 });
 

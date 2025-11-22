@@ -119,14 +119,27 @@ class TenantPaymentController extends Controller
 
         $tenant = Tenant::findOrFail($authTenant['id']);
 
-        $request->validate([
+        // ดึงข้อมูลธนาคารที่เลือกเพื่อตรวจสอบ bank_code
+        $bank = \App\Models\Bank::findOrFail($request->bank_id);
+        
+        // กำหนด validation rules พื้นฐาน
+        $rules = [
             'invoice_id' => 'required|exists:invoices,invoice_id',
             'bank_id' => 'required|exists:banks,bank_id',
             'amount' => 'required|numeric|min:0',
             'paid_date' => 'required|date',
-            'slip_image' => 'required|image|max:2048',
             'note' => 'nullable|string',
-        ]);
+        ];
+        
+        // ถ้าเป็นเงินสด (bank_code = 2) สลิปไม่บังคับ
+        // ถ้าเป็นโอนธนาคาร (bank_code = 1) หรือ QR (bank_code = 0) สลิปบังคับ
+        if ($bank->bank_code == 2) {
+            $rules['slip_image'] = 'nullable|image|max:2048';
+        } else {
+            $rules['slip_image'] = 'required|image|max:2048';
+        }
+        
+        $request->validate($rules);
 
         // ตรวจสอบสิทธิ์
         $invoice = Invoice::with('expense.lease')->findOrFail($request->invoice_id);
@@ -134,17 +147,21 @@ class TenantPaymentController extends Controller
             abort(403, 'คุณไม่มีสิทธิ์ชำระใบแจ้งหนี้นี้');
         }
 
-        // อัปโหลดสลิป
+        // อัปโหลดสลิป (ถ้ามี)
         $slipPath = null;
         if ($request->hasFile('slip_image')) {
             $slipPath = $request->file('slip_image')->store('payment_slips', 'public');
         }
 
+        // กำหนด payment method ตาม bank_code
+        // 0 = QR/PromptPay, 1 = โอนผ่านธนาคาร, 2 = เงินสด
+        $paymentMethod = $bank->bank_code;
+
         // บันทึกการชำระเงิน
         $payment = Payment::create([
             'invoice_id' => $request->invoice_id,
             'bank_id' => $request->bank_id,
-            'method' => 1, // 1 = โอนผ่านธนาคาร
+            'method' => $paymentMethod,
             'total_amount' => $request->amount,
             'paid_date' => $request->paid_date,
             'pic_slip' => $slipPath,
