@@ -62,7 +62,8 @@
 
     {{-- ตารางรายการ --}}
     <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
-        <table class="min-w-full text-sm text-left text-gray-200">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
                 <tr>
                     <th class="px-4 py-3">ผู้เช่า</th>
@@ -151,7 +152,8 @@
                 </tr>
             @endforelse
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 </div>
 @endsection

@@ -12,7 +12,8 @@
     {{-- Invoices Table --}}
     @if($invoices->count() > 0)
     <div class="bg-neutral-900/80 border border-neutral-700 rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
             <thead class="bg-neutral-800 border-b border-neutral-700">
                 <tr>
                     <th class="px-4 py-3 text-left text-gray-300 font-medium">เลขที่ใบแจ้งหนี้</th>
@@ -70,7 +71,8 @@
                 </tr>
                 @endforeach
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 
     {{-- Pagination --}}

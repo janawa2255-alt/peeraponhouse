@@ -17,7 +17,8 @@
     @endif
 
     <div class="bg-neutral-800 rounded-lg border border-neutral-700 overflow-hidden">
-        <table class="w-full">
+        <div class="overflow-x-auto">
+            <table class="w-full">
             <thead class="bg-neutral-900 border-b border-neutral-700">
                 <tr>
                     <th class="px-4 py-3 text-left text-sm font-medium text-neutral-300">หัวข้อ</th>
@@ -78,7 +79,8 @@
                 </tr>
                 @endforelse
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 
     <div class="mt-4">
