@@ -5,7 +5,7 @@
             <!-- Brand -->
             <div class="flex items-center gap-2">
                 <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white text-lg font-bold shadow-lg">
-                    พ
+                
                 </span>
                 <span class="text-xl font-bold text-white">พีระพลเฮาส์</span>
             </div>

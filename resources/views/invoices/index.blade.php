@@ -138,11 +138,12 @@
                         </td>
 
   <td class="px-6 py-3">
-    <div class="flex items-center justify-center gap-2">
+    {{-- ใช้ Grid เพื่อล็อคคอลัมน์ให้ตรงกันทุกแถว --}}
+    <div class="grid grid-cols-[100px_100px_70px] gap-2 justify-center">
 
         {{-- ปุ่มดูรายละเอียด --}}
         <a href="{{ route('backend.invoices.show', $invoice->invoice_id) }}"
-            class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-medium w-24
+            class="flex items-center justify-center w-full px-2 py-1.5 rounded-lg text-xs font-medium
             bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600 transition-colors">
             ดูรายละเอียด
         </a>
@@ -150,10 +151,11 @@
         {{-- ปุ่มส่งแจ้งเตือน --}}
         <form action="{{ route('backend.invoices.notify', $invoice->invoice_id) }}"
             method="POST"
+            class="w-full"
             onsubmit="return confirm('ส่งอีเมลแจ้งผู้เช่าอีกรอบ?')">
             @csrf
             <button type="submit"
-                        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-lg w-24
+                    class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
                     bg-amber-500/20 text-amber-200 border border-amber-500/40
                     hover:bg-amber-500/30 transition-colors">
                 ส่งแจ้งเตือน
@@ -164,18 +166,20 @@
         @if($invoice->status == 0)
             <form method="POST"
                 action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}"
+                class="w-full"
                 onsubmit="return confirm('ต้องการยกเลิกใบแจ้งหนี้นี้หรือไม่?');">
                 @csrf
                 @method('PATCH')
                 <button type="submit"
-                        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-lg w-16
+                        class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
                             bg-red-500/20 text-red-200 border border-red-500/40
                             hover:bg-red-500/30 transition-colors">
                     ยกเลิก
                 </button>
             </form>
         @else
-            <div class="w-16"></div> {{-- Spacer to keep alignment --}}
+            {{-- Spacer สำหรับแถวที่ไม่มีปุ่มยกเลิก --}}
+            <div class="w-full"></div>
         @endif
 
     </div>
