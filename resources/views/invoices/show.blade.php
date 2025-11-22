@@ -1,20 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    @media print {
+        /* Hide sidebar, header, and other non-essential elements */
+        nav, aside, .no-print, header {
+            display: none !important;
+        }
+        /* Reset text colors for printing */
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400 {
+            color: black !important;
+            background: white !important;
+        }
+        /* Ensure the main content takes full width */
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        /* Hide backgrounds to save ink, or keep them if needed. Let's keep borders but remove dark backgrounds */
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 {
+            background-color: white !important;
+            border: 1px solid #ddd !important;
+        }
+        /* Adjust grid for print */
+        .grid {
+            display: block !important;
+        }
+        .grid-cols-1, .md\:grid-cols-2 {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 20px !important;
+        }
+        /* Specific adjustments for this page */
+        .invoice-container {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
 <div class="space-y-4">
-</div>
-<div class="space-y-4">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between no-print">
         <h1 class="text-2xl font-semibold text-white">
             รายละเอียดใบแจ้งหนี้
         </h1>
-        <a href="{{ route('backend.invoices.index') }}"
-           class="px-4 py-2 text-sm font-medium rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-800">
-            ย้อนกลับ
-        </a>
+        <div class="flex gap-2">
+            <button onclick="window.print()" 
+                    class="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+                <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
+            </button>
+            <a href="{{ route('backend.invoices.index') }}"
+               class="px-4 py-2 text-sm font-medium rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-800 transition-colors">
+                ย้อนกลับ
+            </a>
+        </div>
     </div>
 
-    <div class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden">
+    <div class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden invoice-container">
         {{-- header เทา --}}
         <div class="bg-neutral-700 px-6 py-3 flex items-center justify-between">
             <h2 class="text-white font-semibold">
@@ -76,7 +119,7 @@
             </div>
 
             {{-- ปุ่มดูรูปบิล --}}
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-3 no-print">
                 @if($expense && $expense->pic_water)
                     <a href="{{ asset('storage/'.$expense->pic_water) }}" target="_blank"
                        class="px-4 py-2 text-sm rounded-lg bg-neutral-700 text-white hover:bg-neutral-600">

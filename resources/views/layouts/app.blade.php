@@ -49,7 +49,7 @@
     <div class="flex sidebar-expanded-margin transition-all duration-300 ease-in-out relative z-0">
         @include('layouts.sidebar')
         
-        <main class="flex-1 min-h-screen w-full p-4 sm:p-6 lg:p-8">
+        <main class="flex-1 min-h-screen w-full p-4 pt-20 sm:p-6 sm:pt-6 lg:p-8">
             <div class="mx-auto max-w-7xl animate-fade-in-up">
                 @yield('content')
             </div>

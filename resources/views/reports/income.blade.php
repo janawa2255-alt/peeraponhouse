@@ -1,9 +1,62 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    @media print {
+        nav, aside, .no-print, header, form {
+            display: none !important;
+        }
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400 {
+            color: black !important;
+            background: white !important;
+        }
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 {
+            background-color: white !important;
+            border: 1px solid #ddd !important;
+        }
+        /* Adjust grid for print */
+        .grid {
+            display: flex !important;
+            gap: 10px !important;
+        }
+        .grid-cols-1, .md\:grid-cols-3 {
+            flex-direction: row !important;
+        }
+        /* Make cards look like simple boxes */
+        .rounded-xl, .rounded-2xl {
+            border-radius: 0 !important;
+            border: 1px solid #ccc !important;
+            box-shadow: none !important;
+        }
+        /* Remove gradients */
+        .bg-gradient-to-br {
+            background: white !important;
+            color: black !important;
+            border: 1px solid #000 !important;
+        }
+        .text-green-100, .text-blue-100, .text-orange-100 {
+            color: #333 !important;
+        }
+        /* Table adjustments */
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        th, td {
+            border: 1px solid #ddd !important;
+            color: black !important;
+        }
+    }
+</style>
+
 <div class="space-y-4">
     {{-- Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between no-print">
         <div>
             <h1 class="text-2xl font-semibold text-white">
                 รายงานรายได้
@@ -12,10 +65,13 @@
                 สรุปรายได้จากการชำระเงินของผู้เช่า
             </p>
         </div>
+        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+            <i class="fas fa-print mr-2"></i> พิมพ์รายงาน
+        </button>
     </div>
 
     {{-- Filter Form --}}
-    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-xl p-4">
+    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-xl p-4 no-print">
         <form method="GET" action="{{ route('backend.reports.income') }}" class="flex flex-col md:flex-row gap-3">
             <div class="w-full md:w-1/4">
                 <label class="block text-sm font-medium text-gray-300 mb-1">ปี</label>

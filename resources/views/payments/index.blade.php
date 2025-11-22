@@ -55,7 +55,8 @@
     @endif
 
     {{-- ตารางรายการ --}}
-    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
+    {{-- Desktop Table View --}}
+    <div class="hidden md:block bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
@@ -85,22 +86,26 @@
                         case 0:
                             $statusLabel = 'รอตรวจสอบ';
                             $statusClass = 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40';
+                            $statusBg = 'bg-yellow-500';
                             break;
                         case 1:
                             $statusLabel = 'อนุมัติแล้ว';
                             $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                            $statusBg = 'bg-emerald-500';
                             break;
                         case 2:
                             $statusLabel = 'ถูกปฏิเสธ / ยกเลิก';
                             $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
+                            $statusBg = 'bg-red-500';
                             break;
                         default:
                             $statusLabel = 'ไม่ทราบสถานะ';
                             $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                            $statusBg = 'bg-gray-500';
                     }
                 @endphp
 
-                <tr class="border-t border-neutral-800 hover:bg-neutral-800/70">
+                <tr class="border-t border-neutral-800 hover:bg-neutral-800/70 payment-item">
                     <td class="px-4 py-3 text-gray-200">
                         {{ $invoice->invoice_code ?? '-' }}
                     </td>
@@ -187,7 +192,107 @@
             </tbody>
             </table>
         </div>
+    </div>
 
+    {{-- Mobile Card View --}}
+    <div class="grid grid-cols-1 gap-4 md:hidden" id="paymentCardContainer">
+        @forelse ($payments as $payment)
+            @php
+                $invoice = $payment->invoice;
+                $expense = $invoice->expense ?? null;
+                $lease   = $expense->lease ?? null;
+                $tenant  = $lease->tenants ?? null;
+                $room    = $lease->rooms ?? null;
+
+                switch ((int) $payment->status) {
+                    case 0:
+                        $statusLabel = 'รอตรวจสอบ';
+                        $statusClass = 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40';
+                        $statusBg = 'bg-yellow-500';
+                        break;
+                    case 1:
+                        $statusLabel = 'อนุมัติแล้ว';
+                        $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                        $statusBg = 'bg-emerald-500';
+                        break;
+                    case 2:
+                        $statusLabel = 'ถูกปฏิเสธ / ยกเลิก';
+                        $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
+                        $statusBg = 'bg-red-500';
+                        break;
+                    default:
+                        $statusLabel = 'ไม่ทราบสถานะ';
+                        $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                        $statusBg = 'bg-gray-500';
+                }
+            @endphp
+            <div class="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 shadow-lg relative overflow-hidden payment-item">
+                {{-- Status Strip --}}
+                <div class="absolute top-0 left-0 w-1 h-full {{ $statusBg }}"></div>
+
+                <div class="flex justify-between items-start mb-3 pl-2">
+                    <div>
+                        <h3 class="text-white font-bold text-base">{{ $invoice->invoice_code ?? '-' }}</h3>
+                        <p class="text-xs text-gray-400">วันที่โอน: {{ optional($payment->paid_date)->format('d/m/Y') }}</p>
+                    </div>
+                    <span class="px-2 py-1 rounded text-[10px] font-bold border {{ $statusClass }}">
+                        {{ $statusLabel }}
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-4 pl-2 text-sm">
+                    <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                        <p class="text-[10px] text-gray-500 mb-0.5">ผู้เช่า</p>
+                        <p class="text-gray-200 font-medium truncate">{{ optional($lease)->tenant->name ?? optional($tenant)->name ?? '-' }}</p>
+                    </div>
+                    <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                        <p class="text-[10px] text-gray-500 mb-0.5">ห้อง</p>
+                        <p class="text-gray-200 font-medium room-no">{{ $room->room_no ?? '-' }}</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-4 pl-2 bg-neutral-800/30 p-2 rounded-lg">
+                    <span class="text-gray-400 text-sm">ยอดชำระ</span>
+                    <span class="text-base font-bold text-orange-400">
+                        {{ number_format($payment->total_amount, 0) }} ฿
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-2 pl-2">
+                    @if ($payment->pic_slip)
+                        <a href="{{ route('backend.payments.show', $payment) }}"
+                           class="w-full py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
+                            ดูสลิป
+                        </a>
+                    @endif
+
+                    @if ($payment->status == 0)
+                        <div class="flex gap-2">
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="flex-1"
+                                  onsubmit="return confirm('ยืนยันการอนุมัติการชำระเงินนี้หรือไม่?')">
+                                @csrf
+                                <input type="hidden" name="status" value="1">
+                                <button type="submit" class="w-full py-2 rounded-lg bg-green-500/20 text-green-400 text-xs font-medium text-center hover:bg-green-500/30 transition-colors border border-green-500/40">
+                                    อนุมัติ
+                                </button>
+                            </form>
+                            <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" class="flex-1"
+                                  onsubmit="return confirm('ยืนยันการปฏิเสธการชำระเงินนี้หรือไม่?')">
+                                @csrf
+                                <input type="hidden" name="status" value="2">
+                                <button type="submit" class="w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium text-center hover:bg-red-500/30 transition-colors border border-red-500/40">
+                                    ปฏิเสธ
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-8 text-gray-500 bg-neutral-900/50 rounded-xl border border-neutral-800">
+                ยังไม่มีการแจ้งชำระเงิน
+            </div>
+        @endforelse
     </div>
 
     <div>
@@ -204,7 +309,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const form   = document.getElementById('paymentFilterForm');
     const status = document.getElementById('statusFilter');
     const search = document.getElementById('roomSearch');
-    const rows   = document.querySelectorAll('#paymentTableBody tr');
+    // Select both table rows and mobile cards
+    const items  = document.querySelectorAll('.payment-item');
 
     // เปลี่ยนสถานะแล้ว submit form (รีเฟรชหน้า)
     if (status && form) {
@@ -218,9 +324,9 @@ document.addEventListener('DOMContentLoaded', function () {
         search.addEventListener('input', function () {
             const keyword = search.value.toLowerCase().trim();
 
-            rows.forEach(row => {
-                const roomNo = row.querySelector('.room-no')?.textContent.toLowerCase() ?? '';
-                row.style.display = roomNo.includes(keyword) ? '' : 'none';
+            items.forEach(item => {
+                const roomNo = item.querySelector('.room-no')?.textContent.toLowerCase() ?? '';
+                item.style.display = roomNo.includes(keyword) ? '' : 'none';
             });
         });
     }

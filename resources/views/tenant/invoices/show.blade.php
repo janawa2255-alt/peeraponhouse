@@ -1,16 +1,58 @@
 @extends('layouts.tenant')
 
 @section('content')
+<style>
+    @media print {
+        nav, aside, .no-print, header, form {
+            display: none !important;
+        }
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400 {
+            color: black !important;
+            background: white !important;
+        }
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 {
+            background-color: white !important;
+            border: 1px solid #ddd !important;
+        }
+        /* Adjust grid for print */
+        .grid {
+            display: block !important;
+        }
+        .grid-cols-1, .md\:grid-cols-3, .md\:grid-cols-2 {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+        }
+        /* Specific adjustments for this page */
+        .invoice-container {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .text-orange-400, .text-green-400, .text-yellow-600, .text-green-600, .text-red-600 {
+            color: black !important;
+        }
+    }
+</style>
+
 <div class="space-y-6">
     {{-- Header --}}
-    <div>
+    <div class="flex items-center justify-between no-print">
         <h1 class="text-2xl font-bold text-white mb-2">
-            รายะเอียดใบแจ้งหนี้ประจำการชำระเงิน
+            รายละเอียดใบแจ้งหนี้ประจำการชำระเงิน
         </h1>
+        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+            <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
+        </button>
     </div>
 
     {{-- Invoice Detail Card --}}
-    <div class="bg-neutral-900/80 border border-neutral-700 rounded-xl overflow-hidden">
+    <div class="bg-neutral-900/80 border border-neutral-700 rounded-xl overflow-hidden invoice-container">
         <div class="p-6 space-y-5">
             {{-- Header Info --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -121,10 +163,10 @@
             </div>
 
             {{-- Back Button --}}
-            <div class="border-t border-neutral-700 pt-4">
+            <div class="border-t border-neutral-700 pt-4 no-print">
                 <a href="{{ route('invoices') }}" 
                    class="inline-block px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded transition-colors">
-                    ย้อนคลับ
+                    ย้อนกลับ
                 </a>
             </div>
         </div>

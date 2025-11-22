@@ -30,11 +30,11 @@
     @endif
 
     <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
-        <div class="overflow-x-auto">
+        {{-- Desktop Table View --}}
+        <div class="hidden md:block overflow-x-auto">
             <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
                 <tr>
-                    
                     <th class="px-4 py-3">เลขห้อง</th>
                     <th class="px-4 py-3">ค่าเช่าพื้นฐาน</th>
                     <th class="px-4 py-3">สถานะ</th>
@@ -44,6 +44,7 @@
             </thead>
             <tbody>
                 @forelse ($rooms as $room)
+                    <tr class="border-t border-neutral-800 hover:bg-neutral-800/60 transition-colors">
                         <td class="px-4 py-3 font-medium text-white">
                             {{ $room->room_no }}
                         </td>
@@ -92,13 +93,76 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-6 text-center text-gray-400">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-400">
                             ยังไม่มีข้อมูลห้องเช่าในระบบ
                         </td>
                     </tr>
                 @endforelse
             </tbody>
             </table>
+        </div>
+
+        {{-- Mobile Card View --}}
+        <div class="grid grid-cols-1 gap-4 p-4 md:hidden">
+            @forelse ($rooms as $room)
+                @php
+                    $statusText = \App\Models\Room::$statusText[$room->status] ?? 'ไม่ทราบสถานะ';
+                    $statusColor = match($room->status) {
+                        1 => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+                        2 => 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',
+                        3 => 'bg-red-500/20 text-red-300 border-red-500/40',
+                        default => 'bg-gray-500/20 text-gray-300 border-gray-500/40',
+                    };
+                    $statusBg = match($room->status) {
+                        1 => 'bg-emerald-500',
+                        2 => 'bg-yellow-500',
+                        3 => 'bg-red-500',
+                        default => 'bg-gray-500',
+                    };
+                @endphp
+                <div class="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 shadow-lg relative overflow-hidden">
+                    {{-- Status Strip --}}
+                    <div class="absolute top-0 left-0 w-1 h-full {{ $statusBg }}"></div>
+
+                    <div class="flex justify-between items-start mb-3 pl-2">
+                        <div>
+                            <h3 class="text-white font-bold text-lg">ห้อง {{ $room->room_no }}</h3>
+                            <p class="text-xs text-gray-400">{{ $room->note }}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded text-[10px] font-bold border {{ $statusColor }}">
+                            {{ $statusText }}
+                        </span>
+                    </div>
+
+                    <div class="bg-neutral-800/50 p-3 rounded border border-neutral-800 mb-4 pl-2">
+                        <p class="text-xs text-gray-500 mb-1">ค่าเช่าพื้นฐาน</p>
+                        <p class="text-xl font-bold text-orange-400">{{ number_format($room->base_rent, 0) }} ฿</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pl-2">
+                        <a href="{{ route('backend.rooms.edit', $room->room_id) }}"
+                           class="flex justify-center items-center px-3 py-2 text-sm font-medium rounded-lg
+                                  bg-amber-500/20 text-amber-200 border border-amber-500/40 hover:bg-amber-500/30">
+                            <i class="fas fa-edit mr-2"></i> แก้ไข
+                        </a>
+                        <form action="{{ route('backend.rooms.destroy', $room->room_id) }}"
+                              method="POST"
+                              onsubmit="return confirm('ยืนยันการลบห้อง {{ $room->room_no }} ใช่หรือไม่?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="w-full flex justify-center items-center px-3 py-2 text-sm font-medium rounded-lg
+                                           bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500/30">
+                                <i class="fas fa-trash mr-2"></i> ลบ
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center text-gray-400 py-8">
+                    ยังไม่มีข้อมูลห้องเช่าในระบบ
+                </div>
+            @endforelse
         </div>
         <div class="px-6 py-4 border-t border-neutral-800">
             {{ $rooms->links() }}

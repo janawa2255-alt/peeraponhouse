@@ -60,8 +60,8 @@
         </div>
     @endif
 
-    {{-- ตารางรายการ --}}
-    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
+    {{-- Desktop Table View --}}
+    <div class="hidden md:block bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
@@ -83,22 +83,26 @@
                         case 1:
                             $statusLabel = 'เช่าอยู่';
                             $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                            $statusBg = 'bg-emerald-500';
                             break;
                         case 2:
                             $statusLabel = 'สิ้นสุดสัญญา';
                             $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                            $statusBg = 'bg-gray-500';
                             break;
                         case 3:
                             $statusLabel = 'ยกเลิกสัญญา';
                             $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
+                            $statusBg = 'bg-red-500';
                             break;
                         default:
                             $statusLabel = 'ไม่ระบุ';
                             $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                            $statusBg = 'bg-gray-500';
                     }
                 @endphp
 
-                <tr class="border-t border-neutral-800 hover:bg-neutral-800/70">
+                <tr class="border-t border-neutral-800 hover:bg-neutral-800/70 lease-item">
                     <td class="px-4 py-3 font-medium text-white tenant-name">
                         {{ optional($lease->tenants)->name ?? '-' }}
                     </td>
@@ -138,7 +142,7 @@
                             <a href="{{ route('backend.leases.cancel.form', $lease->lease_id) }}"
                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                                                bg-red-500/20 text-red-200 border border-red-500/40
-                                               hover:bg-red-500/30"  >    
+                                               hover:bg-red-500/30"  >
                                 ยกเลิกสัญญาเช่า
                             </a>
                         @endif
@@ -155,6 +159,84 @@
             </table>
         </div>
     </div>
+
+    {{-- Mobile Card View --}}
+    <div class="grid grid-cols-1 gap-4 md:hidden" id="leaseCardContainer">
+        @forelse ($leases as $lease)
+            @php
+                switch ((int) $lease->status) {
+                    case 1:
+                        $statusLabel = 'เช่าอยู่';
+                        $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                        $statusBg = 'bg-emerald-500';
+                        break;
+                    case 2:
+                        $statusLabel = 'สิ้นสุดสัญญา';
+                        $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                        $statusBg = 'bg-gray-500';
+                        break;
+                    case 3:
+                        $statusLabel = 'ยกเลิกสัญญา';
+                        $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
+                        $statusBg = 'bg-red-500';
+                        break;
+                    default:
+                        $statusLabel = 'ไม่ระบุ';
+                        $statusClass = 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+                        $statusBg = 'bg-gray-500';
+                }
+            @endphp
+            <div class="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 shadow-lg relative overflow-hidden lease-item">
+                {{-- Status Strip --}}
+                <div class="absolute top-0 left-0 w-1 h-full {{ $statusBg }}"></div>
+
+                <div class="flex justify-between items-start mb-3 pl-2">
+                    <div>
+                        <h3 class="text-white font-bold text-base tenant-name">{{ optional($lease->tenants)->name ?? '-' }}</h3>
+                        <p class="text-xs text-gray-400">ห้อง: {{ optional($lease->rooms)->room_no ?? '-' }}</p>
+                    </div>
+                    <span class="px-2 py-1 rounded text-[10px] font-bold border {{ $statusClass }}">
+                        {{ $statusLabel }}
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-4 pl-2 text-sm">
+                    <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                        <p class="text-[10px] text-gray-500 mb-0.5">วันที่เริ่ม</p>
+                        <p class="text-gray-200 font-medium">{{ \Carbon\Carbon::parse($lease->start_date)->format('d/m/Y') }}</p>
+                    </div>
+                    <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                        <p class="text-[10px] text-gray-500 mb-0.5">วันสิ้นสุด</p>
+                        <p class="text-gray-200 font-medium">{{ \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') }}</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-4 pl-2 bg-neutral-800/30 p-2 rounded-lg">
+                    <span class="text-gray-400 text-sm">ค่าเช่า/เดือน</span>
+                    <span class="text-base font-bold text-orange-400">
+                        {{ number_format($lease->rent_amount, 0) }} ฿
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-2 pl-2">
+                    <a href="{{ route('backend.leases.show', $lease->lease_id) }}"
+                       class="w-full py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
+                        ดูรายละเอียด
+                    </a>
+                    @if ($lease->status == 1)
+                        <a href="{{ route('backend.leases.cancel.form', $lease->lease_id) }}"
+                           class="w-full py-2 rounded-lg bg-red-500/10 text-red-500 text-xs font-medium text-center hover:bg-red-500/20 transition-colors border border-red-500/30">
+                            ยกเลิกสัญญาเช่า
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-8 text-gray-500 bg-neutral-900/50 rounded-xl border border-neutral-800">
+                ยังไม่มีข้อมูลสัญญาเช่าในระบบ
+            </div>
+        @endforelse
+    </div>
 </div>
 @endsection
 
@@ -165,7 +247,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const form   = document.getElementById('leaseFilterForm');
     const status = document.getElementById('statusFilter');
     const search = document.getElementById('tenantSearch');
-    const rows   = document.querySelectorAll('#leaseTableBody tr');
+    // Select both table rows and mobile cards
+    const items  = document.querySelectorAll('.lease-item');
 
     // เปลี่ยนสถานะแล้ว submit form (รีเฟรชหน้า)
     if (status && form) {
@@ -179,9 +262,9 @@ document.addEventListener('DOMContentLoaded', function () {
         search.addEventListener('input', function () {
             const keyword = search.value.toLowerCase().trim();
 
-            rows.forEach(row => {
-                const name = row.querySelector('.tenant-name')?.textContent.toLowerCase() ?? '';
-                row.style.display = name.includes(keyword) ? '' : 'none';
+            items.forEach(item => {
+                const name = item.querySelector('.tenant-name')?.textContent.toLowerCase() ?? '';
+                item.style.display = name.includes(keyword) ? '' : 'none';
             });
         });
     }

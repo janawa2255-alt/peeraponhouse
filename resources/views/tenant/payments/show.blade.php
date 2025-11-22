@@ -1,6 +1,40 @@
 @extends('layouts.tenant')
 
 @section('content')
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+    function saveAsImage() {
+        const element = document.getElementById('payment-receipt');
+        const button = document.getElementById('saveImageBtn');
+        
+        // Show loading state
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังบันทึก...';
+        button.disabled = true;
+
+        html2canvas(element, {
+            backgroundColor: '#171717', // neutral-900
+            scale: 2, // Higher quality
+            logging: false,
+            useCORS: true // For images from storage
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'payment-receipt-{{ $payment->invoice->invoice_code ?? "slip" }}.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            // Restore button
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }).catch(err => {
+            console.error('Error saving image:', err);
+            alert('เกิดข้อผิดพลาดในการบันทึกภาพ');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
+</script>
+
 <div class="space-y-6">
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -12,20 +46,26 @@
                 ข้อมูลการชำระเงินของคุณ
             </p>
         </div>
-        <a href="{{ route('payments') }}" 
-           class="px-4 py-2 text-sm rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-700 transition-colors">
-            <i class="fas fa-arrow-left mr-2"></i>
-            ย้อนกลับ
-        </a>
+        <div class="flex gap-2">
+            <button id="saveImageBtn" onclick="saveAsImage()" 
+                    class="px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors shadow-lg shadow-green-900/20">
+                <i class="fas fa-image mr-2"></i> บันทึกเป็นภาพ
+            </button>
+            <a href="{{ route('payments') }}" 
+               class="px-4 py-2 text-sm rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                ย้อนกลับ
+            </a>
+        </div>
     </div>
 
     {{-- Payment Info Card --}}
-    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl overflow-hidden shadow-lg">
+    <div id="payment-receipt" class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl overflow-hidden shadow-lg p-1">
         <div class="bg-neutral-800/60 px-6 py-4 border-b border-neutral-700">
             <h2 class="text-white font-semibold">ข้อมูลการชำระเงิน</h2>
         </div>
 
-        <div class="p-6 space-y-6">
+        <div class="p-6 space-y-6 bg-neutral-900">
             {{-- Status Badge --}}
             <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-400">สถานะ</span>

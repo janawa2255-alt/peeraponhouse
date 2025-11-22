@@ -71,7 +71,8 @@
         </form>
     </div>
 
-    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
+    {{-- Desktop Table View --}}
+    <div class="hidden md:block bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left text-gray-200">
             <thead class="bg-neutral-900/90 text-xs uppercase text-gray-400 border-b border-orange-500/30">
@@ -88,84 +89,143 @@
 
             <tbody>
                 @foreach ($tenants as $tenant)
-                    <tr    class="w-12 h-12 overflow-hidden  rounded-full border border-gray-600">
-                        <td class="px-4 py-3 ">
+                    <tr class="border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors">
+                        <td class="px-4 py-3">
                             @if ($tenant->avatar_path)
                                 <img src="{{ asset($tenant->avatar_path) }}"
                                      alt=""
-                                     class="w-16 h-16 rounded-lg border border-gray-600"
-                                      style="max-width: 48px; max-height: 48px;">
+                                     class="w-10 h-10 rounded-full object-cover border border-gray-600">
                             @else
-                                <div class="w-12 h-12 rounded-full border border-dashed border-gray-600
-                                            flex items-center justify-center text-[10px] text-gray-400">
-                                    ไม่มีรูป
+                                <div class="w-10 h-10 rounded-full border border-dashed border-gray-600
+                                            flex items-center justify-center text-[10px] text-gray-400 bg-neutral-800">
+                                    <i class="fas fa-user"></i>
                                 </div>
                             @endif
                         </td>
 
-                        <td class="px-4 py-3 text-left">
+                        <td class="px-4 py-3 font-medium text-white">
                             {{ $tenant->name }}
                         </td>
-                        <td class="px-4 py-3 text-left">
+                        <td class="px-4 py-3 text-gray-300">
                             {{ $tenant->phone }}
                         </td>
-                        <td class="px-4 py-3 text-left">
+                        <td class="px-4 py-3 text-gray-300">
                             {{ $tenant->id_card }}
                         </td>
-                        <td class="px-4 py-3 text-left">
+                        <td class="px-4 py-3 text-gray-300">
                             {{ $tenant->username }}
                         </td>
 
                         <td class="px-4 py-3 text-center">
                             @if ($tenant->status == 0)
-                                <span class="px-2 py-1 rounded-full bg-green-500/20 text-green-200 text-xs">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5"></span>
                                     ใช้งาน
                                 </span>
                             @else
-                                <span class="px-2 py-1 rounded-full bg-red-500/20 text-red-200 text-xs">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5"></span>
                                     ไม่ใช้งาน
                                 </span>
                             @endif
                         </td>
 
-                        {{-- ปุ่มดูรายละเอียด --}}
-                        <td class="px-2 py-3 text-center">
-                            <a href="{{ route('backend.tenants.show', $tenant->tenant_id) }}"
-                               class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
-                                      bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600">
-                                ดูรายละเอียด
-                            </a>
-                      
-
-                        {{-- ปุ่มแก้ไข / ลบ --}}
-                   
-                            <a href="{{ route('backend.tenants.edit', $tenant->tenant_id) }}"
-                               class="inline-flex  px-3 py-1.5 text-xs font-medium rounded-lg
-                                      bg-amber-500/20 text-amber-200 border border-amber-500/40
-                                      hover:bg-amber-500/30">
-                                แก้ไข
-                            </a>
-
-                            <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
-                                               bg-red-500/20 text-red-200 border border-red-500/40
-                                               hover:bg-red-500/30 transition-colors"
-                                        onclick="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?\n\nหมายเหตุ: หากผู้เช่ามีสัญญาเช่าที่ยังใช้งานอยู่ จะไม่สามารถลบได้')">
-                                    <i class="fas fa-trash-alt mr-1"></i>
-                                    ลบ
-                                </button>
-                            </form>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('backend.tenants.show', $tenant->tenant_id) }}"
+                                   class="p-1.5 rounded-lg bg-neutral-700 hover:bg-neutral-600 text-gray-300 hover:text-white transition-colors"
+                                   title="ดูรายละเอียด">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('backend.tenants.edit', $tenant->tenant_id) }}"
+                                   class="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 hover:text-amber-400 transition-colors"
+                                   title="แก้ไข">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="inline-block"
+                                      onsubmit="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?\n\nหมายเหตุ: หากผู้เช่ามีสัญญาเช่าที่ยังใช้งานอยู่ จะไม่สามารถลบได้')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-colors"
+                                            title="ลบ">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
-
                     </tr>
                 @endforeach
             </tbody>
-
             </table>
         </div>
+    </div>
+
+    {{-- Mobile Card View --}}
+    <div class="grid grid-cols-1 gap-4 md:hidden">
+        @foreach ($tenants as $tenant)
+        <div class="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 shadow-lg relative overflow-hidden">
+            {{-- Status Strip --}}
+            <div class="absolute top-0 left-0 w-1 h-full {{ $tenant->status == 0 ? 'bg-green-500' : 'bg-red-500' }}"></div>
+            
+            <div class="flex items-start justify-between mb-3 pl-2">
+                <div class="flex items-center gap-3">
+                    @if ($tenant->avatar_path)
+                        <img src="{{ asset($tenant->avatar_path) }}" class="w-12 h-12 rounded-full object-cover border-2 border-neutral-700 shadow-sm">
+                    @else
+                        <div class="w-12 h-12 rounded-full bg-neutral-800 border-2 border-neutral-700 flex items-center justify-center text-gray-400">
+                            <i class="fas fa-user text-lg"></i>
+                        </div>
+                    @endif
+                    <div>
+                        <h3 class="text-white font-semibold text-base">{{ $tenant->name }}</h3>
+                        <p class="text-xs text-gray-400">ID: {{ $tenant->username }}</p>
+                    </div>
+                </div>
+                <div>
+                    @if ($tenant->status == 0)
+                        <span class="px-2 py-1 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30">
+                            ACTIVE
+                        </span>
+                    @else
+                        <span class="px-2 py-1 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                            INACTIVE
+                        </span>
+                    @endif
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-4 pl-2 text-sm">
+                <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                    <p class="text-[10px] text-gray-500 mb-0.5">เบอร์โทร</p>
+                    <p class="text-gray-200 font-medium">{{ $tenant->phone }}</p>
+                </div>
+                <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
+                    <p class="text-[10px] text-gray-500 mb-0.5">บัตรประชาชน</p>
+                    <p class="text-gray-200 font-medium truncate">{{ $tenant->id_card }}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pl-2">
+                <a href="{{ route('backend.tenants.show', $tenant->tenant_id) }}" 
+                   class="flex-1 py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
+                    ดูข้อมูล
+                </a>
+                <a href="{{ route('backend.tenants.edit', $tenant->tenant_id) }}" 
+                   class="flex-1 py-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium text-center hover:bg-amber-500/20 transition-colors border border-amber-500/30">
+                    แก้ไข
+                </a>
+                <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="flex-1"
+                      onsubmit="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full py-2 rounded-lg bg-red-500/10 text-red-500 text-xs font-medium text-center hover:bg-red-500/20 transition-colors border border-red-500/30">
+                        ลบ
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endforeach
     </div>
 
     {{-- Pagination --}}
