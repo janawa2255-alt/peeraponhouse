@@ -56,7 +56,7 @@ class LeaseController extends Controller
             });
         }
 
-        $leases = $query->orderByDesc('lease_id')->get();
+        $leases = $query->orderByDesc('lease_id')->paginate(10);
 
         return view('leases.index', [
             'leases' => $leases,

@@ -148,13 +148,13 @@ class TenantsConteoller extends Controller
     {
         $tenant = Tenant::findOrFail($id);
         
-        // ตรวจสอบว่ามีสัญญาเช่าหรือไม่ (ห้ามลบถ้ามีสัญญา)
-        $totalLeases = $tenant->leases()->count();
+        // ตรวจสอบว่ามีสัญญาเช่าที่ยังใช้งานอยู่หรือไม่ (status = 1)
+        $hasActiveLease = $tenant->leases()->where('status', 1)->exists();
         
-        if ($totalLeases > 0) {
+        if ($hasActiveLease) {
             return redirect()
                 ->route('backend.tenants.index')
-                ->with('error', 'ไม่สามารถลบผู้เช่าได้ เนื่องจากมีประวัติสัญญาเช่าในระบบ (' . $totalLeases . ' สัญญา)');
+                ->with('error', 'ไม่สามารถลบผู้เช่าได้ เนื่องจากยังมีสัญญาเช่าที่ใช้งานอยู่');
         }
         
         // ลบรูปโปรไฟล์ถ้ามี

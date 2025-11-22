@@ -116,6 +116,9 @@
     </tbody>
             </table>
         </div>
+        <div class="px-6 py-4 border-t border-neutral-800">
+            {{ $employees->links() }}
+        </div>
     </div>
 </div>
 @endsection

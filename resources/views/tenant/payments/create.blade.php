@@ -244,117 +244,151 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-// Handle payment method selection and display appropriate info
-document.getElementById('bank_select').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    const bankCode = selectedOption.getAttribute('data-bank-code');
-    
-    // Get all info sections
+    const allBanks = @json($banks);
+    const storageBaseUrl = "{{ asset('storage') }}/";
+
+    const paymentTypeSelect = document.getElementById('payment_type_select');
+    const bankSelect = document.getElementById('bank_select');
+    const bankSelectionContainer = document.getElementById('bank_selection_container');
+
+    // Info sections
     const bankTransferInfo = document.getElementById('bank-transfer-info');
     const qrPaymentInfo = document.getElementById('qr-payment-info');
     const cashPaymentInfo = document.getElementById('cash-payment-info');
+
+    // Slip
     const slipInput = document.getElementById('slip_image');
     const slipRequiredIndicator = document.getElementById('slip-required-indicator');
     const slipOptionalIndicator = document.getElementById('slip-optional-indicator');
-    
-    // Hide all sections first
-    bankTransferInfo.classList.add('hidden');
-    qrPaymentInfo.classList.add('hidden');
-    cashPaymentInfo.classList.add('hidden');
-    
-    if (this.value) {
-        const bankName = selectedOption.getAttribute('data-bank-name');
-        const accountNumber = selectedOption.getAttribute('data-account-number');
-        const accountName = selectedOption.getAttribute('data-account-name');
-        const qrcode = selectedOption.getAttribute('data-qrcode');
-        
-        // Bank Transfer (bank_code = 1)
-        if (bankCode == '1') {
-            // Show bank transfer info (with bank name, account number and name)
-            document.getElementById('info-bank-name').textContent = bankName || '-';
-            document.getElementById('info-account-number').textContent = accountNumber || '-';
-            document.getElementById('info-account-name').textContent = accountName || '-';
-            bankTransferInfo.classList.remove('hidden');
-            
-            // Slip is required
+
+    function resetInfo() {
+        bankTransferInfo.classList.add('hidden');
+        qrPaymentInfo.classList.add('hidden');
+        cashPaymentInfo.classList.add('hidden');
+    }
+
+    function updateSlipRequirement(required) {
+        if (required) {
             slipInput.setAttribute('required', 'required');
             slipRequiredIndicator.classList.remove('hidden');
             slipOptionalIndicator.classList.add('hidden');
-        }
-        // QR Code / PromptPay (bank_code = 0)
-        else if (bankCode == '0') {
-            // Show QR payment info
-            document.getElementById('qr-account-name').textContent = accountName || '-';
-            document.getElementById('qr-account-number').textContent = accountNumber || '-';
-            
-            if (qrcode) {
-                document.getElementById('qrcode-image').src = qrcode;
-            }
-            qrPaymentInfo.classList.remove('hidden');
-            
-            // Slip is required
-            slipInput.setAttribute('required', 'required');
-            slipRequiredIndicator.classList.remove('hidden');
-            slipOptionalIndicator.classList.add('hidden');
-        }
-        // Cash (bank_code = 2)
-        else if (bankCode == '2') {
-            // Show cash payment info
-            cashPaymentInfo.classList.remove('hidden');
-            
-            // Slip is optional
+        } else {
             slipInput.removeAttribute('required');
             slipRequiredIndicator.classList.add('hidden');
             slipOptionalIndicator.classList.remove('hidden');
         }
     }
-});
 
-// Show file name when selected
-document.getElementById('slip_image').addEventListener('change', function(e) {
-    const fileName = e.target.files[0]?.name || 'ยังไม่ได้เลือกไฟล์';
-    document.getElementById('file-name').textContent = fileName;
-    
-    // Show preview
-    if (e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('image-preview').classList.remove('hidden');
-        };
-        reader.readAsDataURL(e.target.files[0]);
-    } else {
-        document.getElementById('image-preview').classList.add('hidden');
-    }
-});
+    paymentTypeSelect.addEventListener('change', function() {
+        const type = this.value;
+        resetInfo();
+        
+        // Clear bank select but keep default
+        bankSelect.innerHTML = '<option value="">-- เลือกบัญชี --</option>';
+        
+        if (!type) {
+            bankSelectionContainer.classList.add('hidden');
+            return;
+        }
 
-// Flatpickr for date picker
-document.addEventListener('DOMContentLoaded', function() {
-    flatpickr("#paid_date_display", {
-        dateFormat: "d/m/Y",
-        defaultDate: new Date(),
-        allowInput: true, // อนุญาตให้พิมพ์ได้
-        locale: {
-            firstDayOfWeek: 0,
-            weekdays: {
-                shorthand: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
-                longhand: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
-            },
-            months: {
-                shorthand: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
-                longhand: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+        const filteredBanks = allBanks.filter(b => b.bank_code == type);
+
+        if (type == '2') { // Cash
+            // Auto-select the first cash account if available
+            if (filteredBanks.length > 0) {
+                const cashBank = filteredBanks[0];
+                const option = new Option(cashBank.bank_name, cashBank.bank_id);
+                option.selected = true;
+                bankSelect.add(option);
             }
-        },
-        onChange: function(selectedDates, dateStr, instance) {
-            if (selectedDates.length > 0) {
-                const date = selectedDates[0];
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                document.getElementById('paid_date').value = `${year}-${month}-${day}`;
-            }
+            bankSelectionContainer.classList.add('hidden');
+            cashPaymentInfo.classList.remove('hidden');
+            updateSlipRequirement(false);
+        } else {
+            // Transfer or QR
+            bankSelectionContainer.classList.remove('hidden');
+            filteredBanks.forEach(bank => {
+                const option = new Option(bank.bank_name + ' (' + bank.number + ')', bank.bank_id);
+                bankSelect.add(option);
+            });
+            updateSlipRequirement(true);
         }
     });
-});
+
+    bankSelect.addEventListener('change', function() {
+        const bankId = this.value;
+        resetInfo();
+        
+        if (!bankId) return;
+        
+        const bank = allBanks.find(b => b.bank_id == bankId);
+        if (!bank) return;
+
+        if (bank.bank_code == 1) { // Transfer
+            document.getElementById('info-bank-name').textContent = bank.bank_name;
+            document.getElementById('info-account-number').textContent = bank.number;
+            document.getElementById('info-account-name').textContent = bank.account_name || '-';
+            bankTransferInfo.classList.remove('hidden');
+            updateSlipRequirement(true);
+        } else if (bank.bank_code == 0) { // QR
+            document.getElementById('qr-account-name').textContent = bank.account_name || '-';
+            document.getElementById('qr-account-number').textContent = bank.number;
+            if (bank.qrcode_pic) {
+                 document.getElementById('qrcode-image').src = storageBaseUrl + bank.qrcode_pic;
+            }
+            qrPaymentInfo.classList.remove('hidden');
+            updateSlipRequirement(true);
+        } else if (bank.bank_code == 2) {
+            cashPaymentInfo.classList.remove('hidden');
+            updateSlipRequirement(false);
+        }
+    });
+
+    // Show file name when selected
+    document.getElementById('slip_image').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'ยังไม่ได้เลือกไฟล์';
+        document.getElementById('file-name').textContent = fileName;
+        
+        // Show preview
+        if (e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('image-preview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        } else {
+            document.getElementById('image-preview').classList.add('hidden');
+        }
+    });
+
+    // Flatpickr for date picker
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#paid_date_display", {
+            dateFormat: "d/m/Y",
+            defaultDate: new Date(),
+            allowInput: true,
+            locale: {
+                firstDayOfWeek: 0,
+                weekdays: {
+                    shorthand: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                    longhand: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
+                },
+                months: {
+                    shorthand: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                    longhand: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+                }
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    const date = selectedDates[0];
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    document.getElementById('paid_date').value = `${year}-${month}-${day}`;
+                }
+            }
+        });
+    });
 </script>
 @endsection

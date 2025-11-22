@@ -142,43 +142,44 @@
 
         {{-- ปุ่มดูรายละเอียด --}}
         <a href="{{ route('backend.invoices.show', $invoice->invoice_id) }}"
-            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
-            bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600">
+            class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-medium w-24
+            bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600 transition-colors">
             ดูรายละเอียด
         </a>
 
-                            {{-- ปุ่มส่งแจ้งเตือน --}}
-                            <form action="{{ route('backend.invoices.notify', $invoice->invoice_id) }}"
-                                method="POST"
-                                onsubmit="return confirm('ส่งอีเมลแจ้งผู้เช่าอีกรอบ?')">
-                                @csrf
-                                <button type="submit"
-                                         class="inline-flex  px-3 py-1.5 text-xs font-medium rounded-lg
-                                        bg-amber-500/20 text-amber-200 border border-amber-500/40
-                                        hover:bg-amber-500/30">
-                                    ส่งแจ้งเตือน
-                                </button>
-                            </form>
+        {{-- ปุ่มส่งแจ้งเตือน --}}
+        <form action="{{ route('backend.invoices.notify', $invoice->invoice_id) }}"
+            method="POST"
+            onsubmit="return confirm('ส่งอีเมลแจ้งผู้เช่าอีกรอบ?')">
+            @csrf
+            <button type="submit"
+                        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-lg w-24
+                    bg-amber-500/20 text-amber-200 border border-amber-500/40
+                    hover:bg-amber-500/30 transition-colors">
+                ส่งแจ้งเตือน
+            </button>
+        </form>
 
-                            {{-- ปุ่มยกเลิก --}}
-                            @if($invoice->status == 0)
-                                <form method="POST"
-                                    action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}"
-                                    onsubmit="return confirm('ต้องการยกเลิกใบแจ้งหนี้นี้หรือไม่?');">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
-                                               bg-red-500/20 text-red-200 border border-red-500/40
-                                               hover:bg-red-500/30">
-                                        ยกเลิก
-                                    </button>
-                                </form>
-                            @endif
+        {{-- ปุ่มยกเลิก --}}
+        @if($invoice->status == 0)
+            <form method="POST"
+                action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}"
+                onsubmit="return confirm('ต้องการยกเลิกใบแจ้งหนี้นี้หรือไม่?');">
+                @csrf
+                @method('PATCH')
+                <button type="submit"
+                        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-lg w-16
+                            bg-red-500/20 text-red-200 border border-red-500/40
+                            hover:bg-red-500/30 transition-colors">
+                    ยกเลิก
+                </button>
+            </form>
+        @else
+            <div class="w-16"></div> {{-- Spacer to keep alignment --}}
+        @endif
 
-                        </div>
-                    </td>
-                        </td>
+    </div>
+</td>
                     </tr>
                 @empty
                     <tr>

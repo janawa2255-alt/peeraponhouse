@@ -10,7 +10,7 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $rooms = Room::orderBy('room_no', 'asc')->get();
+        $rooms = Room::orderBy('room_no', 'asc')->paginate(10);
         return view('rooms.index', compact('rooms'));
     }
 

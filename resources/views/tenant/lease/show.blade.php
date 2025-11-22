@@ -30,9 +30,9 @@
             <h2 class="text-white font-medium">รายละเอียดสัญญาเช่า</h2>
         </div>
 
-        <div class="p-6 space-y-5">
+        <div class="p-5 space-y-4">
             {{-- Basic Info Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-sm">
                 <div>
                     <span class="text-gray-400">ผู้เช่า:</span>
                     <span class="text-white ml-2">{{ $lease->tenants->name ?? '-' }}</span>
@@ -83,7 +83,7 @@
             {{-- Expense Info --}}
             <div>
                 <h3 class="text-white font-medium mb-2">รายการ</h3>
-                <div class="space-y-2 text-sm">
+                <div class="space-y-1 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-400">ค่าเช่าห้องต่อเดือน:</span>
                         <span class="text-white">{{ number_format($lease->rent_amount, 0) }} ฿</span>
