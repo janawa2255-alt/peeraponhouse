@@ -159,22 +159,9 @@
                         </div>
                     </div>
 
-                    {{-- Cash Payment Info (bank_code = 2) --}}
-                    <div id="cash-payment-info" class="hidden bg-neutral-800 rounded-lg p-4 border border-neutral-600">
-                        <h4 class="text-white font-medium mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            ชำระเงินสด
-                        </h4>
-                        <div class="p-4 bg-green-500/10 border border-green-500/30 rounded text-green-200">
-                            <p class="text-sm mb-2">
-                                <strong>💵 วิธีชำระ:</strong> นำเงินสดมาชำระที่หอพักโดยตรง
-                            </p>
-                            <p class="text-sm">
-                                <strong>📝 หมายเหตุ:</strong> ไม่จำเป็นต้องแนบสลิป แต่หากต้องการแนบใบเสร็จหรือหลักฐานการชำระเงินก็สามารถทำได้
-                            </p>
-                        </div>
+                    {{-- Cash Payment Info (bank_code = 2) - ไม่แสดงอะไรเลย --}}
+                    <div id="cash-payment-info" class="hidden">
+                        {{-- ไม่มีข้อมูลแสดง สำหรับเงินสด --}}
                     </div>
 
                     {{-- File Upload --}}
@@ -278,7 +265,7 @@ document.getElementById('bank_select').addEventListener('change', function() {
         
         // Bank Transfer (bank_code = 1)
         if (bankCode == '1') {
-            // Show bank transfer info
+            // Show bank transfer info (with bank name, account number and name)
             document.getElementById('info-bank-name').textContent = bankName || '-';
             document.getElementById('info-account-number').textContent = accountNumber || '-';
             document.getElementById('info-account-name').textContent = accountName || '-';
