@@ -49,8 +49,7 @@
                     <span class="text-gray-400">วันที่ชำระเงิน:</span>
                     <input type="text" 
                            id="paid_date_display"
-                           placeholder="วว/ดด/ปปปป"
-                           readonly
+                           placeholder="วัน/เดือน/ปี (เช่น 25/11/2568)"
                            required
                            class="w-full mt-1 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
                     <input type="hidden" name="paid_date" id="paid_date" value="{{ date('Y-m-d') }}">
@@ -68,30 +67,36 @@
                 <h3 class="text-white font-medium mb-3">วิธีการชำระเงิน</h3>
                 
                 <div class="space-y-4">
-                    {{-- Payment Method Selection --}}
+                    {{-- Payment Type Selection --}}
                     <div>
-                        <label class="block text-gray-400 text-sm mb-2">เลือกวิธีการชำระ: <span class="text-red-400">*</span></label>
-                        <select name="bank_id" 
-                                id="bank_select"
+                        <label class="block text-gray-400 text-sm mb-2">เลือกประเภทการชำระ: <span class="text-red-400">*</span></label>
+                        <select name="payment_type" 
+                                id="payment_type_select"
                                 required
                                 class="w-full md:w-1/2 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
-                            <option value="">-- เลือกวิธีการชำระ --</option>
-                            @foreach($banks as $bank)
-                                <option value="{{ $bank->bank_id }}" 
-                                        data-bank-code="{{ $bank->bank_code }}"
-                                        data-bank-name="{{ $bank->bank_name }}"
-                                        data-account-number="{{ $bank->number }}"
-                                        data-account-name="{{ $bank->account_name ?? '-' }}"
-                                        data-qrcode="{{ $bank->qrcode_pic ? asset('storage/' . $bank->qrcode_pic) : '' }}">
-                                    @if($bank->bank_code == 0)
-                                        💳 สแกนจ่าย (พร้อมเพย์) - {{ $bank->bank_name }}
-                                    @elseif($bank->bank_code == 1)
-                                        🏦 โอนผ่านธนาคาร - {{ $bank->bank_name }}
-                                    @else
-                                        💵 เงินสด
-                                    @endif
-                                </option>
-                            @endforeach
+                            <option value="">-- เลือกประเภทการชำระ --</option>
+                            @php
+                                $bankTypes = $banks->groupBy('bank_code');
+                            @endphp
+                            @if($bankTypes->has(0))
+                                <option value="0">💳 สแกนจ่าย (พร้อมเพย์)</option>
+                            @endif
+                            @if($bankTypes->has(1))
+                                <option value="1">🏦 โอนผ่านธนาคาร</option>
+                            @endif
+                            @if($bankTypes->has(2))
+                                <option value="2">💵 เงินสด</option>
+                            @endif
+                        </select>
+                    </div>
+
+                    {{-- Bank Account Selection (shows after type is selected) --}}
+                    <div id="bank_selection_container" class="hidden">
+                        <label class="block text-gray-400 text-sm mb-2">เลือกบัญชี: <span class="text-red-400">*</span></label>
+                        <select name="bank_id" 
+                                id="bank_select"
+                                class="w-full md:w-2/3 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white focus:outline-none focus:border-orange-500">
+                            <option value="">-- เลือกบัญชี --</option>
                         </select>
                         @error('bank_id')
                             <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
@@ -328,6 +333,18 @@ document.addEventListener('DOMContentLoaded', function() {
     flatpickr("#paid_date_display", {
         dateFormat: "d/m/Y",
         defaultDate: new Date(),
+        allowInput: true, // อนุญาตให้พิมพ์ได้
+        locale: {
+            firstDayOfWeek: 0,
+            weekdays: {
+                shorthand: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                longhand: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
+            },
+            months: {
+                shorthand: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                longhand: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+            }
+        },
         onChange: function(selectedDates, dateStr, instance) {
             if (selectedDates.length > 0) {
                 const date = selectedDates[0];

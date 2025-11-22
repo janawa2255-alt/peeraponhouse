@@ -10,9 +10,9 @@
         @endphp
         <select name="bank_code"
             class="w-full px-3 py-2 rounded-lg bg-neutral-900/60 border border-orange-500/20 text-gray-200">
-            <!-- <option value="1" {{ $code == 1 ? 'selected' : '' }}>เงินสด</option> -->
             <option value="0" {{ $code == 0 ? 'selected' : '' }}>สแกนจ่าย (QR)</option>
             <option value="1" {{ $code == 1 ? 'selected' : '' }}>โอนผ่านธนาคาร</option>
+            <option value="2" {{ $code == 2 ? 'selected' : '' }}>เงินสด</option>
         </select>
     </div>
 
