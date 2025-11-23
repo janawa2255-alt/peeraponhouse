@@ -65,49 +65,59 @@
                 รายการใบแจ้งหนี้ที่ยังไม่ได้ชำระและเกินกำหนด
             </p>
         </div>
-        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-            <i class="fas fa-print mr-2"></i> พิมพ์รายงาน
-        </button>
+        <div class="flex gap-2">
+            <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+                <i class="fas fa-print mr-2"></i> พิมพ์รายงาน
+            </button>
+        </div>
+    </div>
+
+    {{-- Filter Form --}}
+    <div class="bg-neutral-900/80 border border-orange-500/20 rounded-xl p-4 no-print">
+        <form method="GET" action="{{ route('backend.reports.outstanding') }}" class="flex flex-col md:flex-row gap-3">
+            <div class="w-full md:w-1/3">
+                <label class="block text-sm font-medium text-gray-300 mb-1">กรองตามห้อง</label>
+                <select name="room_no" class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100">
+                    <option value="">ทุกห้อง</option>
+                    @foreach($rooms ?? [] as $room)
+                        <option value="{{ $room->room_no }}" {{ ($roomNo ?? '') == $room->room_no ? 'selected' : '' }}>ห้อง {{ $room->room_no }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">
+                    <i class="fas fa-search mr-1"></i> ค้นหา
+                </button>
+            </div>
+        </form>
     </div>
 
     {{-- Summary Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-red-100 text-sm">ยอดค้างชำระทั้งหมด</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">{{ number_format($totalOutstanding, 0) }}</h3>
-                    <p class="text-red-100 text-xs mt-1">บาท</p>
-                </div>
-                <div class="text-red-100 text-4xl">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
+    <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-4">
+        <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-exclamation-triangle text-red-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-red-100 text-xs md:text-sm">ยอดค้างชำระทั้งหมด</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($totalOutstanding, 0) }}</h3>
+                <p class="text-red-100 text-xs mt-1">บาท</p>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-yellow-100 text-sm">รอชำระ</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">{{ $countUnpaid }}</h3>
-                    <p class="text-yellow-100 text-xs mt-1">ใบแจ้งหนี้</p>
-                </div>
-                <div class="text-yellow-100 text-4xl">
-                    <i class="fas fa-clock"></i>
-                </div>
+        <div class="bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-clock text-yellow-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-yellow-100 text-xs md:text-sm">รอชำระ</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">{{ $countUnpaid }}</h3>
+                <p class="text-yellow-100 text-xs mt-1">ใบแจ้งหนี้</p>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-orange-100 text-sm">เกินกำหนด</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">{{ $countOverdue }}</h3>
-                    <p class="text-orange-100 text-xs mt-1">ใบแจ้งหนี้</p>
-                </div>
-                <div class="text-orange-100 text-4xl">
-                    <i class="fas fa-exclamation-circle"></i>
-                </div>
+        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-exclamation-circle text-orange-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-orange-100 text-xs md:text-sm">เกินกำหนด</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">{{ $countOverdue }}</h3>
+                <p class="text-orange-100 text-xs mt-1">ใบแจ้งหนี้</p>
             </div>
         </div>
     </div>

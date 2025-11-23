@@ -76,16 +76,6 @@
             </select>
         </div>
 
-        {{-- ค้นหาเลขห้อง (กรองทันทีบนหน้า) --}}
-        <div class="w-full md:w-1/3">
-            <label class="block text-sm font-medium text-gray-300 mb-1">
-                ค้นหาเลขห้อง
-            </label>
-            <input type="text" id="roomSearch" placeholder="พิมพ์เลขห้อง..."
-                   class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
-                          focus:outline-none focus:ring-2 focus:ring-orange-500">
-        </div>
-
         {{-- กรองตามห้อง (Dropdown) --}}
         <div class="w-full md:w-1/3">
             <label class="block text-sm font-medium text-gray-300 mb-1">

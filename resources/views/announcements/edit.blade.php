@@ -47,7 +47,7 @@
                     <label class="block text-sm font-medium text-neutral-300 mb-2">รูปภาพปัจจุบัน</label>
                     <img src="{{ asset('storage/' . $announcement->image_path) }}" 
                          alt="Current Image" 
-                         class="max-w-xs rounded-lg border border-neutral-600">
+                         class="max-w-full md:max-w-xs rounded-lg border border-neutral-600">
                 </div>
                 @endif
 
@@ -57,7 +57,7 @@
                     <input type="file" 
                            name="image" 
                            accept="image/*"
-                           class="w-full px-4 py-2 bg-neutral-900 border border-neutral-600 rounded-lg text-neutral-200 focus:border-orange-500 focus:outline-none">
+                           class="block w-full max-w-full px-4 py-2 bg-neutral-900 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:border-orange-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-orange-600 file:text-white hover:file:bg-orange-700">
                     <p class="text-neutral-400 text-xs mt-1">รองรับไฟล์: JPG, PNG, GIF (ขนาดไม่เกิน 2MB)</p>
                     @error('image')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>

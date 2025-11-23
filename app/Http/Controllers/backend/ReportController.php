@@ -15,6 +15,7 @@ class ReportController extends Controller
     {
         $year = $request->get('year', now()->year);
         $month = $request->get('month');
+        $roomNo = $request->get('room_no');
 
         // ดึงข้อมูลรายได้จาก payments ที่อนุมัติแล้ว (status = 1)
         $query = Payment::where('status', 1)
@@ -26,6 +27,13 @@ class ReportController extends Controller
         // ถ้าเลือกเดือน ก็กรองเดือนด้วย
         if ($month) {
             $query->whereMonth('paid_date', $month);
+        }
+
+        // กรองตามห้อง
+        if ($roomNo) {
+            $query->whereHas('invoice.expense.lease.rooms', function($q) use ($roomNo) {
+                $q->where('room_no', $roomNo);
+            });
         }
 
         $payments = $query->orderBy('paid_date', 'desc')->get();
@@ -45,16 +53,29 @@ class ReportController extends Controller
             ->get()
             ->pluck('total', 'month');
 
-        return view('reports.income', compact('payments', 'totalIncome', 'year', 'month', 'monthlyIncome'));
+        // ดึงรายการห้องทั้งหมด
+        $rooms = \App\Models\Room::orderBy('room_no')->get();
+
+        return view('reports.income', compact('payments', 'totalIncome', 'year', 'month', 'monthlyIncome', 'rooms', 'roomNo'));
     }
 
     // รายงานยอดค้างชำระ
     public function outstanding(Request $request)
     {
+        $roomNo = $request->get('room_no');
+        
         // ดึงใบแจ้งหนี้ที่ยังไม่ชำระ (status = 0) หรือเกินกำหนด (status = 2)
-        $invoices = Invoice::with(['expense.lease.tenants', 'expense.lease.rooms'])
-            ->whereIn('status', [0, 2])
-            ->orderBy('due_date', 'asc')
+        $query = Invoice::with(['expense.lease.tenants', 'expense.lease.rooms'])
+            ->whereIn('status', [0, 2]);
+        
+        // กรองตามห้อง
+        if ($roomNo) {
+            $query->whereHas('expense.lease.rooms', function($q) use ($roomNo) {
+                $q->where('room_no', $roomNo);
+            });
+        }
+        
+        $invoices = $query->orderBy('due_date', 'asc')
             ->get();
 
         // สรุปยอดรวมค้างชำระ
@@ -66,6 +87,9 @@ class ReportController extends Controller
         $countUnpaid = $invoices->where('status', 0)->count();
         $countOverdue = $invoices->where('status', 2)->count();
 
-        return view('reports.outstanding', compact('invoices', 'totalOutstanding', 'countUnpaid', 'countOverdue'));
+        // ดึงรายการห้องทั้งหมด
+        $rooms = \App\Models\Room::orderBy('room_no')->get();
+
+        return view('reports.outstanding', compact('invoices', 'totalOutstanding', 'countUnpaid', 'countOverdue', 'rooms', 'roomNo'));
     }
 }

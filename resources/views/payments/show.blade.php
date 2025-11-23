@@ -2,6 +2,14 @@
 
 @section('content')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white !important; color: black !important; }
+        * { color: black !important; }
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 { background: white !important; border: 1px solid #ddd !important; }
+    }
+</style>
 <script>
     function saveAsPDF() {
         const element = document.getElementById('payment-details');
@@ -17,7 +25,8 @@
             filename: 'payment-{{ $payment->invoice->invoice_code ?? "details" }}.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {

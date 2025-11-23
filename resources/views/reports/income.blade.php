@@ -98,6 +98,15 @@
                     @endforeach
                 </select>
             </div>
+            <div class="w-full md:w-1/4">
+                <label class="block text-sm font-medium text-gray-300 mb-1">กรองตามห้อง</label>
+                <select name="room_no" class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100">
+                    <option value="">ทุกห้อง</option>
+                    @foreach($rooms ?? [] as $room)
+                        <option value="{{ $room->room_no }}" {{ ($roomNo ?? '') == $room->room_no ? 'selected' : '' }}>ห้อง {{ $room->room_no }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="flex items-end">
                 <button type="submit" class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">
                     <i class="fas fa-search mr-1"></i> ค้นหา
@@ -107,45 +116,33 @@
     </div>
 
     {{-- Summary Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-green-100 text-sm">รายได้รวม</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">{{ number_format($totalIncome, 0) }}</h3>
-                    <p class="text-green-100 text-xs mt-1">บาท</p>
-                </div>
-                <div class="text-green-100 text-4xl">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
+    <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-4">
+        <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-dollar-sign text-green-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-green-100 text-xs md:text-sm">รายได้รวม</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">{{ number_format($totalIncome, 0) }}</h3>
+                <p class="text-green-100 text-xs mt-1">บาท</p>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-blue-100 text-sm">จำนวนรายการ</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">{{ $payments->count() }}</h3>
-                    <p class="text-blue-100 text-xs mt-1">รายการ</p>
-                </div>
-                <div class="text-blue-100 text-4xl">
-                    <i class="fas fa-receipt"></i>
-                </div>
+        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-receipt text-blue-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-blue-100 text-xs md:text-sm">จำนวนรายการ</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">{{ $payments->count() }}</h3>
+                <p class="text-blue-100 text-xs mt-1">รายการ</p>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-6 shadow-lg">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-orange-100 text-sm">เฉลี่ย/รายการ</p>
-                    <h3 class="text-3xl font-bold text-white mt-1">
-                        {{ $payments->count() > 0 ? number_format($totalIncome / $payments->count(), 0) : 0 }}
-                    </h3>
-                    <p class="text-orange-100 text-xs mt-1">บาท</p>
-                </div>
-                <div class="text-orange-100 text-4xl">
-                    <i class="fas fa-chart-line"></i>
-                </div>
+        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-4 md:p-6 shadow-lg">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-chart-line text-orange-100 text-2xl md:text-4xl mb-2"></i>
+                <p class="text-orange-100 text-xs md:text-sm">เฉลี่ย/รายการ</p>
+                <h3 class="text-xl md:text-3xl font-bold text-white mt-1">
+                    {{ $payments->count() > 0 ? number_format($totalIncome / $payments->count(), 0) : 0 }}
+                </h3>
+                <p class="text-orange-100 text-xs mt-1">บาท</p>
             </div>
         </div>
     </div>
