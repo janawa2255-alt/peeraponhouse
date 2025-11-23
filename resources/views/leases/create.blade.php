@@ -159,7 +159,7 @@
                 </label>
 
                 <input type="file" name="pic_tenant" accept="image/*" required
-                    class="block px-2 py-2 text-sm text-gray-300
+                    class="w-full block px-2 py-2 text-sm text-gray-300
                         file:mr-3 file:px-3 file:py-2
                         file:rounded-lg file:border-0
                         file:bg-orange-500/80 file:text-white

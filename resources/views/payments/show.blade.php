@@ -1,45 +1,90 @@
 @extends('layouts.app')
 
 @section('content')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
     @media print {
-        .no-print { display: none !important; }
-        body { background: white !important; color: black !important; }
-        * { color: black !important; }
-        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 { background: white !important; border: 1px solid #ddd !important; }
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        /* Hide sidebar, header, and other non-essential elements */
+        nav, aside, .no-print, header, footer, form {
+            display: none !important;
+        }
+        /* Reset text colors for printing */
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400, .text-green-200, .text-red-200, .text-blue-400, .text-orange-400, .text-purple-400 {
+            color: black !important;
+            background: white !important;
+            font-family: 'Sarabun', sans-serif;
+        }
+        /* Ensure the main content takes full width */
+        main, .sidebar-expanded-margin {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        /* Container adjustments */
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700, .bg-neutral-800\/50 {
+            background-color: white !important;
+            border: 1px solid #ccc !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+        .border-neutral-700, .border-neutral-600 {
+            border-color: #ccc !important;
+        }
+        
+        /* Grid adjustments */
+        .grid {
+            display: block !important;
+        }
+        .md\:grid-cols-4 {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 10px !important;
+        }
+        .md\:grid-cols-2 {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            gap: 20px !important;
+        }
+        
+        /* Typography */
+        h1, h2, h3 {
+            color: black !important;
+            font-weight: bold !important;
+        }
+        
+        /* Print Header */
+        .print-header {
+            display: block !important;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .print-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .print-header p {
+            font-size: 14px;
+        }
+        
+        /* Specific tweaks */
+        .w-10, .h-10 {
+            display: none !important; /* Hide icons in circles */
+        }
+        .flex.items-center.gap-2.mb-4 {
+            margin-bottom: 0.5rem !important;
+        }
+    }
+    .print-header {
+        display: none;
     }
 </style>
-<script>
-    function saveAsPDF() {
-        const element = document.getElementById('payment-details');
-        const button = document.getElementById('savePdfBtn');
-        
-        // Show loading state
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้าง PDF...';
-        button.disabled = true;
-
-        const opt = {
-            margin: 10,
-            filename: 'payment-{{ $payment->invoice->invoice_code ?? "details" }}.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            button.innerHTML = originalText;
-            button.disabled = false;
-        }).catch(err => {
-            console.error('Error saving PDF:', err);
-            alert('เกิดข้อผิดพลาดในการบันทึก PDF');
-            button.innerHTML = originalText;
-            button.disabled = false;
-        });
-    }
-</script>
 
 @php
     $invoice = $payment->invoice;
@@ -49,16 +94,21 @@
 @endphp
 
 <div class="space-y-6">
+    {{-- Print Header (Visible only in print) --}}
+    <div class="print-header">
+        <h1>พีรพล เฮ้าส์ (Peerapon House)</h1>
+        <p>รายละเอียดการชำระเงิน / Payment Details</p>
+    </div>
 
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between no-print">
         <a href="{{ route('backend.payments.index') }}"
            class="inline-flex items-center text-sm text-gray-400 hover:text-gray-200">
             ← กลับไปหน้าการแจ้งชำระเงิน
         </a>
         
-        <button id="savePdfBtn" onclick="saveAsPDF()" 
-                class="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors shadow-lg shadow-red-900/20">
-            <i class="fas fa-file-pdf mr-2"></i> บันทึกเป็น PDF
+        <button onclick="window.print()" 
+                class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+            <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
         </button>
     </div>
 

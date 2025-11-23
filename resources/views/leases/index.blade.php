@@ -237,6 +237,12 @@
             </div>
         @endforelse
     </div>
+
+    {{-- Pagination --}}
+    <div class="mt-6">
+        {{ $leases->appends(request()->query())->links() }}
+    </div>
+
 </div>
 @endsection
 

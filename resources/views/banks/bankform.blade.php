@@ -43,7 +43,7 @@
     {{-- QR Code --}}
     <div>
         <label class="text-sm text-gray-200">QR Code (ถ้ามี)</label>
-        <input type="file" name="qrcode_pic" class="border border-gray-600 px-3 py-2 rounded-lg block text-gray-300">
+        <input type="file" name="qrcode_pic" class="w-full border border-gray-600 px-3 py-2 rounded-lg block text-gray-300 bg-neutral-900/60">
     </div>
 
     {{-- สถานะ --}}

@@ -185,8 +185,9 @@
 
         {{-- ปุ่มดูรายละเอียด --}}
         <a href="{{ route('backend.invoices.show', $invoice->invoice_id) }}"
-            class="flex items-center justify-center w-full px-2 py-1.5 rounded-lg text-xs font-medium
-            bg-neutral-700 hover:bg-neutral-600 text-gray-100 border border-neutral-600 transition-colors">
+           class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
+                  bg-gray-500/20 text-gray-200 border border-gray-500/40
+                  hover:bg-gray-500/30 transition-colors">
             ดูรายละเอียด
         </a>
 
@@ -198,8 +199,8 @@
             @csrf
             <button type="submit"
                     class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
-                    bg-amber-500/20 text-amber-200 border border-amber-500/40
-                    hover:bg-amber-500/30 transition-colors">
+                           bg-amber-500/20 text-amber-200 border border-amber-500/40
+                           hover:bg-amber-500/30 transition-colors">
                 ส่งแจ้งเตือน
             </button>
         </form>
@@ -214,8 +215,8 @@
                 @method('PATCH')
                 <button type="submit"
                         class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
-                            bg-red-500/20 text-red-200 border border-red-500/40
-                            hover:bg-red-500/30 transition-colors">
+                               bg-red-500/20 text-red-200 border border-red-500/40
+                               hover:bg-red-500/30 transition-colors">
                     ยกเลิก
                 </button>
             </form>
@@ -348,6 +349,11 @@
                 {{ $invoices->links() }}
             </div>
         @endif
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-6">
+        {{ $invoices->appends(request()->query())->links() }}
     </div>
 
 </div>

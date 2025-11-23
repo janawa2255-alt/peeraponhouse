@@ -3,44 +3,82 @@
 @section('content')
 <style>
     @media print {
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
         /* Hide sidebar, header, and other non-essential elements */
-        nav, aside, .no-print, header {
+        nav, aside, .no-print, header, footer {
             display: none !important;
         }
         /* Reset text colors for printing */
-        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400 {
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400, .text-green-400 {
             color: black !important;
             background: white !important;
+            font-family: 'Sarabun', sans-serif; /* Use a standard font if available, or fallback */
         }
-        /* Ensure the main content takes full width */
-        main {
+        /* Ensure the main content takes full width and remove sidebar margins */
+        main, .sidebar-expanded-margin {
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
+            max-width: 100% !important;
         }
-        /* Hide backgrounds to save ink, or keep them if needed. Let's keep borders but remove dark backgrounds */
+        /* Container adjustments */
+        .invoice-container {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            width: 100% !important;
+            max-width: 800px !important; /* Limit width for better readability on A4 */
+            margin: 0 auto !important; /* Center the container */
+        }
         .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 {
             background-color: white !important;
-            border: 1px solid #ddd !important;
+            border-bottom: 1px solid #ccc !important;
         }
-        /* Adjust grid for print */
+        /* Grid adjustments */
         .grid {
             display: block !important;
         }
-        .grid-cols-1, .md\:grid-cols-2 {
+        .md\:grid-cols-2 {
             display: flex !important;
             flex-direction: row !important;
+            justify-content: space-between !important;
             gap: 20px !important;
         }
-        /* Specific adjustments for this page */
-        .invoice-container {
-            border: none !important;
-            box-shadow: none !important;
+        /* Typography */
+        h1, h2, h3 {
+            color: black !important;
         }
+        /* Print Header */
+        .print-header {
+            display: block !important;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .print-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .print-header p {
+            font-size: 14px;
+        }
+    }
+    .print-header {
+        display: none;
     }
 </style>
 
 <div class="space-y-4">
+    {{-- Print Header (Visible only in print) --}}
+    <div class="print-header">
+        <h1>พีรพล เฮ้าส์ (Peerapon House)</h1>
+        <p>ใบแจ้งหนี้ / Invoice</p>
+    </div>
+
     <div class="flex items-center justify-between no-print">
         <h1 class="text-2xl font-semibold text-white">
             รายละเอียดใบแจ้งหนี้

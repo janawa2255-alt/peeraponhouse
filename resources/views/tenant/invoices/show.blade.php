@@ -46,9 +46,6 @@
         <h1 class="text-2xl font-bold text-white mb-2">
             รายละเอียดใบแจ้งหนี้ประจำการชำระเงิน
         </h1>
-        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-            <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
-        </button>
     </div>
 
     {{-- Invoice Detail Card --}}
@@ -160,6 +157,23 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- ปุ่มดูรูปบิล --}}
+            <div class="flex flex-wrap gap-3 no-print mt-4">
+                @if($invoice->expense && $invoice->expense->pic_water)
+                    <a href="{{ asset('storage/'.$invoice->expense->pic_water) }}" target="_blank"
+                       class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-image mr-2"></i> ดูภาพบิลค่าน้ำ
+                    </a>
+                @endif
+
+                @if($invoice->expense && $invoice->expense->pic_elec)
+                    <a href="{{ asset('storage/'.$invoice->expense->pic_elec) }}" target="_blank"
+                       class="px-4 py-2 text-sm rounded-lg bg-amber-600 text-white hover:bg-amber-700 transition-colors">
+                        <i class="fas fa-image mr-2"></i> ดูภาพบิลค่าไฟ
+                    </a>
+                @endif
             </div>
 
             {{-- Back Button --}}

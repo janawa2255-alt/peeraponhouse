@@ -35,6 +35,10 @@
     #logo-sidebar.collapsed .sidebar-badge { display:none; }
     </style>
 
+    {{-- Flatpickr Date Picker --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     @stack('styles')
 </head>
 

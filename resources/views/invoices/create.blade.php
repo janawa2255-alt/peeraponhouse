@@ -93,9 +93,12 @@
                     <label class="block text-sm font-medium text-gray-200 mb-1">
                         วันที่บันทึกใบแจ้งหนี้
                     </label>
-                    <input type="date" name="invoice_date"
-                           value="{{ old('invoice_date', now()->toDateString()) }}"
+                    <input type="text" name="invoice_date" id="invoice_date"
+                           value="{{ old('invoice_date', now()->format('d/m/Y')) }}"
+                           placeholder="วว/ดด/ปปปป"
+                           pattern="\d{2}/\d{2}/\d{4}"
                            class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
+                    <p class="mt-1 text-xs text-gray-400">รูปแบบ: วัน/เดือน/ปี (เช่น {{ now()->format('d/m/Y') }})</p>
                     @error('invoice_date')
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                     @enderror
@@ -106,8 +109,10 @@
                         กำหนดชำระ
                         <span class="text-xs text-gray-400">(ตั้งอัตโนมัติเป็นวันที่ 5 ของเดือนถัดไป แก้ไขได้)</span>
                     </label>
-                    <input type="date" name="due_date" id="due_date"
+                    <input type="text" name="due_date" id="due_date"
                            value="{{ old('due_date') }}"
+                           placeholder="วว/ดด/ปปปป"
+                           pattern="\d{2}/\d{2}/\d{4}"
                            class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
                     @error('due_date')
                         <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
@@ -379,8 +384,10 @@
             nextYear  = y + 1;
         }
 
+        const dd = '05';
         const mm = String(nextMonth).padStart(2, '0');
-        const dueStr = `${nextYear}-${mm}-05`;
+        const yyyy = nextYear;
+        const dueStr = `${dd}/${mm}/${yyyy}`; // รูปแบบ dd/mm/yyyy
 
         // ถ้ายังไม่มีค่า (เช่น ตอนแรกเข้า) หรือค่าเก่าตรงกับ pattern เดิมก็เซ็ตใหม่ได้
         if (!dueEl.value) {
@@ -412,6 +419,46 @@
     updateRoomRentFromLease();
     updateDueDate();
     recalcTotal();
+
+    // เพิ่ม Flatpickr สำหรับ date picker
+    const invoiceDateInput = document.getElementById('invoice_date');
+    const dueDateInput = document.getElementById('due_date');
+
+    if (invoiceDateInput) {
+        flatpickr(invoiceDateInput, {
+            dateFormat: "d/m/Y",
+            allowInput: true,
+            locale: {
+                firstDayOfWeek: 0,
+                weekdays: {
+                    shorthand: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                    longhand: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
+                },
+                months: {
+                    shorthand: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                    longhand: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+                }
+            }
+        });
+    }
+
+    if (dueDateInput) {
+        flatpickr(dueDateInput, {
+            dateFormat: "d/m/Y",
+            allowInput: true,
+            locale: {
+                firstDayOfWeek: 0,
+                weekdays: {
+                    shorthand: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                    longhand: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
+                },
+                months: {
+                    shorthand: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                    longhand: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+                }
+            }
+        });
+    }
 </script>
 @endpush
 

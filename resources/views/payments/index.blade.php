@@ -295,8 +295,9 @@
         @endforelse
     </div>
 
-    <div>
-        {{ $payments->links() }}
+    {{-- Pagination --}}
+    <div class="mt-6">
+        {{ $payments->appends(request()->query())->links() }}
     </div>
 
 </div>

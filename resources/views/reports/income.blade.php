@@ -3,17 +3,24 @@
 @section('content')
 <style>
     @media print {
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
         nav, aside, .no-print, header, form {
             display: none !important;
         }
         body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400 {
             color: black !important;
             background: white !important;
+            font-family: 'Sarabun', sans-serif;
         }
-        main {
+        /* Fix sidebar margin issue */
+        main, .sidebar-expanded-margin {
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
+            max-width: 100% !important;
         }
         .bg-neutral-900, .bg-neutral-800, .bg-neutral-700 {
             background-color: white !important;
@@ -23,9 +30,11 @@
         .grid {
             display: flex !important;
             gap: 10px !important;
+            margin-bottom: 20px !important;
         }
         .grid-cols-1, .md\:grid-cols-3 {
             flex-direction: row !important;
+            width: 100% !important;
         }
         /* Make cards look like simple boxes */
         .rounded-xl, .rounded-2xl {
@@ -46,13 +55,40 @@
         table {
             width: 100% !important;
             border-collapse: collapse !important;
+            font-size: 12px;
         }
         th, td {
             border: 1px solid #ddd !important;
             color: black !important;
+            padding: 8px !important;
+        }
+        /* Print Header */
+        .print-header {
+            display: block !important;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .print-header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .print-header p {
+            font-size: 12px;
+            color: #666;
         }
     }
+    .print-header {
+        display: none;
+    }
 </style>
+
+<div class="print-header">
+    <h1>Peerpol House</h1>
+    <p>รายงานรายได้ / Income Report</p>
+</div>
 
 <div class="space-y-4">
     {{-- Header --}}

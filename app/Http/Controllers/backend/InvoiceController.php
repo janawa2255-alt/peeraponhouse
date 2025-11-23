@@ -88,8 +88,8 @@ class InvoiceController extends Controller
             'water_rate'   => 'required|integer|min:0',
             'elec_total'   => 'required|integer|min:0',
             // room_rent ดึงจาก Lease ไม่ต้องเชื่อฟอร์ม
-            'invoice_date' => 'nullable|date',
-            'due_date'     => 'nullable|date',
+            'invoice_date' => 'nullable|string', // รับรูปแบบ dd/mm/yyyy
+            'due_date'     => 'nullable|string', // รับรูปแบบ dd/mm/yyyy
             'discount'     => 'nullable|integer|min:0',
             'pic_water'    => 'nullable|image|max:2048',
             'pic_elec'     => 'nullable|image|max:2048',
@@ -98,6 +98,25 @@ class InvoiceController extends Controller
             'lease_id.exists'   => 'ไม่พบข้อมูลสัญญาเช่า',
             'curr_water.gte'    => 'เลขมิเตอร์เดือนนี้ต้องมากกว่าหรือเท่ากับเดือนก่อน',
         ]);
+
+        // แปลงวันที่จาก dd/mm/yyyy เป็น Y-m-d
+        $invoiceDate = null;
+        if ($request->invoice_date) {
+            try {
+                $invoiceDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->invoice_date)->format('Y-m-d');
+            } catch (\Exception $e) {
+                return back()->withInput()->withErrors(['invoice_date' => 'รูปแบบวันที่ไม่ถูกต้อง (ใช้ วว/ดด/ปปปป)']);
+            }
+        }
+
+        $dueDate = null;
+        if ($request->due_date) {
+            try {
+                $dueDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y-m-d');
+            } catch (\Exception $e) {
+                return back()->withInput()->withErrors(['due_date' => 'รูปแบบวันที่ไม่ถูกต้อง (ใช้ วว/ดด/ปปปป)']);
+            }
+        }
 
         // กันบิลซ้ำ: ห้ามมีใบแจ้งหนี้ของสัญญานี้ + เดือน + ปี ซ้ำ
         $exists = Invoice::whereHas('expense', function ($q) use ($request) {
@@ -155,21 +174,19 @@ class InvoiceController extends Controller
                     ->store('elec_bills', 'public');
             }
 
-            // วันที่ออกบิล / วันครบกำหนด
-            $invoiceDate = $request->filled('invoice_date')
-                ? Carbon::parse($request->invoice_date)
-                : now();
+            // วันที่ออกบิล / วันครบกำหนด (ใช้ตัวแปรที่แปลงแล้วด้านบน)
+            if (!$invoiceDate) {
+                $invoiceDate = now()->format('Y-m-d');
+            }
 
             // กำหนดชำระอัตโนมัติ: วันที่ 5 ของ "เดือนถัดไป" ของรอบบิล (month/year)
-            if ($request->filled('due_date')) {
-                $dueDate = Carbon::parse($request->due_date);
-            } else {
+            if (!$dueDate) {
                 $billYear  = (int) $request->year;
                 $billMonth = (int) $request->month;
 
                 // สร้างเป็นวันที่ 5 ของเดือนรอบบิล แล้วเลื่อนไปเดือนถัดไป
                 $base    = Carbon::create($billYear, $billMonth, 5, 0, 0, 0);
-                $dueDate = $base->addMonthNoOverflow(); // = วันที่ 5 เดือนถัดไป
+                $dueDate = $base->addMonthNoOverflow()->format('Y-m-d'); // = วันที่ 5 เดือนถัดไป
             }
 
             // บันทึกตาราง Expenses
