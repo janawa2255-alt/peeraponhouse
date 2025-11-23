@@ -22,7 +22,7 @@
         <form action="{{ route('backend.tenants.store') }}" method="POST" enctype="multipart/form-data"
               class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-lg shadow-black/40 p-6 space-y-4">
             @csrf
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             {{-- ชื่อผู้เช่า --}}
                 <div>
                     <label class="text-sm text-gray-200">ชื่อผู้เช่า *</label>

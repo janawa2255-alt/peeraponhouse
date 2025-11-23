@@ -51,8 +51,11 @@
 
                     <div>
                         <p class="text-gray-300 mb-1">เลขบัตรประชาชน</p>
-                        <div class="text-gray-1000">
-                            {{ $tenant->id_card }}
+                        <div class="flex items-center gap-2">
+                            <span class="id-card-text text-gray-1000" style="filter: blur(5px); transition: filter 0.3s;">{{ $tenant->id_card }}</span>
+                            <button onclick="toggleIdCard(this)" class="p-1 text-gray-400 hover:text-white transition-colors" title="แสดง/ซ่อน">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -109,4 +112,24 @@
         </div>
     </div>
 </div>
+
+<script>
+function toggleIdCard(button) {
+    const container = button.closest('div');
+    const idCardText = container.querySelector('.id-card-text');
+    const icon = button.querySelector('i');
+    
+    if (idCardText.style.filter === 'none' || idCardText.style.filter === '') {
+        // Blur it
+        idCardText.style.filter = 'blur(5px)';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        // Show it
+        idCardText.style.filter = 'none';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 @endsection

@@ -22,6 +22,39 @@
         </a>
     </div>
 
+    {{-- Summary Cards --}}
+    <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-4">
+        {{-- Total Outstanding --}}
+        <div class="bg-red-600/20 border border-red-600/40 rounded-xl p-3 md:p-4">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-exclamation-triangle text-red-400 text-xl md:text-2xl mb-2"></i>
+                <p class="text-red-200 text-xs md:text-sm mb-1">ยอดค้างชำระทั้งหมด</p>
+                <p class="text-white font-bold text-lg md:text-2xl">{{ number_format($totalOutstanding ?? 0, 0) }}</p>
+                <p class="text-red-300 text-xs">บาท</p>
+            </div>
+        </div>
+
+        {{-- Pending Count --}}
+        <div class="bg-yellow-600/20 border border-yellow-600/40 rounded-xl p-3 md:p-4">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-clock text-yellow-400 text-xl md:text-2xl mb-2"></i>
+                <p class="text-yellow-200 text-xs md:text-sm mb-1">รอชำระ</p>
+                <p class="text-white font-bold text-lg md:text-2xl">{{ $pendingCount ?? 0 }}</p>
+                <p class="text-yellow-300 text-xs">ใบแจ้งหนี้</p>
+            </div>
+        </div>
+
+        {{-- Overdue Count --}}
+        <div class="bg-orange-600/20 border border-orange-600/40 rounded-xl p-3 md:p-4">
+            <div class="flex flex-col items-center text-center">
+                <i class="fas fa-exclamation-circle text-orange-400 text-xl md:text-2xl mb-2"></i>
+                <p class="text-orange-200 text-xs md:text-sm mb-1">เกินกำหนด</p>
+                <p class="text-white font-bold text-lg md:text-2xl">{{ $overdueCount ?? 0 }}</p>
+                <p class="text-orange-300 text-xs">ใบแจ้งหนี้</p>
+            </div>
+        </div>
+    </div>
+
     {{-- ฟอร์มกรองสถานะ + ค้นหาเลขห้อง --}}
     <form id="invoiceFilterForm" method="GET" action="{{ route('backend.invoices.index') }}"
           class="flex flex-col md:flex-row md:items-end gap-3 rounded-xl p-4">
@@ -51,6 +84,21 @@
             <input type="text" id="roomSearch" placeholder="พิมพ์เลขห้อง..."
                    class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
                           focus:outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+
+        {{-- กรองตามห้อง (Dropdown) --}}
+        <div class="w-full md:w-1/3">
+            <label class="block text-sm font-medium text-gray-300 mb-1">
+                กรองตามห้อง
+            </label>
+            <select id="roomFilter" 
+                    class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">แสดงทุกห้อง</option>
+                @foreach($rooms ?? [] as $room)
+                    <option value="{{ $room->room_no }}">ห้อง {{ $room->room_no }}</option>
+                @endforeach
+            </select>
         </div>
 
     </form>
@@ -321,7 +369,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const form   = document.getElementById('invoiceFilterForm');
     const status = document.getElementById('statusFilter');
     const search = document.getElementById('roomSearch');
+    const roomFilter = document.getElementById('roomFilter');
     const rows   = document.querySelectorAll('#invoiceTableBody tr');
+    const mobileCards = document.querySelectorAll('.grid.grid-cols-1.gap-4.md\\:hidden > div');
 
     // เปลี่ยนสถานะแล้ว submit form (รีเฟรชหน้า)
     if (status && form) {
@@ -331,14 +381,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ค้นหาเลขห้องแบบทันที (ไม่รีเฟรชหน้า)
+    function filterByRoom(keyword) {
+        keyword = keyword.toLowerCase().trim();
+
+        // Filter desktop table rows
+        rows.forEach(row => {
+            const roomNo = row.querySelector('.room-no')?.textContent.toLowerCase() ?? '';
+            row.style.display = roomNo.includes(keyword) ? '' : 'none';
+        });
+
+        // Filter mobile cards
+        mobileCards.forEach(card => {
+            const roomNo = card.textContent.toLowerCase();
+            card.style.display = roomNo.includes(keyword) ? '' : 'none';
+        });
+    }
+
     if (search) {
         search.addEventListener('input', function () {
-            const keyword = search.value.toLowerCase().trim();
+            filterByRoom(search.value);
+        });
+    }
 
-            rows.forEach(row => {
-                const roomNo = row.querySelector('.room-no')?.textContent.toLowerCase() ?? '';
-                row.style.display = roomNo.includes(keyword) ? '' : 'none';
-            });
+    if (roomFilter) {
+        roomFilter.addEventListener('change', function () {
+            filterByRoom(roomFilter.value);
         });
     }
 });

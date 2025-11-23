@@ -45,6 +45,7 @@ class Payment extends Model
     public function getMethodLabelAttribute()
     {
         return match ($this->method) {
+            0       => 'สแกนจ่าย (QR)',
             1       => $this->bank ? 'โอน - ' . $this->bank->bank_name : 'โอนผ่านธนาคาร',
             2       => 'เงินสด',
             default => 'อื่น ๆ',

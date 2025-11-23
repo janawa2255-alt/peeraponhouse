@@ -1,6 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function saveAsPDF() {
+        const element = document.getElementById('payment-details');
+        const button = document.getElementById('savePdfBtn');
+        
+        // Show loading state
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้าง PDF...';
+        button.disabled = true;
+
+        const opt = {
+            margin: 10,
+            filename: 'payment-{{ $payment->invoice->invoice_code ?? "details" }}.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }).catch(err => {
+            console.error('Error saving PDF:', err);
+            alert('เกิดข้อผิดพลาดในการบันทึก PDF');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
+</script>
+
 @php
     $invoice = $payment->invoice;
     $expense = $invoice->expense ?? null;
@@ -10,10 +41,17 @@
 
 <div class="space-y-6">
 
-    <a href="{{ route('backend.payments.index') }}"
-       class="inline-flex items-center text-sm text-gray-400 hover:text-gray-200">
-        ← กลับไปหน้าการแจ้งชำระเงิน
-    </a>
+    <div class="flex items-center justify-between">
+        <a href="{{ route('backend.payments.index') }}"
+           class="inline-flex items-center text-sm text-gray-400 hover:text-gray-200">
+            ← กลับไปหน้าการแจ้งชำระเงิน
+        </a>
+        
+        <button id="savePdfBtn" onclick="saveAsPDF()" 
+                class="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors shadow-lg shadow-red-900/20">
+            <i class="fas fa-file-pdf mr-2"></i> บันทึกเป็น PDF
+        </button>
+    </div>
 
     {{-- Success/Error Messages --}}
     @if(session('success'))
@@ -31,7 +69,7 @@
     @endif
 
     {{-- ข้อมูลแถวบน --}}
-    <div class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden">
+    <div id="payment-details" class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden">
         <div class="bg-neutral-800 px-6 py-3">
             <h1 class="text-white text-lg font-semibold">
                 รายละเอียดการแจ้งชำระเงิน
@@ -144,21 +182,21 @@
                         <div class="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
                             <i class="fas fa-file-image text-purple-400 text-lg"></i>
                         </div>
-                        <h3 class="text-white font-semibold">สลิปการโอนเงิน</h3>
+                        <h3 class="text-white font-semibold">{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}</h3>
                     </div>
 
                     @if ($payment->pic_slip)
                         <div class="text-center">
                             <button onclick="document.getElementById('slip-img').classList.toggle('hidden')"
                                     class="px-5 py-2.5 rounded-lg bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-medium transition-colors border border-neutral-600">
-                                <i class="fas fa-eye mr-2"></i>ดูสลิปการโอน
+                                <i class="fas fa-eye mr-2"></i>{{ $payment->method == 2 ? 'ดูรายละเอียด' : 'ดูสลิปการโอน' }}
                             </button>
                         </div>
 
                         <div id="slip-img" class="hidden mt-4">
                             <div class="flex justify-center">
                                 <img src="{{ asset('storage/'.$payment->pic_slip) }}"
-                                     alt="สลิปการโอน"
+                                     alt="{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอน' }}"
                                      class="max-h-96 rounded-lg shadow-2xl border-2 border-neutral-600 cursor-pointer hover:scale-105 transition-transform"
                                      onclick="window.open(this.src, '_blank')">
                             </div>
@@ -166,7 +204,7 @@
                     @else
                         <div class="text-center py-4">
                             <i class="fas fa-image text-gray-600 text-3xl mb-2"></i>
-                            <p class="text-gray-500 text-sm">ไม่มีสลิปแนบมา</p>
+                            <p class="text-gray-500 text-sm">ไม่มี{{ $payment->method == 2 ? 'รายละเอียด' : 'สลิป' }}แนบมา</p>
                         </div>
                     @endif
                 </div>

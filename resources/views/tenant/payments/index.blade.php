@@ -61,7 +61,7 @@
                         </span>
                     </td>
                     <td class="px-4 py-3 text-center">
-                        <a href="{{ route('payments.show', $payment->id) }}" 
+                        <a href="{{ route('payments.show', $payment->payment_id) }}" 
                            class="inline-block px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white text-xs rounded transition-colors border border-neutral-600">
                             ดูรายละเอียด
                         </a>
@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="pl-2">
-                    <a href="{{ route('payments.show', $payment->id) }}" 
+                    <a href="{{ route('payments.show', $payment->payment_id) }}" 
                        class="block w-full py-2 text-center bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded-lg transition-colors border border-neutral-600">
                         ดูรายละเอียด
                     </a>

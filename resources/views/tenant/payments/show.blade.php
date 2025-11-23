@@ -2,6 +2,7 @@
 
 @section('content')
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     function saveAsImage() {
         const element = document.getElementById('payment-receipt');
@@ -33,6 +34,34 @@
             button.disabled = false;
         });
     }
+
+    function saveAsPDF() {
+        const element = document.getElementById('payment-receipt');
+        const button = document.getElementById('savePdfBtn');
+        
+        // Show loading state
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้าง PDF...';
+        button.disabled = true;
+
+        const opt = {
+            margin: 10,
+            filename: 'payment-{{ $payment->invoice->invoice_code ?? "receipt" }}.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }).catch(err => {
+            console.error('Error saving PDF:', err);
+            alert('เกิดข้อผิดพลาดในการบันทึก PDF');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
 </script>
 
 <div class="space-y-6">
@@ -47,6 +76,10 @@
             </p>
         </div>
         <div class="flex gap-2">
+            <button id="savePdfBtn" onclick="saveAsPDF()" 
+                    class="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors shadow-lg shadow-red-900/20">
+                <i class="fas fa-file-pdf mr-2"></i> บันทึกเป็น PDF
+            </button>
             <button id="saveImageBtn" onclick="saveAsImage()" 
                     class="px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors shadow-lg shadow-green-900/20">
                 <i class="fas fa-image mr-2"></i> บันทึกเป็นภาพ

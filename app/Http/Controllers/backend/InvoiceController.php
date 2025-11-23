@@ -51,8 +51,22 @@ class InvoiceController extends Controller
         ->paginate(10)
         ->appends(['status' => $status]);
 
+    // Calculate summary statistics
+    $totalOutstanding = Invoice::where('status', '!=', 1)
+        ->where('status', '!=', 3)
+        ->with('expense')
+        ->get()
+        ->sum(function($invoice) {
+            return $invoice->expense->total_amount ?? 0;
+        });
+    
+    $pendingCount = Invoice::where('status', 0)->count();
+    $overdueCount = Invoice::where('status', 2)->count();
+    
+    // Get all rooms for filter
+    $rooms = \App\Models\Room::orderBy('room_no')->get();
 
-    return view('invoices.index', compact('invoices', 'status'));
+    return view('invoices.index', compact('invoices', 'status', 'totalOutstanding', 'pendingCount', 'overdueCount', 'rooms'));
 }
     public function create()
     {

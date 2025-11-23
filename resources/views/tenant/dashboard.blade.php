@@ -79,7 +79,7 @@
                     </div>
                     <div>
                         <p class="text-gray-400 text-sm">วันที่สิ้นสุด</p>
-                        <p class="text-white font-medium">{{ $currentLease->end_date ? $currentLease->end_date->format('d/m/Y') : 'ไม่ระบุ' }}</p>
+                        <p class="text-white font-medium">{{ $currentLease->end_date->format('d/m/Y') }}</p>
                     </div>
                     <div class="mt-4">
                         <a href="{{ route('lease.show') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm rounded transition-colors">
