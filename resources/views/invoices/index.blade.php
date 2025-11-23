@@ -225,6 +225,21 @@
             <div class="w-full"></div>
         @endif
 
+        {{-- ปุ่มลบ (แสดงตลอด หรือเฉพาะบางสถานะ? ให้แสดงตลอดแต่ confirm) --}}
+        <form action="{{ route('backend.invoices.destroy', $invoice->invoice_id) }}"
+              method="POST"
+              class="w-full"
+              onsubmit="return confirm('ยืนยันการลบใบแจ้งหนี้นี้? ข้อมูลและรูปภาพจะถูกลบถาวร');">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
+                           bg-red-600/20 text-red-200 border border-red-600/40
+                           hover:bg-red-600/30 transition-colors">
+                <i class="fas fa-trash-alt mr-1"></i> ลบ
+            </button>
+        </form>
+
     </div>
 </td>
                     </tr>

@@ -5,14 +5,14 @@
 <div class="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
     {{-- Background Effects --}}
     <div class="fixed inset-0 z-[-1] pointer-events-none">
-        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(249,115,22,0.15),transparent_50%)]"></div>
-        <div class="absolute bottom-0 right-0 w-full h-1/2 bg-[radial-gradient(circle_at_100%_100%,rgba(249,115,22,0.1),transparent_50%)]"></div>
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15),transparent_50%)]"></div>
+        <div class="absolute bottom-0 right-0 w-full h-1/2 bg-[radial-gradient(circle_at_100%_100%,rgba(59,130,246,0.1),transparent_50%)]"></div>
     </div>
 
     <div class="w-full max-w-md relative z-10">
         {{-- Logo / Header --}}
         <div class="text-center mb-8">
-            <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-600 to-orange-500 text-white font-bold text-2xl shadow-lg shadow-orange-900/40 mb-4">
+            <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-white font-bold text-2xl shadow-lg shadow-blue-900/40 mb-4">
                 PH
             </div>
             <h1 class="text-2xl font-bold text-white mb-2">
@@ -24,7 +24,7 @@
         </div>
 
         {{-- Login Card --}}
-        <div class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden backdrop-blur-xl">
+        <div class="bg-neutral-900/80 border border-blue-500/20 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden backdrop-blur-xl">
             <div class="px-8 py-6">
                 <form method="POST" action="{{ route('backend.login.post') }}" class="space-y-5">
                     @csrf
@@ -58,7 +58,7 @@
                                name="username" 
                                value="{{ old('username') }}"
                                class="w-full rounded-lg bg-neutral-800/60 border border-neutral-700 text-white px-4 py-3 
-                                      focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500
+                                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                                       placeholder-gray-500 transition-all"
                                placeholder="กรอกชื่อผู้ใช้" 
                                required 
@@ -76,7 +76,7 @@
                         <input type="password" 
                                name="password"
                                class="w-full rounded-lg bg-neutral-800/60 border border-neutral-700 text-white px-4 py-3 
-                                      focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500
+                                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                                       placeholder-gray-500 transition-all"
                                placeholder="กรอกรหัสผ่าน" 
                                required>
@@ -94,10 +94,10 @@
                     {{-- Submit Button --}}
                     <button type="submit"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold
-                                   rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white
-                                   hover:from-orange-400 hover:to-orange-500 
-                                   shadow-lg shadow-orange-900/40
-                                   focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-neutral-900
+                                   rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white
+                                   hover:from-blue-400 hover:to-blue-500 
+                                   shadow-lg shadow-blue-900/40
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900
                                    transition-all active:scale-[0.98]">
                         <i class="fas fa-sign-in-alt"></i>
                         เข้าสู่ระบบ
@@ -108,7 +108,7 @@
             {{-- Footer --}}
             <div class="px-8 py-4 bg-neutral-800/40 border-t border-neutral-700/50 text-center">
                 <a href="{{ route('login') }}" 
-                   class="text-sm text-gray-400 hover:text-orange-400 transition-colors">
+                   class="text-sm text-gray-400 hover:text-blue-400 transition-colors">
                     <i class="fas fa-arrow-left mr-1"></i>
                     กลับไปหน้า Login ผู้เช่า
                 </a>

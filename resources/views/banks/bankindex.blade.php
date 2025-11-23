@@ -61,9 +61,9 @@
                         @php
                             $code = (int) $bank->bank_code;
                             $typeLabel = match ($code) {
-                                // 1 => 'เงินสด',
                                 0 => 'สแกนจ่าย (QR)',
                                 1 => 'โอนผ่านธนาคาร',
+                                2 => 'เงินสด',
                                 default => 'ไม่ระบุ',
                             };
 

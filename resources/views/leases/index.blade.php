@@ -146,6 +146,21 @@
                                 ยกเลิกสัญญาเช่า
                             </a>
                         @endif
+
+                        {{-- ปุ่มลบ --}}
+                        <form action="{{ route('backend.leases.destroy', $lease->lease_id) }}"
+                              method="POST"
+                              class="inline-block"
+                              onsubmit="return confirm('ยืนยันการลบสัญญาเช่านี้? ข้อมูลและรูปภาพจะถูกลบถาวร');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
+                                           bg-red-600/20 text-red-200 border border-red-600/40
+                                           hover:bg-red-600/30">
+                                ลบ
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @empty

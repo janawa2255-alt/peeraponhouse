@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use App\Mail\EmailInvoice;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -329,4 +330,42 @@ protected function getInvoiceStatusMeta(int $status): array
     /**
      * ดึงข้อมูลจากสัญญาเช่า สำหรับหน้าออกใบแจ้งหนี้ (AJAX)
      */
+    public function fetchLease(Lease $lease)
+    {
+        $lease->load(['tenants', 'rooms', 'latestExpense']);
+        
+        return response()->json([
+            'lease' => $lease,
+            'latest_expense' => $lease->latestExpense
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $invoice = Invoice::findOrFail($id);
+        
+        // Find associated expense
+        $expense = Expense::find($invoice->expense_id);
+
+        if ($expense) {
+            // Delete water bill image
+            if ($expense->pic_water && Storage::disk('public')->exists($expense->pic_water)) {
+                Storage::disk('public')->delete($expense->pic_water);
+            }
+            
+            // Delete electricity bill image
+            if ($expense->pic_elec && Storage::disk('public')->exists($expense->pic_elec)) {
+                Storage::disk('public')->delete($expense->pic_elec);
+            }
+            
+            // Delete expense record
+            $expense->delete();
+        }
+
+        // Delete invoice record
+        $invoice->delete();
+
+        return redirect()->route('backend.invoices.index')
+            ->with('success', 'ลบใบแจ้งหนี้เรียบร้อยแล้ว');
+    }
 }

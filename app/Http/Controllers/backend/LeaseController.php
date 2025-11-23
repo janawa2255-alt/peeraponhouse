@@ -9,6 +9,7 @@ use App\Models\Room;
 use Illuminate\Http\Request;
 use App\Models\CancelLease;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class LeaseController extends Controller
 {
@@ -211,4 +212,19 @@ class LeaseController extends Controller
         return redirect()->route('backend.leases.index')
             ->with('success', 'ยกเลิกสัญญาเช่าเรียบร้อยแล้ว');
     }
+
+    public function destroy($id)
+    {
+        $lease = Lease::findOrFail($id);
+        
+        // Delete ID card image
+        if ($lease->pic_tenant && Storage::disk('public')->exists($lease->pic_tenant)) {
+            Storage::disk('public')->delete($lease->pic_tenant);
+        }
+        
+        $lease->delete();
+
+        return redirect()->route('backend.leases.index')
+            ->with('success', 'ลบสัญญาเช่าเรียบร้อยแล้ว');
     }
+}

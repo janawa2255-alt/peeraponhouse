@@ -40,7 +40,7 @@ class RoomController extends Controller
             'note'      => $request->note,
         ]);
 
-        return redirect()->route('rooms.index')
+        return redirect()->route('backend.rooms.index')
                          ->with('success', 'เพิ่มข้อมูลห้องเช่าเรียบร้อยแล้ว');
     }
 
@@ -66,7 +66,7 @@ class RoomController extends Controller
             'note'      => $request->note,
         ]);
 
-        return redirect()->route('rooms.index')
+        return redirect()->route('backend.rooms.index')
                          ->with('success', 'แก้ไขข้อมูลห้องเช่าเรียบร้อยแล้ว');
     }
 
@@ -75,7 +75,7 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
         $room->delete();
 
-        return redirect()->route('rooms.index')
+        return redirect()->route('backend.rooms.index')
                          ->with('success', 'ลบข้อมูลห้องเช่าเรียบร้อยแล้ว');
     }
 }
