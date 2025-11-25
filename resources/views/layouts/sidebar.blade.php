@@ -226,8 +226,8 @@ $nav = [
                     d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" />
             </svg>
         </button>
-        <a href="{{ url('/backend') }}" class="flex items-center gap-2">
-            <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white font-bold text-sm shadow-md">PH</span>
+            <a href="{{ url('/backend') }}" class="flex items-center gap-2">
+            <img src="{{ asset('favicon.png') }}" alt="Peerapon House Logo" class="h-10 w-10 object-contain">
             <span class="text-lg font-bold text-white tracking-tight">Peerapon House</span>
         </a>
     </div>
@@ -243,8 +243,7 @@ $nav = [
         class="flex flex-col h-full overflow-y-auto bg-neutral-900/90 backdrop-blur-xl text-gray-200 border-r border-orange-500/20 shadow-2xl shadow-black/40">
         <div class="flex items-center gap-2 px-3 pt-4 pb-3">
             <a href="{{ url('/backend') }}" class="flex items-center gap-3 group/logo">
-                <span
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-600 to-orange-500 text-white font-semibold shadow ring-1 ring-white/10">PH</span>
+                <img src="{{ asset('favicon.png') }}" alt="Peerapon House Logo" class="h-10 w-10 object-contain">
                 <span class="sidebar-text text-lg font-semibold tracking-tight text-white">Peerapon House</span>
             </a>
             

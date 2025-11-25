@@ -344,6 +344,27 @@ protected function getInvoiceStatusMeta(int $status): array
         ]);
     }
 
+    /**
+     * ยกเลิกใบแจ้งหนี้ (เปลี่ยนสถานะเป็น 3 = ยกเลิก)
+     */
+    public function cancel(Invoice $invoice)
+    {
+        // ตรวจสอบว่าใบแจ้งหนี้ยังไม่ได้ชำระ (status = 0)
+        if ($invoice->status != 0) {
+            return redirect()
+                ->route('backend.invoices.index')
+                ->with('error', 'ไม่สามารถยกเลิกใบแจ้งหนี้ที่ชำระแล้วหรือถูกยกเลิกไปแล้ว');
+        }
+
+        // เปลี่ยนสถานะเป็น 3 (ยกเลิก)
+        $invoice->status = 3;
+        $invoice->save();
+
+        return redirect()
+            ->route('backend.invoices.index')
+            ->with('success', 'ยกเลิกใบแจ้งหนี้เรียบร้อยแล้ว');
+    }
+
     public function destroy($id)
     {
         $invoice = Invoice::findOrFail($id);
