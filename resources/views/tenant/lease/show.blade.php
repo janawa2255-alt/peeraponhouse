@@ -108,7 +108,7 @@
             {{-- Action Buttons --}}
             <div class="border-t border-neutral-700 pt-4 flex flex-wrap gap-3">
                 @if($lease->pic_tenant)
-                    <a href="{{ asset('storage/' . $lease->pic_tenant) }}" 
+                    <a href="{{ asset($lease->pic_tenant) }}" 
                        target="_blank"
                        class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded border border-blue-500 transition-colors">
                         <i class="fas fa-id-card mr-2"></i>ดูสำเนาบัตรประชาชน

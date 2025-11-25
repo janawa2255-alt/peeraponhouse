@@ -121,10 +121,12 @@ class LeaseController extends Controller
         DB::transaction(function () use ($request) {
 
             $idCardPath = null;
-            if ($request->hasFile('pic_tenant')) {
-                $idCardPath = $request->file('pic_tenant')
-                    ->store('lease_idcards', 'public');
-            }
+        if ($request->hasFile('pic_tenant')) {
+            $file = $request->file('pic_tenant');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $fileName);
+            $idCardPath = 'images/' . $fileName;
+        }
 
             Lease::create([
                 'tenant_id'   => $request->tenant_id,
@@ -218,10 +220,9 @@ class LeaseController extends Controller
         $lease = Lease::findOrFail($id);
         
         // Delete ID card image
-        if ($lease->pic_tenant && Storage::disk('public')->exists($lease->pic_tenant)) {
-            Storage::disk('public')->delete($lease->pic_tenant);
-        }
-        
+    if ($lease->pic_tenant && file_exists(public_path($lease->pic_tenant))) {
+        unlink(public_path($lease->pic_tenant));
+    }    
         $lease->delete();
 
         return redirect()->route('backend.leases.index')

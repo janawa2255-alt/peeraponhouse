@@ -107,7 +107,7 @@
                 <div class="space-y-2 mt-2">
                     <p class="text-gray-400 text-sm">สำเนาบัตรประชาชนผู้เช่า:</p>
 
-                    <a href="{{ asset('storage/' . $lease->pic_tenant) }}"
+                    <a href="{{ asset($lease->pic_tenant) }}"
                        target="_blank"
                        class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
                               bg-neutral-800 text-gray-100 border border-neutral-600
