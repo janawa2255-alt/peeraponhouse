@@ -150,7 +150,10 @@ class TenantPaymentController extends Controller
         // อัปโหลดสลิป (ถ้ามี)
         $slipPath = null;
         if ($request->hasFile('slip_image')) {
-            $slipPath = $request->file('slip_image')->store('payment_slips', 'public');
+            $file = $request->file('slip_image');
+            $fileName = time() . '_slip_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $fileName);
+            $slipPath = 'images/' . $fileName;
         }
 
         // กำหนด payment method ตาม bank_code

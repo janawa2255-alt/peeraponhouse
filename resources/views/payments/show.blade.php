@@ -254,7 +254,7 @@
 
                         <div id="slip-img" class="hidden mt-4">
                             <div class="flex justify-center">
-                                <img src="{{ asset('storage/'.$payment->pic_slip) }}"
+                                <img src="{{ asset($payment->pic_slip) }}"
                                      alt="{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอน' }}"
                                      class="max-h-96 rounded-lg shadow-2xl border-2 border-neutral-600 cursor-pointer hover:scale-105 transition-transform"
                                      onclick="window.open(this.src, '_blank')">

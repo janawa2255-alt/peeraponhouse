@@ -147,16 +147,6 @@
                                    title="แก้ไข">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="inline-block"
-                                      onsubmit="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?\n\nหมายเหตุ: หากผู้เช่ามีสัญญาเช่าที่ยังใช้งานอยู่ จะไม่สามารถลบได้')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-colors"
-                                            title="ลบ">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
                             </div>
                         </td>
                     </tr>
@@ -227,14 +217,6 @@
                    class="flex-1 py-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium text-center hover:bg-amber-500/20 transition-colors border border-amber-500/30">
                     แก้ไข
                 </a>
-                <form action="{{ route('backend.tenants.destroy', $tenant->tenant_id) }}" method="POST" class="flex-1"
-                      onsubmit="return confirm('⚠️ คุณแน่ใจหรือว่าต้องการลบผู้เช่านี้?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full py-2 rounded-lg bg-red-500/10 text-red-500 text-xs font-medium text-center hover:bg-red-500/20 transition-colors border border-red-500/30">
-                        ลบ
-                    </button>
-                </form>
             </div>
         </div>
         @endforeach

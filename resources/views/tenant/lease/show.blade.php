@@ -73,7 +73,7 @@
                 </div>
                 <div class="md:col-span-2">
                     <span class="text-gray-400">วันที่สิ้นสุด:</span>
-                    <span class="text-white ml-2">{{ $lease->end_date ? \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') : 'ไม่ระบุ' }}</span>
+                    <span class="text-white ml-2">{{ $lease->end_date ? \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}</span>
                 </div>
             </div>
 
@@ -108,11 +108,10 @@
             {{-- Action Buttons --}}
             <div class="border-t border-neutral-700 pt-4 flex flex-wrap gap-3">
                 @if($lease->pic_tenant)
-                    <a href="{{ asset($lease->pic_tenant) }}" 
-                       target="_blank"
+                    <button onclick="openIdCardModal()"
                        class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded border border-blue-500 transition-colors">
                         <i class="fas fa-id-card mr-2"></i>ดูสำเนาบัตรประชาชน
-                    </a>
+                    </button>
                 @else
                     <button disabled class="px-4 py-2 bg-neutral-700 text-gray-400 text-sm rounded border border-neutral-600 cursor-not-allowed">
                         <i class="fas fa-id-card mr-2"></i>ไม่มีสำเนาบัตรประชาชน
@@ -130,6 +129,61 @@
         </div>
     </div>
 </div>
+
+{{-- ID Card Modal --}}
+@if($lease->pic_tenant)
+<div id="idCardModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    {{-- Backdrop --}}
+    <div id="idCardBackdrop" class="fixed inset-0 bg-black transition-opacity duration-300 ease-out opacity-0"></div>
+    
+    {{-- Modal Container --}}
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        {{-- Modal Content --}}
+        <div id="idCardContent" 
+             class="relative inline-block align-bottom bg-neutral-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all duration-300 ease-out sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full opacity-0 scale-95 translate-y-4">
+            
+            {{-- Modal Header --}}
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                            <i class="fas fa-id-card text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">สำเนาบัตรประชาชนผู้เช่า</h3>
+                    </div>
+                    <button onclick="closeIdCardModal()" 
+                            class="text-white/80 hover:text-white transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Modal Body --}}
+            <div class="px-6 py-5 bg-neutral-800">
+                <div class="flex justify-center">
+                    <img src="{{ asset($lease->pic_tenant) }}" 
+                         alt="สำเนาบัตรประชาชน" 
+                         class="max-w-full h-auto rounded-lg shadow-lg">
+                </div>
+            </div>
+
+            {{-- Modal Footer --}}
+            <div class="bg-neutral-900 px-6 py-4 flex justify-between items-center">
+                <a href="{{ asset($lease->pic_tenant) }}" 
+                   download
+                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-download mr-2"></i>ดาวน์โหลด
+                </a>
+                <button type="button" 
+                        onclick="closeIdCardModal()"
+                        class="px-5 py-2.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-times mr-2"></i>ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 {{-- Cancel Lease Modal --}}
 <div id="cancelModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
@@ -222,6 +276,59 @@
 </div>
 
 <script>
+@if($lease->pic_tenant)
+// Open ID Card modal with fade animation
+function openIdCardModal() {
+    const modal = document.getElementById('idCardModal');
+    const backdrop = document.getElementById('idCardBackdrop');
+    const content = document.getElementById('idCardContent');
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Trigger animation
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-75');
+        
+        content.classList.remove('opacity-0', 'scale-95', 'translate-y-4');
+        content.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+    }, 10);
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+// Close ID Card modal with fade animation
+function closeIdCardModal() {
+    const modal = document.getElementById('idCardModal');
+    const backdrop = document.getElementById('idCardBackdrop');
+    const content = document.getElementById('idCardContent');
+    
+    // Trigger close animation
+    backdrop.classList.remove('opacity-75');
+    backdrop.classList.add('opacity-0');
+    
+    content.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+    content.classList.add('opacity-0', 'scale-95', 'translate-y-4');
+    
+    // Hide modal after animation
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+}
+
+// Close ID Card modal when clicking backdrop
+document.getElementById('idCardModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeIdCardModal();
+    }
+});
+@endif
+
 // Open modal with fade animation
 function openCancelModal() {
     const modal = document.getElementById('cancelModal');
@@ -276,8 +383,15 @@ document.getElementById('cancelModal')?.addEventListener('click', function(e) {
 
 // Close modal with ESC key
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !document.getElementById('cancelModal').classList.contains('hidden')) {
-        closeCancelModal();
+    if (e.key === 'Escape') {
+        @if($lease->pic_tenant)
+        if (!document.getElementById('idCardModal').classList.contains('hidden')) {
+            closeIdCardModal();
+        } else 
+        @endif
+        if (!document.getElementById('cancelModal').classList.contains('hidden')) {
+            closeCancelModal();
+        }
     }
 });
 </script>

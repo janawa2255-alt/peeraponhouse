@@ -166,13 +166,17 @@ class InvoiceController extends Controller
             $picElecPath  = null;
 
             if ($request->hasFile('pic_water')) {
-                $picWaterPath = $request->file('pic_water')
-                    ->store('water_bills', 'public');
+                $file = $request->file('pic_water');
+                $fileName = time() . '_water_' . $file->getClientOriginalName();
+                $file->move(public_path('images'), $fileName);
+                $picWaterPath = 'images/' . $fileName;
             }
 
             if ($request->hasFile('pic_elec')) {
-                $picElecPath = $request->file('pic_elec')
-                    ->store('elec_bills', 'public');
+                $file = $request->file('pic_elec');
+                $fileName = time() . '_elec_' . $file->getClientOriginalName();
+                $file->move(public_path('images'), $fileName);
+                $picElecPath = 'images/' . $fileName;
             }
 
             // วันที่ออกบิล / วันครบกำหนด (ใช้ตัวแปรที่แปลงแล้วด้านบน)
@@ -349,13 +353,13 @@ protected function getInvoiceStatusMeta(int $status): array
 
         if ($expense) {
             // Delete water bill image
-            if ($expense->pic_water && Storage::disk('public')->exists($expense->pic_water)) {
-                Storage::disk('public')->delete($expense->pic_water);
+            if ($expense->pic_water && file_exists(public_path($expense->pic_water))) {
+                unlink(public_path($expense->pic_water));
             }
             
             // Delete electricity bill image
-            if ($expense->pic_elec && Storage::disk('public')->exists($expense->pic_elec)) {
-                Storage::disk('public')->delete($expense->pic_elec);
+            if ($expense->pic_elec && file_exists(public_path($expense->pic_elec))) {
+                unlink(public_path($expense->pic_elec));
             }
             
             // Delete expense record

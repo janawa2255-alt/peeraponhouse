@@ -235,7 +235,7 @@
             <div class="border-t border-neutral-700 pt-4">
                 <h3 class="text-white font-semibold mb-3">สลิปการชำระเงิน</h3>
                 <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <img src="{{ asset('storage/' . $payment->pic_slip) }}" 
+                    <img src="{{ asset($payment->pic_slip) }}" 
                          alt="สลิปการชำระเงิน"
                          class="max-h-96 mx-auto rounded-lg shadow-lg">
                 </div>

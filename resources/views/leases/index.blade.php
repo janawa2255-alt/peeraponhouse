@@ -120,7 +120,7 @@
                     </td>
 
                     <td class="px-4 py-3 text-gray-300">
-                        {{ \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') }}
+                        {{ $lease->end_date ? \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}
                     </td>
 
                     <td class="px-4 py-3">
@@ -146,21 +146,6 @@
                                 ยกเลิกสัญญาเช่า
                             </a>
                         @endif
-
-                        {{-- ปุ่มลบ --}}
-                        <form action="{{ route('backend.leases.destroy', $lease->lease_id) }}"
-                              method="POST"
-                              class="inline-block"
-                              onsubmit="return confirm('ยืนยันการลบสัญญาเช่านี้? ข้อมูลและรูปภาพจะถูกลบถาวร');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
-                                           bg-red-600/20 text-red-200 border border-red-600/40
-                                           hover:bg-red-600/30">
-                                ลบ
-                            </button>
-                        </form>
                     </td>
                 </tr>
             @empty
@@ -222,7 +207,7 @@
                     </div>
                     <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
                         <p class="text-[10px] text-gray-500 mb-0.5">วันสิ้นสุด</p>
-                        <p class="text-gray-200 font-medium">{{ \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') }}</p>
+                        <p class="text-gray-200 font-medium">{{ $lease->end_date ? \Carbon\Carbon::parse($lease->end_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}</p>
                     </div>
                 </div>
 

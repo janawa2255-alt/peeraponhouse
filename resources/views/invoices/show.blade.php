@@ -159,17 +159,17 @@
             {{-- ปุ่มดูรูปบิล --}}
             <div class="flex flex-wrap gap-3 no-print">
                 @if($expense && $expense->pic_water)
-                    <a href="{{ asset('storage/'.$expense->pic_water) }}" target="_blank"
-                       class="px-4 py-2 text-sm rounded-lg bg-neutral-700 text-white hover:bg-neutral-600">
-                        ดูภาพบิลค่าน้ำ
-                    </a>
+                    <button onclick="openBillModal('water')"
+                       class="px-4 py-2 text-sm rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors">
+                        <i class="fas fa-image mr-2"></i>ดูภาพบิลค่าน้ำ
+                    </button>
                 @endif
 
                 @if($expense && $expense->pic_elec)
-                    <a href="{{ asset('storage/'.$expense->pic_elec) }}" target="_blank"
-                       class="px-4 py-2 text-sm rounded-lg bg-neutral-700 text-white hover:bg-neutral-600">
-                        ดูภาพบิลค่าไฟ
-                    </a>
+                    <button onclick="openBillModal('elec')"
+                       class="px-4 py-2 text-sm rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors">
+                        <i class="fas fa-image mr-2"></i>ดูภาพบิลค่าไฟ
+                    </button>
                 @endif
             </div>
 
@@ -217,4 +217,140 @@
         </div>
     </div>
 </div>
+
+{{-- Bill Image Modal --}}
+@if(($expense && $expense->pic_water) || ($expense && $expense->pic_elec))
+<div id="billModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    {{-- Backdrop --}}
+    <div id="billBackdrop" class="fixed inset-0 bg-black transition-opacity duration-300 ease-out opacity-0"></div>
+    
+    {{-- Modal Container --}}
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        {{-- Modal Content --}}
+        <div id="billContent" 
+             class="relative inline-block align-bottom bg-neutral-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all duration-300 ease-out sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full opacity-0 scale-95 translate-y-4">
+            
+            {{-- Modal Header --}}
+            <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                            <i class="fas fa-file-invoice text-white text-lg"></i>
+                        </div>
+                        <h3 id="billModalTitle" class="text-xl font-bold text-white">ภาพบิล</h3>
+                    </div>
+                    <button onclick="closeBillModal()" 
+                            class="text-white/80 hover:text-white transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Modal Body --}}
+            <div class="px-6 py-5 bg-neutral-800">
+                <div class="flex justify-center">
+                    <img id="billImage" 
+                         src="" 
+                         alt="ภาพบิล" 
+                         class="max-w-full h-auto rounded-lg shadow-lg">
+                </div>
+            </div>
+
+            {{-- Modal Footer --}}
+            <div class="bg-neutral-900 px-6 py-4 flex justify-between items-center">
+                <a id="billDownloadLink" 
+                   href="" 
+                   download
+                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-download mr-2"></i>ดาวน์โหลด
+                </a>
+                <button type="button" 
+                        onclick="closeBillModal()"
+                        class="px-5 py-2.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-times mr-2"></i>ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const billPaths = {
+    water: "{{ $expense && $expense->pic_water ? asset($expense->pic_water) : '' }}",
+    elec: "{{ $expense && $expense->pic_elec ? asset($expense->pic_elec) : '' }}"
+};
+
+// Open Bill modal with fade animation
+function openBillModal(type) {
+    const modal = document.getElementById('billModal');
+    const backdrop = document.getElementById('billBackdrop');
+    const content = document.getElementById('billContent');
+    const image = document.getElementById('billImage');
+    const title = document.getElementById('billModalTitle');
+    const downloadLink = document.getElementById('billDownloadLink');
+    
+    // Set image source and title based on type
+    if (type === 'water') {
+        image.src = billPaths.water;
+        title.textContent = 'ภาพบิลค่าน้ำ';
+        downloadLink.href = billPaths.water;
+    } else if (type === 'elec') {
+        image.src = billPaths.elec;
+        title.textContent = 'ภาพบิลค่าไฟ';
+        downloadLink.href = billPaths.elec;
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Trigger animation
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-75');
+        
+        content.classList.remove('opacity-0', 'scale-95', 'translate-y-4');
+        content.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+    }, 10);
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+// Close Bill modal with fade animation
+function closeBillModal() {
+    const modal = document.getElementById('billModal');
+    const backdrop = document.getElementById('billBackdrop');
+    const content = document.getElementById('billContent');
+    
+    // Trigger close animation
+    backdrop.classList.remove('opacity-75');
+    backdrop.classList.add('opacity-0');
+    
+    content.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+    content.classList.add('opacity-0', 'scale-95', 'translate-y-4');
+    
+    // Hide modal after animation
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking backdrop
+document.getElementById('billModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeBillModal();
+    }
+});
+
+// Close modal with ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !document.getElementById('billModal').classList.contains('hidden')) {
+        closeBillModal();
+    }
+});
+</script>
+@endif
 @endsection
