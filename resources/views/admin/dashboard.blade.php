@@ -23,7 +23,7 @@
                     <p class="text-blue-100 text-sm">ห้องทั้งหมด</p>
                     <p class="text-3xl font-bold mt-2">{{ \App\Models\Room::count() }}</p>
                     <p class="text-xs text-blue-100 mt-1">
-                        ว่าง: {{ \App\Models\Room::where('status', 1)->count() }} ห้อง
+                        ว่าง: {{ \App\Models\Room::where('status', 0)->count() }} ห้อง | มีผู้เช่า: {{ \App\Models\Room::where('status', 1)->count() }} ห้อง
                     </p>
                 </div>
                 <div class="bg-white/20 p-4 rounded-lg">
@@ -39,7 +39,7 @@
                     <p class="text-green-100 text-sm">ผู้เช่าทั้งหมด</p>
                     <p class="text-3xl font-bold mt-2">{{ \App\Models\Tenant::where('status', 0)->count() }}</p>
                     <p class="text-xs text-green-100 mt-1">
-                        กำลังเช่า: {{ \App\Models\Lease::where('status', 0)->count() }} สัญญา
+                        กำลังเช่า: {{ \App\Models\Lease::where('status', 1)->count() }} สัญญา
                     </p>
                 </div>
                 <div class="bg-white/20 p-4 rounded-lg">
@@ -91,7 +91,7 @@
             </div>
             @php
                 $totalRooms = \App\Models\Room::count();
-                $occupiedRooms = \App\Models\Room::where('status', 0)->count();
+                $occupiedRooms = \App\Models\Room::where('status', 1)->count();
                 $occupancyRate = $totalRooms > 0 ? ($occupiedRooms / $totalRooms) * 100 : 0;
             @endphp
             <div class="space-y-2">
@@ -139,17 +139,17 @@
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <span class="text-neutral-400 text-sm">สัญญาที่ใช้งานอยู่</span>
-                    <span class="text-white font-medium">{{ \App\Models\Lease::where('status', 0)->count() }} สัญญา</span>
+                    <span class="text-white font-medium">{{ \App\Models\Lease::where('status', 1)->count() }} สัญญา</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-neutral-400 text-sm">ใกล้หมดอายุ (30 วัน)</span>
                     <span class="text-yellow-500 font-medium">
-                        {{ \App\Models\Lease::where('status', 0)->where('end_date', '<=', now()->addDays(30))->count() }} สัญญา
+                        {{ \App\Models\Lease::where('status', 1)->where('end_date', '<=', now()->addDays(30))->count() }} สัญญา
                     </span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-neutral-400 text-sm">สัญญาที่ยกเลิก</span>
-                    <span class="text-neutral-400 font-medium">{{ \App\Models\Lease::where('status', 1)->count() }} สัญญา</span>
+                    <span class="text-neutral-400 font-medium">{{ \App\Models\Lease::where('status', 3)->count() }} สัญญา</span>
                 </div>
             </div>
         </div>
