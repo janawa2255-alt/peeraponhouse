@@ -124,7 +124,7 @@
                     <p>
                         <span class="font-semibold">ครบกำหนดชำระ:</span>
                         <span class="ml-2">
-                            {{ optional($invoice->due_date)->format('d/m/Y') }}
+                            {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'ไม่มีกำหนด' }}
                         </span>
                     </p>
                     @if($expense)

@@ -197,7 +197,7 @@
                             {{ $room->room_no ?? '-' }}
                         </td>
                         <td class="px-4 py-3">
-                            {{ optional($invoice->due_date)->format('d/m/Y') }}
+                            {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : '\u0e44\u0e21\u0e48\u0e21\u0e35\u0e01\u0e33\u0e2b\u0e19\u0e14' }}
                         </td>
                         <td class="px-4 py-3 text-right font-medium text-red-400">
                             {{ number_format($expense->total_amount ?? 0, 0) }} ฿

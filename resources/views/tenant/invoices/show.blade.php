@@ -89,7 +89,7 @@
                 </div>
                 <div>
                     <span class="text-gray-400">วันครบกำหนด:</span>
-                    <span class="text-white ml-2">{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</span>
+                    <span class="text-white ml-2">{{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}</span>
                 </div>
             </div>
 

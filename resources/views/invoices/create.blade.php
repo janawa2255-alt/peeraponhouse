@@ -107,7 +107,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-200 mb-1">
                         กำหนดชำระ
-                        <span class="text-xs text-gray-400">(ตั้งอัตโนมัติเป็นวันที่ 5 ของเดือนถัดไป แก้ไขได้)</span>
+                        <span class="text-xs text-gray-400">(ไม่บังคับ - ถ้าไม่กรอกจะแสดงเป็น "ไม่มีกำหนด")</span>
                     </label>
                     <input type="text" name="due_date" id="due_date"
                            value="{{ old('due_date') }}"
@@ -124,20 +124,30 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-200 mb-1">
-                        เลขมิเตอร์น้ำก่อน
+                        เลขมิเตอร์น้ำก่อน <span class="text-red-400">*</span>
                     </label>
                     <input type="number" name="prev_water" id="prev_water"
                         value="{{ old('prev_water') }}"
+                        required
+                        min="0"
                         class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
+                    @error('prev_water')
+                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-200 mb-1">
-                        เลขมิเตอร์น้ำใหม่
+                        เลขมิเตอร์น้ำใหม่ <span class="text-red-400">*</span>
                     </label>
                     <input type="number" name="curr_water" id="curr_water"
                         value="{{ old('curr_water') }}"
+                        required
+                        min="0"
                         class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
+                    @error('curr_water')
+                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -151,11 +161,16 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-200 mb-1">
-                        ค่าไฟตามบิล
+                        ค่าไฟตามบิล <span class="text-red-400">*</span>
                     </label>
                     <input type="number" name="elec_total" id="elec_total"
                         value="{{ old('elec_total') }}"
+                        required
+                        min="0"
                         class="w-full rounded-lg bg-neutral-800 border border-neutral-700 text-gray-100 text-sm px-3 py-2">
+                    @error('elec_total')
+                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
@@ -363,40 +378,7 @@
         recalcTotal();
     }
 
-    // ตั้งกำหนดชำระอัตโนมัติเป็นวันที่ 5 ของ "เดือนถัดไป" จาก month/year ที่เลือก
-    function updateDueDate() {
-        const monthEl = document.getElementById('month');
-        const yearEl  = document.getElementById('year');
-        const dueEl   = document.getElementById('due_date');
-
-        if (!monthEl || !yearEl || !dueEl) return;
-
-        const m = parseInt(monthEl.value);
-        const y = parseInt(yearEl.value);
-
-        if (!m || !y) return;
-
-        let nextMonth = m + 1;
-        let nextYear  = y;
-
-        if (nextMonth > 12) {
-            nextMonth = 1;
-            nextYear  = y + 1;
-        }
-
-        const dd = '05';
-        const mm = String(nextMonth).padStart(2, '0');
-        const yyyy = nextYear;
-        const dueStr = `${dd}/${mm}/${yyyy}`; // รูปแบบ dd/mm/yyyy
-
-        // ถ้ายังไม่มีค่า (เช่น ตอนแรกเข้า) หรือค่าเก่าตรงกับ pattern เดิมก็เซ็ตใหม่ได้
-        if (!dueEl.value) {
-            dueEl.value = dueStr;
-        } else {
-            // ถ้าอยากให้เปลี่ยนทุกครั้งที่เปลี่ยนเดือน/ปี ก็ใช้บรรทัดด้านล่างแทน
-            // dueEl.value = dueStr;
-        }
-    }
+    // ฟังก์ชัน updateDueDate ถูกลบออกแล้ว - ไม่ตั้งค่ากำหนดชำระอัตโนมัติอีกต่อไป
 
     ['prev_water', 'curr_water', 'elec_total', 'room_rent', 'water_rate', 'discount'].forEach(id => {
         const el = document.getElementById(id);
@@ -410,14 +392,8 @@
         leaseSelect.addEventListener('change', updateRoomRentFromLease);
     }
 
-    const monthEl = document.getElementById('month');
-    const yearEl  = document.getElementById('year');
-    if (monthEl) monthEl.addEventListener('change', updateDueDate);
-    if (yearEl)  yearEl.addEventListener('input', updateDueDate);
-
     // เรียกครั้งแรกตอนโหลดหน้า เพื่อเซ็ตค่าเริ่มต้น
     updateRoomRentFromLease();
-    updateDueDate();
     recalcTotal();
 
     // เพิ่ม Flatpickr สำหรับ date picker

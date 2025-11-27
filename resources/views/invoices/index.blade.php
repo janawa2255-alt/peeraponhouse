@@ -170,7 +170,7 @@
                         </td>
 
                         <td class="px-6 py-3 whitespace-nowrap">
-                            {{ optional($invoice->due_date)->format('d/m/Y') }}
+                            {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'ไม่มีกำหนด' }}
                         </td>
 
                         <td class="px-6 py-3">
@@ -285,7 +285,7 @@
                 <div class="flex justify-between items-start mb-3 pl-2">
                     <div>
                         <h3 class="text-white font-bold text-lg">{{ $invoice->invoice_code }}</h3>
-                        <p class="text-xs text-gray-400">ครบกำหนด: {{ optional($invoice->due_date)->format('d/m/Y') }}</p>
+                        <p class="text-xs text-gray-400">ครบกำหนด: {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'ไม่มีกำหนด' }}</p>
                     </div>
                     <span class="px-2 py-1 rounded text-[10px] font-bold {{ $statusClass }}">
                         {{ $statusLabel }}

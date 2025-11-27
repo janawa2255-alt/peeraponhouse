@@ -36,7 +36,7 @@
                         {{ number_format($invoice->expense->total_amount ?? 0, 0) }} ฿
                     </td>
                     <td class="px-4 py-3 text-center text-white">
-                        {{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}
+                        {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}
                     </td>
                     <td class="px-4 py-3 text-center">
                         @php
@@ -114,7 +114,7 @@
                 <div class="grid grid-cols-2 gap-2 pl-2 text-sm mb-4">
                     <div class="bg-neutral-800/50 p-2 rounded border border-neutral-800">
                         <p class="text-[10px] text-gray-500 mb-0.5">ครบกำหนด</p>
-                        <p class="text-gray-200 font-medium">{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</p>
+                        <p class="text-gray-200 font-medium">{{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') : 'ไม่มีกำหนด' }}</p>
                     </div>
                 </div>
 

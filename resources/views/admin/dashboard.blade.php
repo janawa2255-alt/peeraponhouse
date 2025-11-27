@@ -184,9 +184,9 @@
                                 ห้อง {{ $invoice->expense->lease->rooms->room_no ?? 'N/A' }} - 
                                 {{ $invoice->expense->lease->tenants->name ?? 'N/A' }}
                             </p>
-                            <p class="text-xs mt-1 {{ $invoice->due_date->isPast() ? 'text-red-400' : 'text-yellow-400' }}">
+                            <p class="text-xs mt-1 {{ optional($invoice->due_date)->isPast() ? 'text-red-400' : 'text-yellow-400' }}">
                                 <i class="fas fa-clock mr-1"></i>
-                                ครบกำหนด: {{ $invoice->due_date->format('d/m/Y') }}
+                                ครบกำหนด: {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'ไม่มีกำหนด' }}
                             </p>
                         </div>
                         <div class="text-right">
