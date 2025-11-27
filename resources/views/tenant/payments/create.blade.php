@@ -234,6 +234,7 @@
                     ยกเลิก
                 </button>
                 <button type="submit" 
+                        id="submit-button"
                         class="px-6 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors">
                     ยืนยัน
                 </button>
@@ -389,6 +390,56 @@
                 }
             }
         });
+
+        // Form validation before submission
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            // Check payment type
+            const paymentType = paymentTypeSelect.value;
+            if (!paymentType) {
+                e.preventDefault();
+                alert('⚠️ กรุณาเลือกประเภทการชำระเงิน');
+                paymentTypeSelect.focus();
+                paymentTypeSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+
+            // Check bank selection (except for cash)
+            if (paymentType !== '2') {
+                const bankId = bankSelect.value;
+                if (!bankId) {
+                    e.preventDefault();
+                    alert('⚠️ กรุณาเลือกบัญชีที่ต้องการชำระเงิน');
+                    bankSelect.focus();
+                    bankSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+
+            // Check slip upload (required for transfer and QR)
+            const slipFile = slipInput.files[0];
+            const isSlipRequired = slipInput.hasAttribute('required');
+            if (isSlipRequired && !slipFile) {
+                e.preventDefault();
+                alert('⚠️ กรุณาแนบสลิปการโอนเงิน');
+                slipInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+
+            // Check date
+            const paidDate = document.getElementById('paid_date').value;
+            if (!paidDate) {
+                e.preventDefault();
+                alert('⚠️ กรุณาเลือกวันที่ชำระเงิน');
+                document.getElementById('paid_date_display').focus();
+                document.getElementById('paid_date_display').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+
+            // All validations passed
+            return true;
+        });
     });
+
 </script>
 @endsection

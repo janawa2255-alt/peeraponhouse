@@ -19,6 +19,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share badge counts with sidebar
+        view()->composer('layouts.sidebar', function ($view) {
+            $pendingPaymentsCount = \App\Models\Payment::where('status', 0)->count();
+            $cancelledLeasesCount = \App\Models\CancelLease::where('status', 0)->count(); // รออนุมัติ
+            
+            $view->with([
+                'pendingPaymentsCount' => $pendingPaymentsCount,
+                'cancelledLeasesCount' => $cancelledLeasesCount,
+            ]);
+        });
     }
 }

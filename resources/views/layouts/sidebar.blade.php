@@ -5,7 +5,7 @@ $nav = [
 [
 'label' => 'หน้าแรก',
 'href' => route('backend.dashboard'),
-'patterns' => ['backend', 'dashboard'],
+'patterns' => ['backend', 'backend/dashboard'],
 'badge' => null,
 'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
     <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
@@ -16,7 +16,7 @@ $nav = [
  [
         'label' => 'ข้อมูลห้องเช่า',
         'href' => route('backend.rooms.index'),
-        'patterns' => ['rooms', 'rooms/*'],
+        'patterns' => ['backend/rooms', 'backend/rooms/*'],
         'badge' => null,
         'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
             viewBox="0 0 20 20">
@@ -26,7 +26,7 @@ $nav = [
     [
         'label' => 'ข้อมูลพนักงาน',
         'href' => route('backend.employees.index'),
-        'patterns' => ['employees', 'employees/*'],
+        'patterns' => ['backend/employees', 'backend/employees/*'],
         'badge' => null,
         'icon' => '
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -41,7 +41,7 @@ $nav = [
     [
         'label' => 'บัญชีธนาคาร',
         'href' => route('backend.banks.index'),
-        'patterns' => ['banks', 'banks/*'],
+        'patterns' => ['backend/banks', 'backend/banks/*'],
         'badge' => null,
         'icon' => '
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -58,7 +58,7 @@ $nav = [
                 [
                 'label' => 'ข้อมูลผู้เช่า',
                 'href' => route('backend.tenants.index'),
-                'patterns' => ['products', 'products/*'],
+                'patterns' => ['backend/tenants', 'backend/tenants/*'],
                 'badge' => null,
                             'icon' => '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
                 <path
@@ -68,7 +68,7 @@ $nav = [
     [
             'label' => 'ข้อมูลสัญญาเช่า',
             'href' => route('backend.leases.index'),
-            'patterns' => ['leases', 'leases/*'],
+            'patterns' => ['backend/leases', 'backend/leases/*'],
             'badge' => null,
                             'icon' => '
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -86,8 +86,8 @@ $nav = [
     [
             'label' => 'รายการยกเลิกสัญญาเช่า',
             'href' =>  route('backend.cancel_lease.index'),
-            'patterns' => ['cancel_lease', 'cancel_lease/*'],
-            'badge' => null,
+            'patterns' => ['backend/cancel_lease', 'backend/cancel_lease/*'],
+            'badge' => $cancelledLeasesCount ?? 0,
             'icon' => '
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
@@ -104,7 +104,7 @@ $nav = [
     [
                  'label' => 'รายการใบแจ้งหนี้',
             'href' => route('backend.invoices.index'),
-            'patterns' => ['invoices', 'invoices/*'],
+            'patterns' => ['backend/invoices', 'backend/invoices/*'],
             'badge' => null,
             'icon' => '
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -121,8 +121,8 @@ $nav = [
     [
             'label' => 'ข้อมูลการแจ้งชำระเงิน',
             'href' => route('backend.payments.index'),
-            'patterns' => ['payments', 'payments/*'],
-            'badge' => '',
+            'patterns' => ['backend/payments', 'backend/payments/*'],
+            'badge' => $pendingPaymentsCount ?? 0,
             'icon' => '
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
@@ -140,7 +140,7 @@ $nav = [
     [
             'label' => 'จัดการประกาศ',
             'href' => route('backend.announcements.index'),
-            'patterns' => ['announcements', 'announcements/*'],
+            'patterns' => ['backend/announcements', 'backend/announcements/*'],
             'badge' => '',
             'icon' => '
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -160,7 +160,7 @@ $nav = [
     [
         'label' => 'รายงานรายได้',
         'href' => route('backend.reports.income'),
-        'patterns' => ['reports/income', 'reports/income/*'],
+        'patterns' => ['backend/reports/income', 'backend/reports/income/*'],
         'badge' => null,
         'icon' => '
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -174,7 +174,7 @@ $nav = [
     [
         'label' => 'รายงานยอดค้างชำระ',
         'href' => route('backend.reports.outstanding'),
-        'patterns' => ['reports/outstanding', 'reports/outstanding/*'],
+        'patterns' => ['backend/reports/outstanding', 'backend/reports/outstanding/*'],
         'badge' => null,
         'icon' => '
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -294,7 +294,7 @@ $nav = [
                     <span class="shrink-0 {{ $isActive ? 'text-orange-300' : 'text-gray-400 group-hover:text-white' }}"
                         aria-hidden="true">{!! $item['icon'] !!}</span>
                     <span class="flex-1 sidebar-text truncate">{{ $item['label'] }}</span>
-                    @if($item['badge'])
+                    @if($item['badge'] && $item['badge'] > 0)
                     <span
                         class="sidebar-badge inline-flex items-center justify-center px-2 text-[0.6rem] font-medium text-orange-100 bg-orange-500/25 rounded-full ring-1 ring-orange-400/40">{{ $item['badge'] }}</span>
                     @endif
