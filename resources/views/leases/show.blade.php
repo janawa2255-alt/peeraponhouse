@@ -237,10 +237,16 @@
 
             {{-- Modal Body --}}
             <div class="px-6 py-5 bg-neutral-800">
+                <p class="text-gray-400 text-sm mb-3 text-center">
+                    <i class="fas fa-info-circle mr-1"></i>คลิกที่รูปเพื่อดูแบบชัดเจน
+                </p>
                 <div class="flex justify-center">
-                    <img src="{{ asset($lease->pic_tenant) }}" 
+                    <img id="id-card-image"
+                         src="{{ asset($lease->pic_tenant) }}" 
                          alt="สำเนาบัตรประชาชน" 
-                         class="max-w-full h-auto rounded-lg shadow-lg">
+                         class="max-w-full h-auto rounded-lg shadow-lg cursor-pointer transition-all duration-300 blur-md hover:blur-sm"
+                         onclick="toggleIdCardBlur(this)"
+                         title="คลิกเพื่อดูแบบชัดเจน">
                 </div>
             </div>
 
@@ -319,6 +325,19 @@ document.addEventListener('keydown', function(e) {
         closeIdCardModal();
     }
 });
+
+// Toggle blur effect on ID card
+function toggleIdCardBlur(img) {
+    if (img.classList.contains('blur-md')) {
+        img.classList.remove('blur-md', 'hover:blur-sm');
+        img.classList.add('blur-none');
+        img.title = 'คลิกเพื่อเบลออีกครั้ง';
+    } else {
+        img.classList.remove('blur-none');
+        img.classList.add('blur-md', 'hover:blur-sm');
+        img.title = 'คลิกเพื่อดูแบบชัดเจน';
+    }
+}
 </script>
 @endif
 @endsection
