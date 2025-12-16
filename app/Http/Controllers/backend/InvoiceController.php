@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
-   public function index(Request $request)
+    public function index(Request $request)
 {
+    // Update overdue invoices before displaying
+    $this->updateOverdueInvoices();
 
     $status = $request->query('status', 'all');
 
@@ -97,7 +99,7 @@ class InvoiceController extends Controller
         ], [
             'lease_id.required' => 'กรุณาเลือกห้อง',
             'lease_id.exists'   => 'ไม่พบข้อมูลสัญญาเช่า',
-            'curr_water.gte'    => 'เลขมิเตอร์เดือนนี้ต้องมากกว่าหรือเท่ากับเดือนก่อน',
+            'curr_water.gte'    => 'เลขมิเตอร์ไม่ถูกต้อง',
         ]);
 
         // แปลงวันที่จาก dd/mm/yyyy เป็น Y-m-d
@@ -363,6 +365,18 @@ protected function getInvoiceStatusMeta(int $status): array
         return redirect()
             ->route('backend.invoices.index')
             ->with('success', 'ยกเลิกใบแจ้งหนี้เรียบร้อยแล้ว');
+    }
+
+    /**
+     * Automatically update overdue invoices
+     * Sets status to 2 (overdue) for unpaid invoices past their due date
+     */
+    protected function updateOverdueInvoices()
+    {
+        Invoice::where('status', 0) // Only unpaid invoices
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now()->format('Y-m-d'))
+            ->update(['status' => 2]);
     }
 
     public function destroy($id)

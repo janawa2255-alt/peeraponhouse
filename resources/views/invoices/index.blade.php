@@ -55,12 +55,12 @@
         </div>
     </div>
 
-    {{-- ฟอร์มกรองสถานะ + ค้นหาเลขห้อง --}}
+    {{-- ฟอร์มกรองสถานะ + ค้นหาเลขห้อง + ค้นหาเลขบิล --}}
     <form id="invoiceFilterForm" method="GET" action="{{ route('backend.invoices.index') }}"
           class="flex flex-col md:flex-row md:items-end gap-3 rounded-xl p-4">
 
         {{-- เลือกสถานะ --}}
-        <div class="w-full md:w-1/3">
+        <div class="w-full md:w-1/4">
             <label class="block text-sm font-medium text-gray-300 mb-1">
                 กรองตามสถานะใบแจ้งหนี้
             </label>
@@ -76,8 +76,18 @@
             </select>
         </div>
 
+        {{-- ค้นหาเลขบิล --}}
+        <div class="w-full md:w-1/4">
+            <label class="block text-sm font-medium text-gray-300 mb-1">
+                ค้นหาเลขที่ใบแจ้งหนี้
+            </label>
+            <input type="text" id="invoiceCodeSearch" placeholder="เช่น INV-2025-001"
+                   class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
+                          focus:outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+
         {{-- กรองตามห้อง (Dropdown) --}}
-        <div class="w-full md:w-1/3">
+        <div class="w-full md:w-1/4">
             <label class="block text-sm font-medium text-gray-300 mb-1">
                 กรองตามห้อง
             </label>
@@ -109,6 +119,7 @@
                         <th class="px-6 py-3">เลขที่ใบแจ้งหนี้</th>
                         <th class="px-6 py-3">ผู้เช่า</th>
                         <th class="px-6 py-3">ห้อง</th>
+                        <th class="px-6 py-3 whitespace-nowrap">เดือน/ปี</th>
                         <th class="px-6 py-3 text-right">ยอดรวม</th>
                         <th class="px-6 py-3">ครบกำหนด</th>
                         <th class="px-6 py-3">สถานะ</th>
@@ -153,12 +164,29 @@
                             {{ $invoice->invoice_code }}
                         </td>
 
-                        <td class="px-6 py-3">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             {{ optional($lease)->tenant->name ?? optional($tenant)->name ?? '-' }}
                         </td>
 
-                        <td class="px-6 py-3 room-no">
+                        <td class="px-6 py-3 room-no whitespace-nowrap">
                             {{ $room->room_no ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap">
+                            @if($expense)
+                                @php
+                                    $months = [
+                                        '01' => 'ม.ค.', '02' => 'ก.พ.', '03' => 'มี.ค.',
+                                        '04' => 'เม.ย.', '05' => 'พ.ค.', '06' => 'มิ.ย.',
+                                        '07' => 'ก.ค.', '08' => 'ส.ค.', '09' => 'ก.ย.',
+                                        '10' => 'ต.ค.', '11' => 'พ.ย.', '12' => 'ธ.ค.',
+                                    ];
+                                    $monthName = $months[str_pad($expense->month, 2, '0', STR_PAD_LEFT)] ?? '';
+                                @endphp
+                                {{ $monthName }} {{ $expense->year + 543 }}
+                            @else
+                                -
+                            @endif
                         </td>
 
                         <td class="px-6 py-3 text-right whitespace-nowrap">
@@ -173,22 +201,22 @@
                             {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'ไม่มีกำหนด' }}
                         </td>
 
-                        <td class="px-6 py-3">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $statusClass }}">
                                 {{ $statusLabel }}
                             </span>
                         </td>
 
-  <td class="px-6 py-3">
+  <td class="px-3 py-3">
     {{-- ใช้ Grid เพื่อล็อคคอลัมน์ให้ตรงกันทุกแถว --}}
-    <div class="grid grid-cols-[120px_120px_80px] gap-2 justify-center">
+    <div class="grid grid-cols-[100px_100px_70px] gap-2 justify-center">
 
         {{-- ปุ่มดูรายละเอียด --}}
         <a href="{{ route('backend.invoices.show', $invoice->invoice_id) }}"
            class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
                   bg-gray-500/20 text-gray-200 border border-gray-500/40
                   hover:bg-gray-500/30 transition-colors">
-            ดูรายละเอียด
+            รายละเอียด
         </a>
 
         {{-- ปุ่มส่งแจ้งเตือน --}}
@@ -201,7 +229,7 @@
                     class="flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded-lg
                            bg-amber-500/20 text-amber-200 border border-amber-500/40
                            hover:bg-amber-500/30 transition-colors">
-                ส่งแจ้งเตือน
+                แจ้งเตือน
             </button>
         </form>
 
@@ -402,6 +430,43 @@ document.addEventListener('DOMContentLoaded', function () {
     if (roomFilter) {
         roomFilter.addEventListener('change', function () {
             filterByRoom(roomFilter.value);
+        });
+    }
+
+    // ค้นหาเลขบิลแบบทันที (ไม่รีเฟรชหน้า)
+    const invoiceCodeSearch = document.getElementById('invoiceCodeSearch');
+    
+    function filterByInvoiceCode(keyword) {
+        keyword = keyword.toLowerCase().trim();
+
+        // Filter desktop table rows
+        rows.forEach(row => {
+            const invoiceCode = row.querySelector('td:first-child')?.textContent.toLowerCase().trim() ?? '';
+            const roomNo = row.querySelector('.room-no')?.textContent.toLowerCase() ?? '';
+            
+            // Show row if invoice code OR room number matches (if room filter is active)
+            const matchesInvoiceCode = invoiceCode.includes(keyword);
+            const roomFilterValue = roomFilter?.value.toLowerCase() ?? '';
+            const matchesRoom = roomFilterValue === '' || roomNo.includes(roomFilterValue);
+            
+            row.style.display = (matchesInvoiceCode && matchesRoom) ? '' : 'none';
+        });
+
+        // Filter mobile cards
+        mobileCards.forEach(card => {
+            const cardText = card.textContent.toLowerCase();
+            const roomFilterValue = roomFilter?.value.toLowerCase() ?? '';
+            
+            const matchesInvoiceCode = cardText.includes(keyword);
+            const matchesRoom = roomFilterValue === '' || cardText.includes(roomFilterValue);
+            
+            card.style.display = (matchesInvoiceCode && matchesRoom) ? '' : 'none';
+        });
+    }
+
+    if (invoiceCodeSearch) {
+        invoiceCodeSearch.addEventListener('input', function () {
+            filterByInvoiceCode(invoiceCodeSearch.value);
         });
     }
 });

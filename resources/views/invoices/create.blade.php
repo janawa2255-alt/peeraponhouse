@@ -107,7 +107,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-200 mb-1">
                         กำหนดชำระ
-                        <span class="text-xs text-gray-400">(ไม่บังคับ - ถ้าไม่กรอกจะแสดงเป็น "ไม่มีกำหนด")</span>
+                        <span class="text-xs text-gray-400">(-ถ้าไม่กรอกระบบจะตั้งค่าเป็นวันที่5ของเดือนถัดไป-)</span>
                     </label>
                     <input type="text" name="due_date" id="due_date"
                            value="{{ old('due_date') }}"
@@ -395,6 +395,31 @@
     // เรียกครั้งแรกตอนโหลดหน้า เพื่อเซ็ตค่าเริ่มต้น
     updateRoomRentFromLease();
     recalcTotal();
+
+    // ตรวจสอบเลขมิเตอร์น้ำใหม่ต้องไม่น้อยกว่าเก่า
+    const currWaterInput = document.getElementById('curr_water');
+    const prevWaterInput = document.getElementById('prev_water');
+    
+    function validateWaterMeter() {
+        const prev = parseFloat(prevWaterInput.value) || 0;
+        const curr = parseFloat(currWaterInput.value) || 0;
+        
+        if (curr < prev && curr > 0) {
+            currWaterInput.setCustomValidity('เลขมิเตอร์ไม่ถูกต้อง');
+            currWaterInput.classList.add('border-red-500');
+            currWaterInput.classList.remove('border-neutral-700');
+        } else {
+            currWaterInput.setCustomValidity('');
+            currWaterInput.classList.remove('border-red-500');
+            currWaterInput.classList.add('border-neutral-700');
+        }
+    }
+    
+    if (currWaterInput && prevWaterInput) {
+        currWaterInput.addEventListener('input', validateWaterMeter);
+        prevWaterInput.addEventListener('input', validateWaterMeter);
+    }
+
 
     // เพิ่ม Flatpickr สำหรับ date picker
     const invoiceDateInput = document.getElementById('invoice_date');

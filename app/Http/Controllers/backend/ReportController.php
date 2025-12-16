@@ -62,6 +62,9 @@ class ReportController extends Controller
     // รายงานยอดค้างชำระ
     public function outstanding(Request $request)
     {
+        // Update overdue invoices before displaying
+        $this->updateOverdueInvoices();
+        
         $roomNo = $request->get('room_no');
         
         // ดึงใบแจ้งหนี้ที่ยังไม่ชำระ (status = 0) หรือเกินกำหนด (status = 2)
@@ -91,5 +94,17 @@ class ReportController extends Controller
         $rooms = \App\Models\Room::orderBy('room_no')->get();
 
         return view('reports.outstanding', compact('invoices', 'totalOutstanding', 'countUnpaid', 'countOverdue', 'rooms', 'roomNo'));
+    }
+
+    /**
+     * Automatically update overdue invoices
+     * Sets status to 2 (overdue) for unpaid invoices past their due date
+     */
+    protected function updateOverdueInvoices()
+    {
+        Invoice::where('status', 0) // Only unpaid invoices
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now()->format('Y-m-d'))
+            ->update(['status' => 2]);
     }
 }

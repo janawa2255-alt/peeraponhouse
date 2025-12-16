@@ -167,6 +167,7 @@
                     <th class="px-4 py-3">เลขที่ใบแจ้งหนี้</th>
                     <th class="px-4 py-3">ผู้เช่า</th>
                     <th class="px-4 py-3">ห้อง</th>
+                    <th class="px-4 py-3">เดือน/ปี</th>
                     <th class="px-4 py-3">วันครบกำหนด</th>
                     <th class="px-4 py-3 text-right">ยอดเงิน</th>
                     <th class="px-4 py-3">สถานะ</th>
@@ -195,6 +196,22 @@
                         </td>
                         <td class="px-4 py-3">
                             {{ $room->room_no ?? '-' }}
+                        </td>
+                        <td class="px-4 py-3">
+                            @if($expense)
+                                @php
+                                    $months = [
+                                        '01' => 'ม.ค.', '02' => 'ก.พ.', '03' => 'มี.ค.',
+                                        '04' => 'เม.ย.', '05' => 'พ.ค.', '06' => 'มิ.ย.',
+                                        '07' => 'ก.ค.', '08' => 'ส.ค.', '09' => 'ก.ย.',
+                                        '10' => 'ต.ค.', '11' => 'พ.ย.', '12' => 'ธ.ค.',
+                                    ];
+                                    $monthName = $months[str_pad($expense->month, 2, '0', STR_PAD_LEFT)] ?? '';
+                                @endphp
+                                {{ $monthName }} {{ $expense->year + 543 }}
+                            @else
+                                -
+                            @endif
                         </td>
                         <td class="px-4 py-3">
                             {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : '\u0e44\u0e21\u0e48\u0e21\u0e35\u0e01\u0e33\u0e2b\u0e19\u0e14' }}

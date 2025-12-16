@@ -131,7 +131,17 @@
                         <p>
                             <span class="font-semibold">รอบบิล:</span>
                             <span class="ml-2">
-                                เดือน {{ $expense->month ?? '-' }} / ปี {{ $expense->year ?? '-' }}
+                                @php
+                                    $months = [
+                                        '01' => 'มกราคม', '02' => 'กุมภาพันธ์', '03' => 'มีนาคม',
+                                        '04' => 'เมษายน', '05' => 'พฤษภาคม', '06' => 'มิถุนายน',
+                                        '07' => 'กรกฎาคม', '08' => 'สิงหาคม', '09' => 'กันยายน',
+                                        '10' => 'ตุลาคม', '11' => 'พฤศจิกายน', '12' => 'ธันวาคม',
+                                    ];
+                                    $monthName = $months[str_pad($expense->month, 2, '0', STR_PAD_LEFT)] ?? '';
+                                    $buddhistYear = $expense->year + 543;
+                                @endphp
+                                {{ $monthName }} {{ $buddhistYear }}
                             </span>
                         </p>
                     @endif
