@@ -244,19 +244,12 @@
                         <h3 class="text-white font-semibold">{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}</h3>
                     </div>
 
-                    @if ($payment->pic_slip)
-                        <div class="text-center">
-                            <button onclick="openSlipModal()"
-                                    class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-lg shadow-blue-900/20">
-                                <i class="fas fa-eye mr-2"></i>{{ $payment->method == 2 ? 'ดูรายละเอียด' : 'ดูสลิปการโอน' }}
-                            </button>
-                        </div>
-                    @else
-                        <div class="text-center py-4">
-                            <i class="fas fa-image text-gray-600 text-3xl mb-2"></i>
-                            <p class="text-gray-500 text-sm">ไม่มี{{ $payment->method == 2 ? 'รายละเอียด' : 'สลิป' }}แนบมา</p>
-                        </div>
-                    @endif
+                    <div class="text-center">
+                        <button onclick="openSlipModal()"
+                                class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-lg shadow-blue-900/20">
+                            <i class="fas fa-eye mr-2"></i>{{ $payment->method == 2 ? 'ดูรายละเอียด' : 'ดูสลิปการโอน' }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -340,26 +333,38 @@
 
             {{-- Modal Body --}}
             <div class="px-6 py-5 bg-neutral-800">
-                <p class="text-gray-400 text-sm mb-3 text-center">
-                    <i class="fas fa-info-circle mr-1"></i>คลิกที่รูปเพื่อดูแบบชัดเจน
-                </p>
-                <div class="flex justify-center">
-                    <img id="slip-image"
-                         src="{{ asset($payment->pic_slip) }}" 
-                         alt="{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}" 
-                         class="max-w-full h-auto rounded-lg shadow-lg cursor-pointer transition-all duration-300 blur-md hover:blur-sm"
-                         onclick="toggleSlipBlur(this)"
-                         title="คลิกเพื่อดูแบบชัดเจน">
-                </div>
+                @if($payment->pic_slip)
+                    <p class="text-gray-400 text-sm mb-3 text-center">
+                        <i class="fas fa-info-circle mr-1"></i>คลิกที่รูปเพื่อดูแบบชัดเจน
+                    </p>
+                    <div class="flex justify-center">
+                        <img id="slip-image"
+                             src="{{ asset($payment->pic_slip) }}" 
+                             alt="{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}" 
+                             class="max-w-full h-auto rounded-lg shadow-lg cursor-pointer transition-all duration-300 blur-md hover:blur-sm"
+                             onclick="toggleSlipBlur(this)"
+                             title="คลิกเพื่อดูแบบชัดเจน">
+                    </div>
+                @else
+                    <div class="flex flex-col items-center justify-center py-12">
+                        <div class="w-24 h-24 rounded-full bg-neutral-700/50 flex items-center justify-center mb-4">
+                            <i class="fas fa-image text-gray-500 text-4xl"></i>
+                        </div>
+                        <p class="text-gray-400 text-lg font-medium mb-2">ไม่มีรูปภาพ</p>
+                        <p class="text-gray-500 text-sm">{{ $payment->method == 2 ? 'การชำระเงินสดไม่มีสลิปแนบมา' : 'ไม่มีสลิปการโอนแนบมา' }}</p>
+                    </div>
+                @endif
             </div>
 
             {{-- Modal Footer --}}
-            <div class="bg-neutral-900 px-6 py-4 flex justify-between items-center">
-                <a href="{{ asset($payment->pic_slip) }}" 
-                   download
-                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-                    <i class="fas fa-download mr-2"></i>ดาวน์โหลด
-                </a>
+            <div class="bg-neutral-900 px-6 py-4 flex {{ $payment->pic_slip ? 'justify-between' : 'justify-end' }} items-center">
+                @if($payment->pic_slip)
+                    <a href="{{ asset($payment->pic_slip) }}" 
+                       download
+                       class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <i class="fas fa-download mr-2"></i>ดาวน์โหลด
+                    </a>
+                @endif
                 <button type="button" 
                         onclick="closeSlipModal()"
                         class="px-5 py-2.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-medium rounded-lg transition-colors">
