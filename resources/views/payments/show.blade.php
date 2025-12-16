@@ -12,7 +12,7 @@
             display: none !important;
         }
         /* Reset text colors for printing */
-        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400, .text-green-200, .text-red-200, .text-blue-400, .text-orange-400, .text-purple-400, .text-yellow-200 {
+        body, .text-white, .text-gray-200, .text-gray-300, .text-gray-400, .text-green-200, .text-red-200, .text-blue-400, .text-orange-400, .text-purple-400 {
             color: black !important;
             background: white !important;
             font-family: 'Sarabun', sans-serif;
@@ -25,14 +25,13 @@
             max-width: 100% !important;
         }
         /* Container adjustments */
-        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700, .bg-neutral-800\/60, .bg-neutral-900\/80, .bg-gradient-to-br {
-            background: white !important;
+        .bg-neutral-900, .bg-neutral-800, .bg-neutral-700, .bg-neutral-800\/50 {
             background-color: white !important;
             border: 1px solid #ccc !important;
             border-radius: 0 !important;
             box-shadow: none !important;
         }
-        .border-neutral-700, .border-neutral-600, .border-orange-500\/20 {
+        .border-neutral-700, .border-neutral-600 {
             border-color: #ccc !important;
         }
         
@@ -40,12 +39,16 @@
         .grid {
             display: block !important;
         }
+        .md\:grid-cols-4 {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 10px !important;
+        }
         .md\:grid-cols-2 {
             display: flex !important;
             flex-direction: row !important;
             justify-content: space-between !important;
             gap: 20px !important;
-            flex-wrap: wrap !important;
         }
         
         /* Typography */
@@ -74,14 +77,21 @@
         .w-10, .h-10 {
             display: none !important; /* Hide icons in circles */
         }
-        .text-4xl {
-            font-size: 24px !important;
+        .flex.items-center.gap-2.mb-4 {
+            margin-bottom: 0.5rem !important;
         }
     }
     .print-header {
         display: none;
     }
 </style>
+
+@php
+    $invoice = $payment->invoice;
+    $expense = $invoice->expense ?? null;
+    $lease   = $expense->lease ?? null;
+    $tenant  = $lease->tenants ?? null;
+@endphp
 
 <div class="space-y-6">
     {{-- Print Header (Visible only in print) --}}
@@ -90,138 +100,214 @@
         <p>รายละเอียดการชำระเงิน / Payment Details</p>
     </div>
 
-    {{-- Header --}}
     <div class="flex items-center justify-between no-print">
-        <div>
-            <h1 class="text-2xl font-bold text-white mb-1">
-                รายละเอียดการชำระเงิน
+        <a href="{{ route('backend.payments.index') }}"
+           class="inline-flex items-center text-sm text-gray-400 hover:text-gray-200">
+            ← กลับไปหน้าการแจ้งชำระเงิน
+        </a>
+        
+        <button onclick="window.print()" 
+                class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+            <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
+        </button>
+    </div>
+
+    {{-- Success/Error Messages --}}
+    @if(session('success'))
+    <div class="bg-green-600/20 border border-green-600/40 text-green-200 px-4 py-3 rounded-lg flex items-center gap-3">
+        <i class="fas fa-check-circle text-xl"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="bg-red-600/20 border border-red-600/40 text-red-200 px-4 py-3 rounded-lg flex items-center gap-3">
+        <i class="fas fa-exclamation-circle text-xl"></i>
+        <span>{{ session('error') }}</span>
+    </div>
+    @endif
+
+    {{-- ข้อมูลแถวบน --}}
+    <div id="payment-details" class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden">
+        <div class="bg-neutral-800 px-6 py-3">
+            <h1 class="text-white text-lg font-semibold">
+                รายละเอียดการแจ้งชำระเงิน
             </h1>
-            <p class="text-sm text-gray-400">
-                ข้อมูลการชำระเงินจากผู้เช่า
-            </p>
         </div>
-        <div class="flex gap-2">
-            <button onclick="window.print()" 
-                    class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-                <i class="fas fa-print mr-2"></i> พิมพ์ / บันทึกเป็น PDF
-            </button>
-            <a href="{{ route('backend.payments.index') }}" 
-               class="px-4 py-2 text-sm rounded-lg border border-neutral-600 text-gray-200 hover:bg-neutral-700 transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i>
-                ย้อนกลับ
-            </a>
+
+        <div class="px-6 py-4 space-y-2 text-sm text-gray-200">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <div class="text-gray-400 text-xs">เลขที่ใบแจ้งหนี้</div>
+                    <div>{{ $invoice->invoice_code ?? '-' }}</div>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-xs">ผู้เช่า</div>
+                    <div>{{ $tenant->name ?? '-' }}</div>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-xs">วิธีชำระ</div>
+                    <div>{{ $payment->method_label }}</div>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-xs">วันที่โอน</div>
+                    <div>{{ optional($payment->paid_date)->format('d/m/Y') }}</div>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-xs">ยอดชำระ</div>
+                    <div>{{ number_format($payment->total_amount, 0) }} ฿</div>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-xs">สถานะ</div>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium {{ $payment->status_badge_class }}">
+                        {{ $payment->status_label }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- รายละเอียดค่าใช้จ่าย --}}
+    <div class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden">
+        <div class="bg-neutral-800 px-6 py-3 border-b border-neutral-700">
+            <h2 class="text-white text-lg font-semibold">รายละเอียดค่าใช้จ่าย</h2>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- ข้อมูลการใช้น้ำ --}}
+                <div class="bg-neutral-800/50 rounded-lg p-5 border border-neutral-700">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+                            <i class="fas fa-tint text-blue-400 text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-semibold">ข้อมูลการใช้น้ำ</h3>
+                    </div>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">ค่าน้ำหน่วยละ</span>
+                            <span class="text-white font-medium">{{ number_format($expense->water_rate ?? 0) }} ฿</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">เลขมิเตอร์เดิม</span>
+                            <span class="text-white font-medium">{{ $expense->prev_water ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">เลขมิเตอร์ใหม่</span>
+                            <span class="text-white font-medium">{{ $expense->curr_water ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-neutral-600">
+                            <span class="text-gray-400">ใช้ไป (หน่วย)</span>
+                            <span class="text-blue-400 font-semibold">{{ $expense->water_units ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ข้อมูลค่าใช้จ่าย --}}
+                <div class="bg-neutral-800/50 rounded-lg p-5 border border-neutral-700">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-orange-600/20 flex items-center justify-center">
+                            <i class="fas fa-receipt text-orange-400 text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-semibold">สรุปค่าใช้จ่าย</h3>
+                    </div>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">ค่าห้อง</span>
+                            <span class="text-white font-medium">{{ number_format($expense->room_rent ?? 0) }} ฿</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">ค่าน้ำ</span>
+                            <span class="text-white font-medium">{{ number_format($expense->water_total ?? 0) }} ฿</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">ค่าไฟ</span>
+                            <span class="text-white font-medium">{{ number_format($expense->elec_total ?? 0) }} ฿</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-neutral-600">
+                            <span class="text-white font-semibold">ยอดรวมทั้งหมด</span>
+                            <span class="text-orange-400 font-bold text-lg">{{ number_format($expense->total_amount ?? $payment->total_amount, 0) }} ฿</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- สลิปการโอน --}}
+            <div class="mt-6">
+                <div class="bg-neutral-800/50 rounded-lg p-5 border border-neutral-700">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                            <i class="fas fa-file-image text-purple-400 text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-semibold">{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}</h3>
+                    </div>
+
+                    @if ($payment->pic_slip)
+                        <div class="text-center">
+                            <button onclick="openSlipModal()"
+                                    class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-lg shadow-blue-900/20">
+                                <i class="fas fa-eye mr-2"></i>{{ $payment->method == 2 ? 'ดูรายละเอียด' : 'ดูสลิปการโอน' }}
+                            </button>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="fas fa-image text-gray-600 text-3xl mb-2"></i>
+                            <p class="text-gray-500 text-sm">ไม่มี{{ $payment->method == 2 ? 'รายละเอียด' : 'สลิป' }}แนบมา</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- ปุ่มอนุมัติ / ปฏิเสธ --}}
+            @if($payment->status == 0)
+                {{-- แสดงปุ่มเฉพาะเมื่อสถานะเป็น 0 (รอตรวจสอบ) --}}
+                <div class="mt-6 flex justify-center gap-4">
+                    <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST" 
+                          onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะอนุมัติการชำระเงินนี้?')">
+                        @csrf
+                        <input type="hidden" name="status" value="1">
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors shadow-lg shadow-green-600/20">
+                            <i class="fas fa-check mr-2"></i>อนุมัติ
+                        </button>
+                    </form>
+
+                    <form action="{{ route('backend.payments.updateStatus', $payment) }}" method="POST"
+                          onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะปฏิเสธการชำระเงินนี้?')">
+                        @csrf
+                        <input type="hidden" name="status" value="2">
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors shadow-lg shadow-red-600/20">
+                            <i class="fas fa-times mr-2"></i>ปฏิเสธ
+                        </button>
+                    </form>
+                </div>
+            @else
+                {{-- แสดงข้อความเมื่อดำเนินการแล้ว --}}
+                <div class="mt-6">
+                    <div class="bg-neutral-800/50 rounded-lg p-5 border border-neutral-700">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="w-12 h-12 rounded-full {{ $payment->status == 1 ? 'bg-green-600/20' : 'bg-red-600/20' }} flex items-center justify-center">
+                                <i class="fas {{ $payment->status == 1 ? 'fa-check-circle text-green-400' : 'fa-times-circle text-red-400' }} text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-semibold text-lg">
+                                    {{ $payment->status == 1 ? 'อนุมัติแล้ว' : 'ปฏิเสธแล้ว' }}
+                                </p>
+                                @if($payment->note)
+                                    <p class="text-gray-400 text-sm mt-1">หมายเหตุ: {{ $payment->note }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
 
-    {{-- Payment Info Card --}}
-    <div id="payment-receipt" class="bg-neutral-900/80 border border-orange-500/20 rounded-2xl overflow-hidden shadow-lg p-1">
-        <div class="bg-neutral-800/60 px-6 py-4 border-b border-neutral-700">
-            <h2 class="text-white font-semibold">ข้อมูลการชำระเงิน</h2>
-        </div>
-
-        <div class="p-6 space-y-6 bg-neutral-900">
-            {{-- Status Badge --}}
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-400">สถานะ</span>
-                @php
-                    $statusClasses = [
-                        0 => 'bg-yellow-500/20 text-yellow-200 border-yellow-500/40',
-                        1 => 'bg-green-500/20 text-green-200 border-green-500/40',
-                        2 => 'bg-red-500/20 text-red-200 border-red-500/40',
-                    ];
-                    $statusLabels = [
-                        0 => 'รอตรวจสอบ',
-                        1 => 'อนุมัติแล้ว',
-                        2 => 'ปฏิเสธ',
-                    ];
-                @endphp
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border {{ $statusClasses[$payment->status] ?? '' }}">
-                    {{ $statusLabels[$payment->status] ?? 'ไม่ทราบ' }}
-                </span>
-            </div>
-
-            {{-- Amount --}}
-            <div class="bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-xl p-6 border border-orange-500/20 text-center">
-                <p class="text-gray-400 text-sm mb-2">ยอดที่ชำระ</p>
-                <p class="text-4xl font-bold text-orange-400">
-                    {{ number_format($payment->total_amount, 2) }} ฿
-                </p>
-            </div>
-
-            {{-- Payment Details --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <p class="text-gray-400 mb-1">วันที่ชำระ</p>
-                    <p class="text-white font-semibold">
-                        {{ \Carbon\Carbon::parse($payment->paid_date)->format('d/m/Y') }}
-                    </p>
-                </div>
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <p class="text-gray-400 mb-1">ใบแจ้งหนี้</p>
-                    <p class="text-white font-semibold">
-                        {{ $payment->invoice->invoice_code ?? '-' }}
-                    </p>
-                </div>
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <p class="text-gray-400 mb-1">ห้อง</p>
-                    <p class="text-white font-semibold">
-                        {{ $payment->invoice->expense->lease->rooms->room_no ?? '-' }}
-                    </p>
-                </div>
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <p class="text-gray-400 mb-1">ผู้เช่า</p>
-                    <p class="text-white font-semibold">
-                        {{ $payment->invoice->expense->lease->tenants->name ?? '-' }}
-                    </p>
-                </div>
-            </div>
-
-            {{-- Bank Info --}}
-            @if($payment->bank)
-            <div class="border-t border-neutral-700 pt-4">
-                <h3 class="text-white font-semibold mb-3">ข้อมูลการโอน</h3>
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700 space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">ธนาคาร</span>
-                        <span class="text-white font-medium">{{ $payment->bank->bank_name }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">เลขที่บัญชี</span>
-                        <span class="text-white font-medium">{{ $payment->bank->number }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">ชื่อบัญชี</span>
-                        <span class="text-white font-medium">{{ $payment->bank->account_name }}</span>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            {{-- Slip Image --}}
-            @if($payment->pic_slip)
-            <div class="border-t border-neutral-700 pt-4">
-                <h3 class="text-white font-semibold mb-3">สลิปการชำระเงิน</h3>
-                <div class="flex justify-start">
-                    <button onclick="openSlipModal()"
-                       class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg
-                              bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-                        <i class="fas fa-receipt mr-2"></i>ดูสลิปการชำระเงิน
-                    </button>
-                </div>
-            </div>
-            @endif
-
-            {{-- Note --}}
-            @if($payment->note)
-            <div class="border-t border-neutral-700 pt-4">
-                <h3 class="text-white font-semibold mb-2">หมายเหตุ</h3>
-                <div class="bg-neutral-800/40 rounded-lg p-4 border border-neutral-700">
-                    <p class="text-gray-300 text-sm">{{ $payment->note }}</p>
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
 </div>
 
 {{-- Slip Modal --}}
@@ -243,7 +329,7 @@
                         <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
                             <i class="fas fa-receipt text-white text-lg"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-white">สลิปการชำระเงิน</h3>
+                        <h3 class="text-xl font-bold text-white">{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}</h3>
                     </div>
                     <button onclick="closeSlipModal()" 
                             class="text-white/80 hover:text-white transition-colors">
@@ -260,7 +346,7 @@
                 <div class="flex justify-center">
                     <img id="slip-image"
                          src="{{ asset($payment->pic_slip) }}" 
-                         alt="สลิปการชำระเงิน" 
+                         alt="{{ $payment->method == 2 ? 'รายละเอียดการชำระเงินสด' : 'สลิปการโอนเงิน' }}" 
                          class="max-w-full h-auto rounded-lg shadow-lg cursor-pointer transition-all duration-300 blur-md hover:blur-sm"
                          onclick="toggleSlipBlur(this)"
                          title="คลิกเพื่อดูแบบชัดเจน">

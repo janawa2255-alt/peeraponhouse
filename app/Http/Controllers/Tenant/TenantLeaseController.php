@@ -41,7 +41,12 @@ class TenantLeaseController extends Controller
             ->orderByDesc('created_at')
             ->first();
 
-        return view('tenant.lease.show', compact('tenant', 'lease', 'latestExpense'));
+        // ดึงคำขอยกเลิกล่าสุด (ถ้ามี)
+        $cancelRequest = CancelLease::where('lease_id', $lease->lease_id)
+            ->orderByDesc('cancel_id')
+            ->first();
+
+        return view('tenant.lease.show', compact('tenant', 'lease', 'latestExpense', 'cancelRequest'));
     }
 
     /**

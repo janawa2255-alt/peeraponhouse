@@ -13,12 +13,17 @@ use Illuminate\Support\Facades\DB;
 class CancelLeaseController extends Controller
 {
    
-   public function index()
+   public function index(Request $request)
 {
-    $cancelRequests = CancelLease::with(['lease.tenants', 'lease.rooms'])
-        ->where('status', 0 ) // รออนุมัติ
-        ->orderByDesc('cancel_id')
-        ->get();
+    $query = CancelLease::with(['lease.tenants', 'lease.rooms']);
+
+    // กรองตามสถานะ
+    $status = $request->get('status', 'all');
+    if ($status !== 'all') {
+        $query->where('status', (int)$status);
+    }
+
+    $cancelRequests = $query->orderByDesc('cancel_id')->get();
 
     return view('cancel_leases.index', compact('cancelRequests'));
 }

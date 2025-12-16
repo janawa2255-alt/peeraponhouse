@@ -14,6 +14,25 @@
         </div>
     </div>
 
+    {{-- ฟอร์มกรองสถานะ --}}
+    <form method="GET" action="{{ route('backend.cancel_lease.index') }}" class="flex items-end gap-3">
+        <div class="w-full md:w-1/3">
+            <label class="block text-sm font-medium text-gray-300 mb-1">
+                กรองตามสถานะ
+            </label>
+            @php $currentStatus = request('status', 'all'); @endphp
+            <select name="status" 
+                    onchange="this.form.submit()"
+                    class="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-gray-600 text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="all" {{ $currentStatus === 'all' ? 'selected' : '' }}>ทั้งหมด</option>
+                <option value="0" {{ $currentStatus === '0' ? 'selected' : '' }}>รออนุมัติ</option>
+                <option value="1" {{ $currentStatus === '1' ? 'selected' : '' }}>อนุมัติแล้ว</option>
+                <option value="2" {{ $currentStatus === '2' ? 'selected' : '' }}>ปฏิเสธคำขอ</option>
+            </select>
+        </div>
+    </form>
+
     @if (session('success'))
         <div class="p-3 rounded-lg border border-green-500/40 bg-green-500/10 text-sm text-green-200">
             {{ session('success') }}
@@ -54,7 +73,7 @@
                             $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
                             break;
                         case 2:
-                            $statusLabel = 'ไม่อนุมัติ';
+                            $statusLabel = 'ปฏิเสธคำขอ';
                             $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
                             break;
                         default:

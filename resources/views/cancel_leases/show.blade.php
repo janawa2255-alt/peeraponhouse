@@ -31,7 +31,7 @@
                 $statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
                 break;
             case 2:
-                $statusLabel = 'ไม่อนุมัติ';
+                $statusLabel = 'ปฏิเสธคำขอ';
                 $statusClass = 'bg-red-500/20 text-red-300 border-red-500/40';
                 break;
             default:
@@ -95,7 +95,7 @@
 
             <p class="text-gray-300">
                 <span class="text-gray-400">ผู้แจ้ง:</span>
-                {{ $cancel->created_by }}
+                {{ optional(optional($cancel->lease)->tenants)->name ?? '-' }}
             </p>
 
             <div>
@@ -115,33 +115,69 @@
             @endif
         </div>
 
-        {{-- ฟอร์มอนุมัติ (เฉพาะถ้ายังรออนุมัติ) --}}
+        {{-- ฟอร์มอนุมัติ/ปฏิเสธ (เฉพาะถ้ายังรออนุมัติ) --}}
         @if ($cancel->status == 0)
-            <div class="border-t border-neutral-800 pt-4 space-y-3">
+            <div class="border-t border-neutral-800 pt-4 space-y-4">
                 <h2 class="text-base font-semibold text-white mb-1">การดำเนินการของเจ้าของหอ</h2>
 
-                <form action="{{ route('backend.cancel-leases.approve', $cancel->cancel_id) }}" method="POST" class="space-y-3">
-                    @csrf
-
-                    <label class="block text-sm text-gray-300 mb-1">
-                        หมายเหตุเจ้าของ (ถ้ามี)
-                    </label>
-                    <textarea name="note_owner" rows="2"
-                        class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100
-                               focus:outline-none focus:ring-2 focus:ring-emerald-500">{{ old('note_owner') }}</textarea>
-
-                    <div class="flex justify-end gap-2">
-                        <a href="{{ route('backend.cancel_lease.index') }}"
-                           class="px-4 py-2 text-sm rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
-                            ยกเลิก / กลับหน้ารายการ
-                        </a>
-
-                        <button type="submit"
-                                class="px-4 py-2 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- ฟอร์มอนุมัติ --}}
+                    <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                        <h3 class="text-green-300 font-medium mb-3 flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
                             อนุมัติการยกเลิกสัญญา
-                        </button>
+                        </h3>
+                        <form action="{{ route('backend.cancel-leases.approve', $cancel->cancel_id) }}" method="POST" class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-sm text-gray-300 mb-1">
+                                    หมายเหตุ (ถ้ามี)
+                                </label>
+                                <textarea name="note_owner" rows="2"
+                                    placeholder="ระบุหมายเหตุเพิ่มเติม..."
+                                    class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100 text-sm
+                                           focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                            </div>
+                            <button type="submit"
+                                    onclick="return confirm('ยืนยันการอนุมัติการยกเลิกสัญญาเช่า?')"
+                                    class="w-full px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors">
+                                <i class="fas fa-check mr-2"></i>อนุมัติการยกเลิก
+                            </button>
+                        </form>
                     </div>
-                </form>
+
+                    {{-- ฟอร์มปฏิเสธ --}}
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                        <h3 class="text-red-300 font-medium mb-3 flex items-center gap-2">
+                            <i class="fas fa-times-circle"></i>
+                            ปฏิเสธคำขอยกเลิก
+                        </h3>
+                        <form action="{{ route('backend.cancel-leases.reject', $cancel->cancel_id) }}" method="POST" class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-sm text-gray-300 mb-1">
+                                    เหตุผลในการปฏิเสธ <span class="text-red-400">*</span>
+                                </label>
+                                <textarea name="note_owner" rows="2" required
+                                    placeholder="ระบุเหตุผลที่ปฏิเสธคำขอ..."
+                                    class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100 text-sm
+                                           focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                            </div>
+                            <button type="submit"
+                                    onclick="return confirm('ยืนยันการปฏิเสธคำขอยกเลิกสัญญา?')"
+                                    class="w-full px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors">
+                                <i class="fas fa-times mr-2"></i>ปฏิเสธคำขอ
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <a href="{{ route('backend.cancel_lease.index') }}"
+                       class="px-6 py-2 text-sm rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>ย้อนกลับ
+                    </a>
+                </div>
             </div>
         @else
             <div class="border-t border-neutral-800 pt-4 text-sm text-gray-300">
