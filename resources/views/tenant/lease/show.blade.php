@@ -120,18 +120,30 @@
 
                 {{-- Cancel Request Status / Action Button --}}
                 @if($cancelRequest)
-                    @php
-                        $statusConfig = [
-                            0 => ['label' => 'รออนุมัติ', 'class' => 'bg-yellow-600 hover:bg-yellow-700 border-yellow-500', 'icon' => 'fa-clock'],
-                            1 => ['label' => 'อนุมัติแล้ว', 'class' => 'bg-green-600 hover:bg-green-700 border-green-500', 'icon' => 'fa-check-circle'],
-                            2 => ['label' => 'ปฏิเสธคำขอ', 'class' => 'bg-red-600 hover:bg-red-700 border-red-500', 'icon' => 'fa-times-circle'],
-                        ];
-                        $config = $statusConfig[$cancelRequest->status] ?? $statusConfig[0];
-                    @endphp
-                    <button onclick="openCancelStatusModal()"
-                            class="px-4 py-2 {{ $config['class'] }} text-white text-sm rounded border transition-colors">
-                        <i class="fas {{ $config['icon'] }} mr-2"></i>สถานะคำขอยกเลิก: {{ $config['label'] }}
-                    </button>
+                    @if($cancelRequest->status == 2)
+                        {{-- ถ้าถูกปฏิเสธ ให้แสดงปุ่มยื่นคำขอใหม่ --}}
+                        <button onclick="openCancelStatusModal()"
+                                class="px-4 py-2 bg-red-600 hover:bg-red-700 border-red-500 text-white text-sm rounded border transition-colors">
+                            <i class="fas fa-times-circle mr-2"></i>คำขอถูกปฏิเสธ - ดูรายละเอียด
+                        </button>
+                        <button onclick="openCancelModal()" 
+                                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded border border-orange-500 transition-colors">
+                            <i class="fas fa-redo mr-2"></i>ยื่นคำขอยกเลิกอีกครั้ง
+                        </button>
+                    @else
+                        {{-- แสดงสถานะปกติ --}}
+                        @php
+                            $statusConfig = [
+                                0 => ['label' => 'รออนุมัติ', 'class' => 'bg-yellow-600 hover:bg-yellow-700 border-yellow-500', 'icon' => 'fa-clock'],
+                                1 => ['label' => 'อนุมัติแล้ว', 'class' => 'bg-green-600 hover:bg-green-700 border-green-500', 'icon' => 'fa-check-circle'],
+                            ];
+                            $config = $statusConfig[$cancelRequest->status] ?? $statusConfig[0];
+                        @endphp
+                        <button onclick="openCancelStatusModal()"
+                                class="px-4 py-2 {{ $config['class'] }} text-white text-sm rounded border transition-colors">
+                            <i class="fas {{ $config['icon'] }} mr-2"></i>สถานะคำขอยกเลิก: {{ $config['label'] }}
+                        </button>
+                    @endif
                 @elseif($lease->status == 1)
                     {{-- Show cancel button only if no cancel request exists and lease is active --}}
                     <button onclick="openCancelModal()" 
@@ -304,7 +316,7 @@
                 <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
                     <p class="text-red-200 text-sm">
                         <i class="fas fa-exclamation-circle mr-2"></i>
-                        คำขอยกเลิกของคุณถูกปฏิเสธ หากต้องการยกเลิกสัญญา กรุณาติดต่อเจ้าของหอพักโดยตรง
+                        คำขอยกเลิกของคุณถูกปฏิเสธ
                     </p>
                 </div>
                 @endif

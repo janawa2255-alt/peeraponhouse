@@ -42,9 +42,9 @@
                         @php
                             $statusConfig = [
                                 0 => ['label' => 'รอชำระ', 'class' => 'bg-yellow-600'],
-                                1 => ['label' => 'ชำระแล้ว', 'class' => 'bg-blue-600'],
-                                2 => ['label' => 'ยกเลิก', 'class' => 'bg-red-600'],
-                                3 => ['label' => 'เกินกำหนด', 'class' => 'bg-red-600'],
+                                1 => ['label' => 'ชำระแล้ว', 'class' => 'bg-green-600'],
+                                2 => ['label' => 'เกินกำหนด', 'class' => 'bg-red-600'],
+                                3 => ['label' => 'ยกเลิก', 'class' => 'bg-gray-600'],
                             ];
                             $config = $statusConfig[$invoice->status] ?? ['label' => '-', 'class' => 'bg-gray-600'];
                         @endphp
@@ -58,7 +58,7 @@
                                class="inline-block px-2 py-1 bg-green-600 hover:bg-green-500 text-white text-xs rounded transition-colors">
                                 ดูรายละเอียด
                             </a>
-                            @if($invoice->status == 0)
+                            @if(in_array($invoice->status, [0, 2]))
                             <a href="{{ route('payments.create', $invoice->invoice_id) }}" 
                                class="inline-block px-2 py-1 bg-orange-600 hover:bg-orange-500 text-white text-xs rounded transition-colors">
                                 ชำระเงิน
@@ -82,9 +82,9 @@
             @php
                 $statusConfig = [
                     0 => ['label' => 'รอชำระ', 'class' => 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', 'bg' => 'bg-yellow-500'],
-                    1 => ['label' => 'ชำระแล้ว', 'class' => 'bg-blue-500/20 text-blue-400 border-blue-500/30', 'bg' => 'bg-blue-500'],
-                    2 => ['label' => 'ยกเลิก', 'class' => 'bg-red-500/20 text-red-400 border-red-500/30', 'bg' => 'bg-red-500'],
-                    3 => ['label' => 'เกินกำหนด', 'class' => 'bg-red-500/20 text-red-400 border-red-500/30', 'bg' => 'bg-red-500'],
+                    1 => ['label' => 'ชำระแล้ว', 'class' => 'bg-green-500/20 text-green-400 border-green-500/30', 'bg' => 'bg-green-500'],
+                    2 => ['label' => 'เกินกำหนด', 'class' => 'bg-red-500/20 text-red-400 border-red-500/30', 'bg' => 'bg-red-500'],
+                    3 => ['label' => 'ยกเลิก', 'class' => 'bg-gray-500/20 text-gray-400 border-gray-500/30', 'bg' => 'bg-gray-500'],
                 ];
                 $config = $statusConfig[$invoice->status] ?? ['label' => '-', 'class' => 'bg-gray-500/20 text-gray-400 border-gray-500/30', 'bg' => 'bg-gray-500'];
             @endphp
@@ -124,7 +124,7 @@
                            class="flex-1 py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
                             ดูรายละเอียด
                         </a>
-                        @if($invoice->status == 0)
+                        @if(in_array($invoice->status, [0, 2]))
                             <a href="{{ route('payments.create', $invoice->invoice_id) }}" 
                                class="flex-1 py-2 rounded-lg bg-orange-600 text-white text-xs font-medium text-center hover:bg-orange-500 transition-colors shadow-lg shadow-orange-900/20">
                                 ชำระเงิน

@@ -108,9 +108,9 @@
             {{-- Footer --}}
             <div class="px-8 py-4 bg-neutral-800/40 border-t border-neutral-700/50 text-center">
                 <a href="{{ route('login') }}" 
-                   class="text-sm text-gray-400 hover:text-blue-400 transition-colors">
-                    <i class="fas fa-arrow-left mr-1"></i>
-                    กลับไปหน้า Login ผู้เช่า
+                   class="text-sm text-gray-400 hover:text-orange-400 transition-colors">
+                   <i class="fas fa-user mr-1"></i>
+                    เข้าสู่ระบบสำหรับผู้เช่า
                 </a>
             </div>
         </div>

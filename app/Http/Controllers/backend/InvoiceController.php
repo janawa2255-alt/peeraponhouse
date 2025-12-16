@@ -352,8 +352,8 @@ protected function getInvoiceStatusMeta(int $status): array
      */
     public function cancel(Invoice $invoice)
     {
-        // ตรวจสอบว่าใบแจ้งหนี้ยังไม่ได้ชำระ (status = 0)
-        if ($invoice->status != 0) {
+        // ตรวจสอบว่าใบแจ้งหนี้ยังไม่ได้ชำระและยังไม่ถูกยกเลิก (status = 0 หรือ 2)
+        if (!in_array($invoice->status, [0, 2])) {
             return redirect()
                 ->route('backend.invoices.index')
                 ->with('error', 'ไม่สามารถยกเลิกใบแจ้งหนี้ที่ชำระแล้วหรือถูกยกเลิกไปแล้ว');

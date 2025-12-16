@@ -68,6 +68,7 @@
                             0 => ['label' => 'รอชำระเงิน', 'class' => 'bg-yellow-600'],
                             1 => ['label' => 'ชำระแล้ว', 'class' => 'bg-green-600'],
                             2 => ['label' => 'เกินกำหนด', 'class' => 'bg-red-600'],
+                            3 => ['label' => 'ยกเลิก', 'class' => 'bg-gray-600'],
                         ];
                         $config = $statusConfig[$invoice->status] ?? ['label' => '-', 'class' => 'bg-gray-600'];
                     @endphp

@@ -120,65 +120,75 @@
             <div class="border-t border-neutral-800 pt-4 space-y-4">
                 <h2 class="text-base font-semibold text-white mb-1">การดำเนินการของเจ้าของหอ</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {{-- ฟอร์มอนุมัติ --}}
-                    <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                        <h3 class="text-green-300 font-medium mb-3 flex items-center gap-2">
-                            <i class="fas fa-check-circle"></i>
-                            อนุมัติการยกเลิกสัญญา
-                        </h3>
-                        <form action="{{ route('backend.cancel-leases.approve', $cancel->cancel_id) }}" method="POST" class="space-y-3">
-                            @csrf
-                            <div>
-                                <label class="block text-sm text-gray-300 mb-1">
-                                    หมายเหตุ (ถ้ามี)
-                                </label>
-                                <textarea name="note_owner" rows="2"
-                                    placeholder="ระบุหมายเหตุเพิ่มเติม..."
-                                    class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100 text-sm
-                                           focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
-                            </div>
-                            <button type="submit"
-                                    onclick="return confirm('ยืนยันการอนุมัติการยกเลิกสัญญาเช่า?')"
-                                    class="w-full px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors">
-                                <i class="fas fa-check mr-2"></i>อนุมัติการยกเลิก
-                            </button>
-                        </form>
-                    </div>
-
-                    {{-- ฟอร์มปฏิเสธ --}}
-                    <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-                        <h3 class="text-red-300 font-medium mb-3 flex items-center gap-2">
-                            <i class="fas fa-times-circle"></i>
-                            ปฏิเสธคำขอยกเลิก
-                        </h3>
-                        <form action="{{ route('backend.cancel-leases.reject', $cancel->cancel_id) }}" method="POST" class="space-y-3">
-                            @csrf
-                            <div>
-                                <label class="block text-sm text-gray-300 mb-1">
-                                    เหตุผลในการปฏิเสธ <span class="text-red-400">*</span>
-                                </label>
-                                <textarea name="note_owner" rows="2" required
-                                    placeholder="ระบุเหตุผลที่ปฏิเสธคำขอ..."
-                                    class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100 text-sm
-                                           focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                            </div>
-                            <button type="submit"
-                                    onclick="return confirm('ยืนยันการปฏิเสธคำขอยกเลิกสัญญา?')"
-                                    class="w-full px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors">
-                                <i class="fas fa-times mr-2"></i>ปฏิเสธคำขอ
-                            </button>
-                        </form>
-                    </div>
+                {{-- ช่องกรอกหมายเหตุ --}}
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">
+                        หมายเหตุเจ้าของ (ถ้ามี)
+                    </label>
+                    <textarea id="ownerNote" rows="3"
+                        placeholder="ระบุหมายเหตุหรือเหตุผล..."
+                        class="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-gray-600 text-gray-100 text-sm
+                               focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"></textarea>
+                    <p class="text-gray-500 text-xs mt-1">หมายเหตุนี้จะถูกส่งไปยังผู้เช่า</p>
                 </div>
 
-                <div class="flex justify-center">
+                {{-- ปุ่มดำเนินการ --}}
+                <div class="flex flex-wrap gap-3 justify-end">
                     <a href="{{ route('backend.cancel_lease.index') }}"
-                       class="px-6 py-2 text-sm rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors">
+                       class="px-6 py-2.5 text-sm rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors">
                         <i class="fas fa-arrow-left mr-2"></i>ย้อนกลับ
                     </a>
+
+                    <button type="button"
+                            onclick="submitAction('approve')"
+                            class="px-6 py-2.5 text-sm rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors shadow-lg shadow-green-600/20">
+                        <i class="fas fa-check mr-2"></i>อนุมัติการยกเลิก
+                    </button>
+
+                    <button type="button"
+                            onclick="submitAction('reject')"
+                            class="px-6 py-2.5 text-sm rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors shadow-lg shadow-red-600/20">
+                        <i class="fas fa-times mr-2"></i>ปฏิเสธคำขอ
+                    </button>
                 </div>
+
+                {{-- Hidden Forms --}}
+                <form id="approveForm" action="{{ route('backend.cancel-leases.approve', $cancel->cancel_id) }}" method="POST" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="note_owner" id="approveNote">
+                </form>
+
+                <form id="rejectForm" action="{{ route('backend.cancel-leases.reject', $cancel->cancel_id) }}" method="POST" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="note_owner" id="rejectNote">
+                </form>
             </div>
+
+            <script>
+            function submitAction(action) {
+                const note = document.getElementById('ownerNote').value.trim();
+                let confirmMessage = '';
+                let formId = '';
+                let noteInputId = '';
+
+                if (action === 'approve') {
+                    confirmMessage = 'ยืนยันการอนุมัติการยกเลิกสัญญาเช่า?';
+                    formId = 'approveForm';
+                    noteInputId = 'approveNote';
+                } else if (action === 'reject') {
+                    confirmMessage = 'ยืนยันการปฏิเสธคำขอยกเลิกสัญญา?';
+                    formId = 'rejectForm';
+                    noteInputId = 'rejectNote';
+                }
+
+                if (confirm(confirmMessage)) {
+                    // Copy note to hidden input
+                    document.getElementById(noteInputId).value = note;
+                    // Submit form
+                    document.getElementById(formId).submit();
+                }
+            }
+            </script>
         @else
             <div class="border-t border-neutral-800 pt-4 text-sm text-gray-300">
                 คำขอนี้ถูกดำเนินการแล้ว ไม่สามารถอนุมัติซ้ำได้

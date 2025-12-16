@@ -234,7 +234,7 @@
         </form>
 
         {{-- ปุ่มยกเลิก --}}
-        @if($invoice->status == 0)
+        @if(in_array($invoice->status, [0, 2]))
             <form method="POST"
                 action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}"
                 class="w-full"
@@ -355,7 +355,7 @@
                             </button>
                         </form>
                     </div>
-                    @if($invoice->status == 0)
+                    @if(in_array($invoice->status, [0, 2]))
                         <form method="POST" action="{{ route('backend.invoices.cancel', $invoice->invoice_id) }}" class="w-full" onsubmit="return confirm('ต้องการยกเลิกใบแจ้งหนี้นี้หรือไม่?');">
                             @csrf
                             @method('PATCH')
