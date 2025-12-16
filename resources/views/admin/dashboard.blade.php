@@ -69,9 +69,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-red-100 text-sm">ค้างชำระ</p>
-                    <p class="text-3xl font-bold mt-2">{{ \App\Models\Invoice::where('status', 0)->count() }}</p>
+                    <p class="text-3xl font-bold mt-2">{{ \App\Models\Invoice::whereIn('status', [0, 2])->count() }}</p>
                     <p class="text-xs text-red-100 mt-1">
-                        {{ number_format(\App\Models\Invoice::where('status', 0)->join('expenses', 'invoices.ex_id', '=', 'expenses.ex_id')->sum('expenses.total_amount')) }} บาท
+                        {{ number_format(\App\Models\Invoice::whereIn('status', [0, 2])->join('expenses', 'invoices.ex_id', '=', 'expenses.ex_id')->sum('expenses.total_amount')) }} บาท
                     </p>
                 </div>
                 <div class="bg-white/20 p-4 rounded-lg">
@@ -171,7 +171,7 @@
             <div class="space-y-2">
                 @php
                     $unpaidInvoices = \App\Models\Invoice::with(['expense.lease.rooms', 'expense.lease.tenants'])
-                        ->where('status', 0)
+                        ->whereIn('status', [0, 2])
                         ->orderBy('due_date', 'asc')
                         ->limit(5)
                         ->get();

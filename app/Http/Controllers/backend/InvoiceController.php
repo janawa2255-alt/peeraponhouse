@@ -318,15 +318,16 @@ protected function getInvoiceStatusMeta(int $status): array
 }
  protected function generateInvoiceCode(string $year): string
     {
-        $latest = Invoice::whereYear('invoice_data', $year)
-            ->orderByDesc('invoice_id')
-            ->first();
+        // ดึงเลขที่ใบแจ้งหนี้สูงสุดของปีนี้
+        $maxCode = Invoice::whereYear('invoice_data', $year)
+            ->where('invoice_code', 'like', "INV-{$year}-%")
+            ->max('invoice_code');
 
         $running = 1;
 
-        if ($latest) {
-            // ดึงเลขลำดับท้ายสุดจาก code เดิม (เช่น INV-2025-001)
-            $parts   = explode('-', $latest->invoice_code);
+        if ($maxCode) {
+            // ดึงเลขลำดับท้ายสุดจาก code ที่สูงสุด (เช่น INV-2025-003)
+            $parts = explode('-', $maxCode);
             $running = isset($parts[2]) ? ((int) $parts[2] + 1) : 1;
         }
 
