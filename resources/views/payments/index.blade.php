@@ -131,16 +131,12 @@
                     </td>
 
                     <td class="px-4 py-3">
-                        @if ($payment->pic_slip)
-                            <a href="{{ route('backend.payments.show', $payment) }}"
-                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
-                                      bg-gray-200 text-gray-800 border border-gray-300
-                                      hover:bg-gray-300">
-                                ดูสลิป
-                            </a>
-                        @else
-                            <span class="text-xs text-gray-500">ไม่มีสลิป</span>
-                        @endif
+                        <a href="{{ route('backend.payments.show', $payment) }}"
+                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg
+                                  bg-gray-200 text-gray-800 border border-gray-300
+                                  hover:bg-gray-300">
+                            ดูสลิป
+                        </a>
                     </td>
 
                     <td class="px-4 py-3">
@@ -259,12 +255,10 @@
                 </div>
 
                 <div class="flex flex-col gap-2 pl-2">
-                    @if ($payment->pic_slip)
-                        <a href="{{ route('backend.payments.show', $payment) }}"
-                           class="w-full py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
-                            ดูสลิป
-                        </a>
-                    @endif
+                    <a href="{{ route('backend.payments.show', $payment) }}"
+                       class="w-full py-2 rounded-lg bg-neutral-700 text-white text-xs font-medium text-center hover:bg-neutral-600 transition-colors border border-neutral-600">
+                        ดูสลิป
+                    </a>
 
                     @if ($payment->status == 0)
                         <div class="flex gap-2">
